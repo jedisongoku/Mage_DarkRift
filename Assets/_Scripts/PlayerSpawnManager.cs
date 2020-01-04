@@ -87,20 +87,18 @@ public class PlayerSpawnManager : MonoBehaviour
                     Debug.LogWarning("skin " + skin);
                     GameObject obj = Instantiate(playerPrefab, spawnLocations[id % 7].transform.position, Quaternion.identity) as GameObject;
                     GameObject skinObject = Instantiate(playerSkinPrefabs[skin], obj.transform);
-                    PlayerMovementController movement = obj.GetComponent<PlayerMovementController>();
-                    movement.RebindAnimator();
+                    Player player = obj.GetComponent<Player>();
+                    //movement.RebindAnimator();
                     if (id == client.ID)
                     {
-                        movement.IsControllable = true;
-                        movement.Client = client;
+                        player.IsControllable = true;
+                        player.Client = client;
                         
                     }
                     else
                     {
-                        movement.IsControllable = false;
+                        player.IsControllable = false;
                     }
-
-                    Player player = obj.GetComponent<Player>();
 
                     player.Nickname = nickname;
                     player.Skin = skin;

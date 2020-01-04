@@ -1,5 +1,4 @@
 ﻿using DarkRift;
-using DarkRift.Client.Unity;
 using UnityEngine;
 using Cinemachine;
 
@@ -7,7 +6,7 @@ public class PlayerMovementController : MonoBehaviour
 {
     const byte MOVEMENT_TAG = 1;
     
-    public bool IsControllable { get; set; }
+    private Player player;
     private Animator m_Animator;
     private Rigidbody m_Rigidbody;
 
@@ -21,24 +20,14 @@ public class PlayerMovementController : MonoBehaviour
     private float vertical;
     private float fireTimer;
 
-    public UnityClient Client { get; set; }
-    // Start is called before the first frame update
+    
     void Awake()
     {
         Debug.LogWarning("Everything works");
+        player = GetComponent<Player>();
         m_Animator = GetComponent<Animator>();
         m_Rigidbody = GetComponent<Rigidbody>();
-        SetBaseStats();
-        
-        
-    }
-
-    private void Start()
-    {
-        if (IsControllable)
-        {
-            GameObject.Find("VirtualCamera").GetComponent<CinemachineVirtualCamera>().Follow = this.transform;
-        }
+        SetBaseStats(); 
     }
 
     void SetBaseStats()
@@ -47,12 +36,24 @@ public class PlayerMovementController : MonoBehaviour
         turnSpeed = PlayerBaseStats.Instance.TurnSpeed;
     }
 
+    private void Start()
+    {
+        if (player.IsControllable)
+        {
+            GameObject.Find("VirtualCamera").GetComponent<CinemachineVirtualCamera>().Follow = this.transform;
+            
+        }
+        m_Animator.Rebind();
+    }
+
+    
+
     // Update is called once per frame
     void FixedUpdate()
     {
         fireTimer += Time.deltaTime;
 
-        if(IsControllable)
+        if(player.IsControllable)
         {
             horizontal = Input.GetAxis("Horizontal");
             vertical = Input.GetAxis("Vertical");
@@ -76,7 +77,7 @@ public class PlayerMovementController : MonoBehaviour
         m_Animator.SetFloat("Horizontal", horizontal);
         m_Animator.SetFloat("Vertical", vertical);
 
-        if(IsControllable)
+        if(player.IsControllable)
         {
             using (DarkRiftWriter writer = DarkRiftWriter.Create())
             {
@@ -86,7 +87,7 @@ public class PlayerMovementController : MonoBehaviour
                 writer.Write(vertical);
 
                 using (Message message = Message.Create(Tags.MovePlayerTag, writer))
-                    Client.SendMessage(message, SendMode.Unreliable);
+                    player.Client.SendMessage(message, SendMode.Unreliable);
             }
         }
     }
@@ -108,10 +109,6 @@ public class PlayerMovementController : MonoBehaviour
         vertical = _vertical;
     }
 
-    public void RebindAnimator()
-    {
-        m_Animator.Rebind();
-    }
 
 
 }
