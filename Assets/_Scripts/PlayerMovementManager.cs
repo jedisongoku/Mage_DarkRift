@@ -2,7 +2,7 @@
 using UnityEngine;
 using Cinemachine;
 
-public class PlayerMovementController : MonoBehaviour
+public class PlayerMovementManager : MonoBehaviour
 {
     const byte MOVEMENT_TAG = 1;
     

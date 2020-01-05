@@ -136,7 +136,7 @@ public class ServerManager : MonoBehaviour
                 player.Z = newZ;
 
                 //move the copy of the character on the server
-                serverPlayersInScene[e.Client].GetComponent<PlayerMovementController>().SetMovement(new Vector3(player.X, 0f, player.Z), player.Horizontal, player.Vertical);
+                serverPlayersInScene[e.Client].GetComponent<PlayerMovementManager>().SetMovement(new Vector3(player.X, 0f, player.Z), player.Horizontal, player.Vertical);
 
                 using (DarkRiftWriter writer = DarkRiftWriter.Create())
                 {

@@ -65,6 +65,7 @@ public class ObjectPooler : MonoBehaviour
         for (int i = 0; i < primarySkillPrefabPooledAmount; i++)
         {
             GameObject obj = (GameObject)Instantiate(primarySkillPrefab);
+            obj.layer = LayerMask.NameToLayer("Damageable");
             obj.SetActive(false);
             primarySkillPrefabList.Add(obj);
         }

@@ -56,7 +56,7 @@ public class ClientManager : MonoBehaviour
                 float vertical = reader.ReadSingle();
 
                 if (networkPlayers.ContainsKey(id))
-                    networkPlayers[id].GetComponent<PlayerMovementController>().SetMovement(position, horizontal, vertical);
+                    networkPlayers[id].GetComponent<PlayerMovementManager>().SetMovement(position, horizontal, vertical);
             }
         }
     }
