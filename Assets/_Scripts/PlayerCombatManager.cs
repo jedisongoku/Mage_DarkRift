@@ -37,26 +37,39 @@ public class PlayerCombatManager : MonoBehaviour
         {
             if (Input.GetButtonDown("Dash"))
             {
-                isSecondary = true;
+                using (DarkRiftWriter writer = DarkRiftWriter.Create())
+                {
+                    writer.Write(true);
+
+                    using (Message message = Message.Create(NetworkTags.SecondarySkillTag, writer))
+                        player.Client.SendMessage(message, SendMode.Reliable);
+                }
+            }
+            if (Input.GetButtonDown("Fire1"))
+            {
+                isPrimary = true;
                 using (DarkRiftWriter writer = DarkRiftWriter.Create())
                 {
                     writer.Write(isPrimary);
                     writer.Write(isSecondary);
 
-                    using (Message message = Message.Create(NetworkTags.CombatPlayerTag, writer))
-                        player.Client.SendMessage(message, SendMode.Unreliable);
+                    using (Message message = Message.Create(NetworkTags.PrimarySkillTag, writer))
+                        player.Client.SendMessage(message, SendMode.Reliable);
                 }
             }
         }
         
         if (isPrimary)
         {
-
+            Debug.Log("primary");
+            isPrimary = false;
+            m_Animator.SetTrigger("Attacking");
         }
         if(isSecondary)
         {
+            Debug.Log("secondary");
             isSecondary = false;
-            m_Animator.SetTrigger("isDashing");
+            m_Animator.SetTrigger("Dashing");
         }
     }
 

@@ -33,12 +33,13 @@ public class ClientManager : MonoBehaviour
 
     private void MessageReceived(object sender, MessageReceivedEventArgs e)
     {
+        
         using (Message message = e.GetMessage() as Message)
         {
             if (message.Tag == NetworkTags.MovePlayerTag)
                 Movement(sender, e);
-            else if (message.Tag == NetworkTags.CombatPlayerTag)
-                Combat(sender, e);
+            else if (message.Tag == NetworkTags.SecondarySkillTag)
+                SecondarySkill(sender, e);
         }
     }
     void Movement(object sender, MessageReceivedEventArgs e)
@@ -58,19 +59,18 @@ public class ClientManager : MonoBehaviour
         }
     }
 
-    void Combat(object sender, MessageReceivedEventArgs e)
+    void SecondarySkill(object sender, MessageReceivedEventArgs e)
     {
         using (Message message = e.GetMessage() as Message)
         {
             using (DarkRiftReader reader = message.GetReader())
             {
                 ushort id = reader.ReadUInt16();
-                bool primary = reader.ReadBoolean();
                 bool secondary = reader.ReadBoolean();
 
 
                 if (networkPlayers.ContainsKey(id))
-                    networkPlayers[id].GetComponent<PlayerCombatManager>().SetCombat(primary, secondary);
+                    networkPlayers[id].GetComponent<PlayerCombatManager>().SetCombat(false, secondary);
             }
         }
     }
@@ -82,6 +82,14 @@ public class ClientManager : MonoBehaviour
         Destroy(o.gameObject);
 
         networkPlayers.Remove(id);
+    }
+
+    public int TotalPlayer
+    {
+        get
+        {
+            return networkPlayers.Count;
+        }
     }
 
     

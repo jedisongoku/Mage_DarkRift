@@ -179,5 +179,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7bdb3633b0427444a1599763d6f947f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  clientsId: 
   gameServer: {fileID: 0}
+  playerPrefab: {fileID: 6361094391380882287, guid: d0b9cc1c9bc34f24fb8b35d64b7ada39,
+    type: 3}
+  playerSkinPrefabs:
+  - {fileID: 135428, guid: eea1710edb5bbe447a454fcb7c112cab, type: 3}
+  - {fileID: 155690, guid: 985b620247f8ea24bbe8554017e32fb6, type: 3}

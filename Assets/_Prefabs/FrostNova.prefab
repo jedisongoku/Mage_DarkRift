@@ -9552,9 +9552,9 @@ GameObject:
   - component: {fileID: 3517897760195212690}
   - component: {fileID: 3517897760214567806}
   - component: {fileID: 3517897760213100084}
-  - component: {fileID: -6594777234641274392}
-  - component: {fileID: -2715416965483635182}
   - component: {fileID: 2848441833833066111}
+  - component: {fileID: -3500728907260216584}
+  - component: {fileID: -5071883725836131949}
   m_Layer: 0
   m_Name: FrostNova
   m_TagString: Untagged
@@ -14287,31 +14287,6 @@ ParticleSystemRenderer:
   m_Mesh2: {fileID: 0}
   m_Mesh3: {fileID: 0}
   m_MaskInteraction: 0
---- !u!114 &-6594777234641274392
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3517897760195353392}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d8cd4fdc8973c3748b3e60f0a82bbf05, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  explosionDestroyTime: 1.5
---- !u!114 &-2715416965483635182
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3517897760195353392}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b11cc7df1f0aeec4dab118b2b355a2ce, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!135 &2848441833833066111
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -14325,6 +14300,31 @@ SphereCollider:
   serializedVersion: 2
   m_Radius: 2.3
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &-3500728907260216584
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3517897760195353392}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 09be3d03527340b4c96b35794b52d80f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  explosionDestroyTime: 1.5
+--- !u!114 &-5071883725836131949
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3517897760195353392}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: abcb5e52360cfb44aa70a77bb247e951, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3517897760195392016
 GameObject:
   m_ObjectHideFlags: 0

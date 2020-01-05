@@ -23779,7 +23779,7 @@ GameObject:
   - component: {fileID: 6498234039627842433}
   - component: {fileID: 6498234039625883189}
   - component: {fileID: 6498234039605746093}
-  - component: {fileID: -6384864140258711920}
+  - component: {fileID: -2191927516836507869}
   m_Layer: 0
   m_Name: ExplosionFireballBlue
   m_TagString: Untagged
@@ -28609,7 +28609,7 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
---- !u!114 &-6384864140258711920
+--- !u!114 &-2191927516836507869
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -28618,6 +28618,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 6498234039612364963}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d8cd4fdc8973c3748b3e60f0a82bbf05, type: 3}
+  m_Script: {fileID: 11500000, guid: 09be3d03527340b4c96b35794b52d80f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  explosionDestroyTime: 1.5

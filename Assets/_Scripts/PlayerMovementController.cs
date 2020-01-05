@@ -23,7 +23,6 @@ public class PlayerMovementController : MonoBehaviour
     
     void Awake()
     {
-        Debug.LogWarning("Everything works");
         player = GetComponent<Player>();
         m_Animator = GetComponent<Animator>();
         m_Rigidbody = GetComponent<Rigidbody>();
@@ -94,6 +93,7 @@ public class PlayerMovementController : MonoBehaviour
 
     void OnAnimatorMove()
     {
+        
         m_Rigidbody.MovePosition(m_Rigidbody.position + m_Movement * m_Animator.deltaPosition.magnitude * walkSpeed);
         if (fireTimer > 0.2f)
         {

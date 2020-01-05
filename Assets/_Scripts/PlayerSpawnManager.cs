@@ -49,6 +49,7 @@ public class PlayerSpawnManager : MonoBehaviour
 
     private void MessageReceived(object sender, MessageReceivedEventArgs e)
     {
+        Debug.Log("Message Received " + e.GetMessage() + " " + sender.ToString());
         using (Message message = e.GetMessage() as Message)
         {
             if (message.Tag == NetworkTags.SpawnPlayerTag)
@@ -67,6 +68,7 @@ public class PlayerSpawnManager : MonoBehaviour
             if (message.Tag == NetworkTags.SpawnPlayerTag)
             {
                 Debug.LogWarning("Reader length " + reader.Length);
+                
                 if (reader.Length % 39 != 0)
                 {
                     Debug.LogWarning("Received malformed spawn packet.");
@@ -75,7 +77,9 @@ public class PlayerSpawnManager : MonoBehaviour
 
                 while (reader.Position < reader.Length)
                 {
+
                     Debug.LogWarning("Pos " + reader.Position + "-- Length " + reader.Length);
+
                     ushort id = reader.ReadUInt16();
                     Vector3 position = new Vector3(reader.ReadSingle(), 0, reader.ReadSingle());
                     float h = reader.ReadSingle();
@@ -91,7 +95,6 @@ public class PlayerSpawnManager : MonoBehaviour
                     GameObject skinObject = Instantiate(playerSkinPrefabs[skin], obj.transform);
                     Player player = obj.GetComponent<Player>();
 
-                    //movement.RebindAnimator();
                     if (id == client.ID)
                     {
                         player.IsControllable = true;
@@ -110,6 +113,8 @@ public class PlayerSpawnManager : MonoBehaviour
                 }
             }
         }
+
+        ObjectPooler.Instance.GenerateParticles();
     }
 
     void DespawnPlayer(object sender, MessageReceivedEventArgs e)

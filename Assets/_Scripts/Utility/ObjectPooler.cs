@@ -25,16 +25,15 @@ public class ObjectPooler : MonoBehaviour
     }
 
     // Start is called before the first frame update
-    void Start()
+    public void GenerateParticles()
     {
-        
+        Debug.Log("Count " + ClientManager.Instance.TotalPlayer);
         primarySkillPrefabList = new List<GameObject>();
         primarySkillExplosionPrefabList = new List<GameObject>();
         primarySkillFrostNovaPrefabList = new List<GameObject>();
 
-        /*
         //Primary Skill Particle Instantiation 
-        for (int i = 0; i < primarySkillPrefabPooledAmount * PhotonNetwork.CurrentRoom.PlayerCount; i++)
+        for (int i = 0; i < primarySkillPrefabPooledAmount * ClientManager.Instance.TotalPlayer; i++)
         {
             GameObject obj = (GameObject)Instantiate(primarySkillPrefab);
             obj.SetActive(false);
@@ -42,7 +41,7 @@ public class ObjectPooler : MonoBehaviour
         }
 
         //Primary Skill OnHit Particle Instantiation 
-        for (int i = 0; i < primarySkillExplosionPrefabPooledAmount * PhotonNetwork.CurrentRoom.PlayerCount; i++)
+        for (int i = 0; i < primarySkillExplosionPrefabPooledAmount * ClientManager.Instance.TotalPlayer; i++)
         {
             GameObject obj = (GameObject)Instantiate(primarySkillExplosionPrefab);
             obj.SetActive(false);
@@ -50,12 +49,12 @@ public class ObjectPooler : MonoBehaviour
         }
 
         //Primary Skill OnHit FrostNova Particle Instantiation 
-        for (int i = 0; i < primarySkillFrostNovaPrefabPooledAmount * PhotonNetwork.CurrentRoom.PlayerCount; i++)
+        for (int i = 0; i < primarySkillFrostNovaPrefabPooledAmount * ClientManager.Instance.TotalPlayer; i++)
         {
             GameObject obj = (GameObject)Instantiate(primarySkillFrostNovaPrefab);
             obj.SetActive(false);
             primarySkillFrostNovaPrefabList.Add(obj);
-        }*/
+        }
     }
 
     public GameObject GetPrimarySkillPrefab()
