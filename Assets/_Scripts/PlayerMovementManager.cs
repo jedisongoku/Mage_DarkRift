@@ -51,45 +51,49 @@ public class PlayerMovementManager : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-        fireTimer += Time.deltaTime;
+        if(!player.IsDead)
+        {
+            fireTimer += Time.deltaTime;
 
-        if(player.IsControllable)
-        {
-            horizontal = Input.GetAxis("Horizontal");
-            vertical = Input.GetAxis("Vertical");
-            
-        }
-        else
-        {
-            
-            if((m_Rigidbody.position - m_NetworkPosition).magnitude > 3)
+            if (player.IsControllable)
             {
-                m_Rigidbody.position = m_NetworkPosition;
+                horizontal = Input.GetAxis("Horizontal");
+                vertical = Input.GetAxis("Vertical");
+
             }
-            m_Rigidbody.position = Vector3.MoveTowards(m_Rigidbody.position, m_NetworkPosition, Time.fixedDeltaTime);
-        }
-
-        m_Movement.Set(horizontal, 0f, vertical);
-        m_Movement.Normalize();
-
-        Vector3 desiredForward = Vector3.RotateTowards(transform.forward, m_Movement, turnSpeed * Time.deltaTime, 0f);
-        m_Rotation = Quaternion.LookRotation(desiredForward);
-        m_Animator.SetFloat("Horizontal", horizontal);
-        m_Animator.SetFloat("Vertical", vertical);
-
-        if(player.IsControllable)
-        {
-            using (DarkRiftWriter writer = DarkRiftWriter.Create())
+            else
             {
-                writer.Write(m_Rigidbody.position.x);
-                writer.Write(m_Rigidbody.position.z);
-                writer.Write(horizontal);
-                writer.Write(vertical);
 
-                using (Message message = Message.Create(NetworkTags.MovePlayerTag, writer))
-                    player.Client.SendMessage(message, SendMode.Unreliable);
+                if ((m_Rigidbody.position - m_NetworkPosition).magnitude > 3)
+                {
+                    m_Rigidbody.position = m_NetworkPosition;
+                }
+                m_Rigidbody.position = Vector3.MoveTowards(m_Rigidbody.position, m_NetworkPosition, Time.fixedDeltaTime);
+            }
+
+            m_Movement.Set(horizontal, 0f, vertical);
+            m_Movement.Normalize();
+
+            Vector3 desiredForward = Vector3.RotateTowards(transform.forward, m_Movement, turnSpeed * Time.deltaTime, 0f);
+            m_Rotation = Quaternion.LookRotation(desiredForward);
+            m_Animator.SetFloat("Horizontal", horizontal);
+            m_Animator.SetFloat("Vertical", vertical);
+
+            if (player.IsControllable)
+            {
+                using (DarkRiftWriter writer = DarkRiftWriter.Create())
+                {
+                    writer.Write(m_Rigidbody.position.x);
+                    writer.Write(m_Rigidbody.position.z);
+                    writer.Write(horizontal);
+                    writer.Write(vertical);
+
+                    using (Message message = Message.Create(NetworkTags.MovePlayerTag, writer))
+                        player.Client.SendMessage(message, SendMode.Unreliable);
+                }
             }
         }
+        
     }
 
     void OnAnimatorMove()
@@ -110,6 +114,10 @@ public class PlayerMovementManager : MonoBehaviour
         vertical = _vertical;
     }
 
-
+    public void TurnForAttack(Vector3 _mousePosition)
+    {
+        fireTimer = 0;
+        transform.LookAt(_mousePosition);
+    }
 
 }

@@ -16,7 +16,7 @@ public class ServerManager : MonoBehaviour
     public GameObject[] playerSkinPrefabs;
 
     Dictionary<IClient, ServerPlayer> players = new Dictionary<IClient, ServerPlayer>();
-    Dictionary<IClient, GameObject> serverPlayersInScene = new Dictionary<IClient, GameObject>();
+    public Dictionary<IClient, GameObject> serverPlayersInScene = new Dictionary<IClient, GameObject>();
 
     // Start is called before the first frame update
     void Awake()
@@ -63,6 +63,8 @@ public class ServerManager : MonoBehaviour
         GameObject skinObject = Instantiate(playerSkinPrefabs[playerServer.Skin], playerObject.transform);
         playerObject.GetComponent<Player>().IsServer = true;
         playerObject.GetComponent<Player>().ID = e.Client.ID;
+        playerObject.GetComponent<Player>().ServerClient = e.Client;
+
 
         //Add playerObject to the list
         serverPlayersInScene.Add(e.Client, playerObject);
@@ -189,6 +191,7 @@ public class ServerManager : MonoBehaviour
                 //c.SendMessage(message, e.SendMode);
                 foreach (IClient c in gameServer.Server.ClientManager.GetAllClients())
                     c.SendMessage(message, e.SendMode);
+                
             }
         }
     }
@@ -219,6 +222,10 @@ public class ServerManager : MonoBehaviour
             }
         }
     }
+
+    #endregion
+
+    #region Health Manager
 
     #endregion
 }

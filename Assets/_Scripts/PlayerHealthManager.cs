@@ -1,8 +1,16 @@
 ﻿using DarkRift;
+using DarkRift.Server;
 using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
 
 public class PlayerHealthManager : MonoBehaviour
 {
+    [Header("Player")]
+    [SerializeField] GameObject playerUI;
+    [SerializeField] Image playerHealthBar;
+    [SerializeField] TextMeshProUGUI playerHealthText;
+
     private Player player;
     private Animator m_Animator;
     private Rigidbody m_Rigidbody;
@@ -26,6 +34,7 @@ public class PlayerHealthManager : MonoBehaviour
 
         //StartCoroutine(HealhtRegeneration());
         SetPlayerBaseStats();
+        UpdateHealth();
     }
 
     void SetPlayerBaseStats()
@@ -44,5 +53,72 @@ public class PlayerHealthManager : MonoBehaviour
         //strongHeartParticle.SetActive(false);
         //shieldGuardParticle.SetActive(false);
         //frostbiteParticle.SetActive(false);
+    }
+
+    void UpdateHealth()
+    {
+        if(playerhealth <= 0)
+        {
+            Dead();
+            m_Animator.SetTrigger("Dead");
+            //dead here
+        }
+        else
+        {
+            playerHealthBar.fillAmount = playerhealth / playerMaxHealth;
+            playerHealthText.text = playerhealth.ToString();
+        }
+
+        if(player.IsServer)
+        {
+            //SendHealthMessage();
+        }
+        
+    }
+    
+    public void TakeDamage(int _damageTaken, IClient _damageOrigin)
+    {
+        //Add other rune variables here before applying the damage to self
+
+        playerhealth = (playerhealth - _damageTaken) <= 0 ? 0 : playerhealth - _damageTaken;
+        if(playerhealth <= 0)
+        {
+            //register the killer in the scoreboard
+        }
+        UpdateHealth();
+    }
+
+    public void HealthMessageReceived(ushort _health)
+    {
+        playerhealth = _health;
+        UpdateHealth();
+    }
+    
+    void SendHealthMessage()
+    {
+        using (DarkRiftWriter writer = DarkRiftWriter.Create())
+        {
+            writer.Write(player.IsDead);
+            writer.Write(playerhealth);
+            //probably add the rune applications for particles
+
+            using (Message message = Message.Create(NetworkTags.HealthPlayerTag, writer))
+                foreach (IClient c in ServerManager.Instance.gameServer.Server.ClientManager.GetAllClients())
+                    c.SendMessage(message, SendMode.Reliable);
+        }
+    }
+
+    void Dead()
+    {
+        GetComponent<CapsuleCollider>().enabled = false;
+        playerUI.SetActive(false);
+        player.IsDead = true;
+    }
+
+    void Respawn()
+    {
+        GetComponent<CapsuleCollider>().enabled = true;
+        playerUI.SetActive(true);
+        player.IsDead = false;
     }
 }

@@ -9852,21 +9852,21 @@ MonoBehaviour:
   walkSpeed: 0.65
   turnSpeed: 15
   health: 100
-  healthGenerationRate: 0
+  healthGenerationRate: 0.01
   primarySkillDamage: 30
-  primarySkillCooldown: 2.5
-  secondarySkillCooldown: 7
-  bloodthirstHealAmount: 0
-  hpBoostAmount: 0
-  shieldGuardDamageReductionRate: 0
-  flameDamageRate: 0
-  flameDuration: 0
-  chillSlowRate: 0
-  chillDuration: 0
-  multishotDelayTime: 0
-  rageStartRate: 0
-  rageDamageRate: 0
-  poisonPickupTime: 0
+  primarySkillCooldown: 2
+  secondarySkillCooldown: 5
+  bloodthirstHealAmount: 30
+  hpBoostAmount: 50
+  shieldGuardDamageReductionRate: 0.2
+  flameDamageRate: 0.2
+  flameDuration: 8
+  chillSlowRate: 0.15
+  chillDuration: 2.5
+  multishotDelayTime: 0.2
+  rageStartRate: 0.3
+  rageDamageRate: 0.1
+  poisonPickupTime: 5
 --- !u!114 &206528785
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -50263,7 +50263,7 @@ PrefabInstance:
     - target: {fileID: 8766409296749979376, guid: 8f2d841a46f40504dbd4c33629387443,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8766409296749979379, guid: 8f2d841a46f40504dbd4c33629387443,
         type: 3}

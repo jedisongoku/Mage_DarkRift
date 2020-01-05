@@ -38243,7 +38243,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 21300000, guid: df96ac7305b772f4b85e7bbfb2eb7772, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -38539,7 +38539,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 650360a9a4150e1418aa55cd99047ee7, type: 3}
+  m_Sprite: {fileID: 21300000, guid: df96ac7305b772f4b85e7bbfb2eb7772, type: 3}
   m_Type: 3
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -38656,6 +38656,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: debb6e0d79c3c56419467cf7342c72fe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerCombatManager: {fileID: -7094498262923247961}
+  playerHealthManager: {fileID: 0}
+  playerMovementManager: {fileID: 5061779938565317016}
 --- !u!114 &5061779938565317016
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -38680,6 +38683,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 82aec37e32866a34195dae1ca98b8627, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  primarySkillSpawnLocation: {fileID: 0}
 --- !u!1 &6830049393364381262
 GameObject:
   m_ObjectHideFlags: 0

@@ -4,6 +4,7 @@ using DarkRift;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Collections.Generic;
+using System;
 
 public class ClientManager : MonoBehaviour
 {
@@ -42,8 +43,27 @@ public class ClientManager : MonoBehaviour
                 PrimarySkill(sender, e);
             else if (message.Tag == NetworkTags.SecondarySkillTag)
                 SecondarySkill(sender, e);
+            else if (message.Tag == NetworkTags.HealthPlayerTag)
+                Health(sender, e);
         }
     }
+
+    void Health(object sender, MessageReceivedEventArgs e)
+    {
+        using (Message message = e.GetMessage() as Message)
+        {
+            using (DarkRiftReader reader = message.GetReader())
+            {
+                ushort id = reader.ReadUInt16();
+                bool isDead = reader.ReadBoolean();
+                ushort health = reader.ReadUInt16();
+
+                if (networkPlayers.ContainsKey(id))
+                    networkPlayers[id].GetComponent<PlayerHealthManager>().HealthMessageReceived(health);
+            }
+        }
+    }
+
     void Movement(object sender, MessageReceivedEventArgs e)
     {
         using (Message message = e.GetMessage() as Message)

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using DarkRift.Server;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -17,6 +18,7 @@ public class PrimarySkillController : MonoBehaviour
     private int playerViewId;
     private float travelDistance = 0f;
     private Vector3 initialPosition = Vector3.zero;
+    public IClient ServerClient { get; set; }
 
     [Header("Runes")]
     bool isFrostbite = false;
@@ -168,8 +170,16 @@ public class PrimarySkillController : MonoBehaviour
             {
                 if(other.gameObject.GetComponent<Player>().ID != PlayerOrigin)
                 {
+                    if (other.gameObject.GetComponent<Player>().IsServer)
+                    {
+                        //if collision happens on the server, notify the player to get ready for damage to the enemy player
+                        ServerManager.Instance.serverPlayersInScene[ServerClient].GetComponent<PlayerCombatManager>().ReadyForDamage(other.gameObject.GetComponent<Player>().ServerClient);
+                    }
+
                     Destroy(other.gameObject);
+
                 }
+                
                 
                 /*
                 if (other.gameObject.GetComponent<PhotonView>().ViewID != playerViewId)

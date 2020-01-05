@@ -6,4 +6,5 @@
     public static readonly ushort RespawnPlayerTag = 4;
     public static readonly ushort PrimarySkillTag = 5;
     public static readonly ushort SecondarySkillTag = 6;
+    public static readonly ushort HealthPlayerTag = 7;
 }

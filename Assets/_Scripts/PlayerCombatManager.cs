@@ -1,5 +1,6 @@
 ﻿using DarkRift;
 using DarkRift.Client.Unity;
+using DarkRift.Server;
 using System.Collections;
 using UnityEngine;
 
@@ -8,6 +9,7 @@ public class PlayerCombatManager : MonoBehaviour
     private Player player;
     private Animator m_Animator;
     private Rigidbody m_Rigidbody;
+    private PlayerMovementManager playerMovementManager;
 
     Plane plane = new Plane(Vector3.up, Vector3.zero);
 
@@ -37,6 +39,7 @@ public class PlayerCombatManager : MonoBehaviour
         player = GetComponent<Player>();
         m_Animator = GetComponent<Animator>();
         m_Rigidbody = GetComponent<Rigidbody>();
+        playerMovementManager = GetComponent<PlayerMovementManager>();
 
         SetPlayerBaseStats();
         
@@ -64,7 +67,7 @@ public class PlayerCombatManager : MonoBehaviour
         secondarySkillCooldownTimer += Time.deltaTime;
 
 
-        if (player.IsControllable)
+        if (player.IsControllable && !player.IsDead)
         {
             if (Input.GetButtonDown("Dash"))
             {
@@ -107,7 +110,8 @@ public class PlayerCombatManager : MonoBehaviour
     }
 
     IEnumerator UsePrimarySkill(float _delayTime)
-    {        
+    {
+        playerMovementManager.TurnForAttack(mousePosition);
         m_Animator.SetTrigger("Attacking");
         Vector3 heading = mousePosition - primarySkillSpawnLocation.transform.position;
         Vector3 direction = heading / heading.magnitude;
@@ -123,6 +127,8 @@ public class PlayerCombatManager : MonoBehaviour
         obj.GetComponent<PrimarySkillController>().SetParticleMoveDirection = new Vector3(direction.x, 0, direction.z);
         obj.GetComponent<PrimarySkillController>().Traveling = true;
         obj.GetComponent<PrimarySkillController>().PlayerOrigin = player.ID;
+        if(player.IsServer) obj.GetComponent<PrimarySkillController>().ServerClient = player.ServerClient;
+
 
         /*
         obj.GetComponent<PrimarySkillController>().PlayerOrigin = photonView.ViewID;
@@ -171,5 +177,12 @@ public class PlayerCombatManager : MonoBehaviour
     public void SecondarySkillMessageReceived()
     {
         m_Animator.SetTrigger("Dashing");
+    }
+
+    
+    public void ReadyForDamage(IClient _enemyClient)
+    {
+        float damageToApply = primarySkillDamage;
+        if (isRage) damageToApply += damageToApply * PlayerBaseStats.Instance.RageDamageRate;
     }
 }
