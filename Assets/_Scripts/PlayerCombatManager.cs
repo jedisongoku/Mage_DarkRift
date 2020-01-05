@@ -43,7 +43,7 @@ public class PlayerCombatManager : MonoBehaviour
                     writer.Write(isPrimary);
                     writer.Write(isSecondary);
 
-                    using (Message message = Message.Create(Tags.CombatPlayerTag, writer))
+                    using (Message message = Message.Create(NetworkTags.CombatPlayerTag, writer))
                         player.Client.SendMessage(message, SendMode.Unreliable);
                 }
             }

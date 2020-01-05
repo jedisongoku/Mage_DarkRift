@@ -86,7 +86,7 @@ public class PlayerMovementController : MonoBehaviour
                 writer.Write(horizontal);
                 writer.Write(vertical);
 
-                using (Message message = Message.Create(Tags.MovePlayerTag, writer))
+                using (Message message = Message.Create(NetworkTags.MovePlayerTag, writer))
                     player.Client.SendMessage(message, SendMode.Unreliable);
             }
         }

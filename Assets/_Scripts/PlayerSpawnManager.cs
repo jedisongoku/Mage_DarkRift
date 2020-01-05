@@ -15,15 +15,14 @@ public class PlayerSpawnManager : MonoBehaviour
 
     [SerializeField]
     [Tooltip("The network player manager.")]
-    NetworkPlayerManager networkPlayerManager;
+    ClientManager clientManager;
 
     [SerializeField]
     [Tooltip("The player prefab.")]
     GameObject playerPrefab;
 
-
     [SerializeField]
-    GameObject[] spawnLocations;
+    public GameObject[] spawnLocations;
 
     [SerializeField]
     public GameObject[] playerSkinPrefabs;
@@ -52,9 +51,9 @@ public class PlayerSpawnManager : MonoBehaviour
     {
         using (Message message = e.GetMessage() as Message)
         {
-            if (message.Tag == Tags.SpawnPlayerTag)
+            if (message.Tag == NetworkTags.SpawnPlayerTag)
                 SpawnPlayer(sender, e);
-            else if (message.Tag == Tags.DespawnPlayerTag)
+            else if (message.Tag == NetworkTags.DespawnPlayerTag)
                 DespawnPlayer(sender, e);
         }
     }
@@ -65,10 +64,10 @@ public class PlayerSpawnManager : MonoBehaviour
         using (Message message = e.GetMessage())
         using (DarkRiftReader reader = message.GetReader())
         {
-            if (message.Tag == Tags.SpawnPlayerTag)
+            if (message.Tag == NetworkTags.SpawnPlayerTag)
             {
                 Debug.LogWarning("Reader length " + reader.Length);
-                if (reader.Length % 31 != 0)
+                if (reader.Length % 39 != 0)
                 {
                     Debug.LogWarning("Received malformed spawn packet.");
                     return;
@@ -79,15 +78,19 @@ public class PlayerSpawnManager : MonoBehaviour
                     Debug.LogWarning("Pos " + reader.Position + "-- Length " + reader.Length);
                     ushort id = reader.ReadUInt16();
                     Vector3 position = new Vector3(reader.ReadSingle(), 0, reader.ReadSingle());
+                    float h = reader.ReadSingle();
+                    float v = reader.ReadSingle();
                     string nickname = reader.ReadString();
                     byte skin = reader.ReadByte();
 
                     Debug.LogWarning("ID " + id);
                     Debug.LogWarning("Nickname " + nickname);
                     Debug.LogWarning("skin " + skin);
-                    GameObject obj = Instantiate(playerPrefab, spawnLocations[id % 7].transform.position, Quaternion.identity) as GameObject;
+
+                    GameObject obj = Instantiate(playerPrefab, PoisonShopManager.Instance.spawnLocations[id % 7].transform.position, Quaternion.identity) as GameObject;
                     GameObject skinObject = Instantiate(playerSkinPrefabs[skin], obj.transform);
                     Player player = obj.GetComponent<Player>();
+
                     //movement.RebindAnimator();
                     if (id == client.ID)
                     {
@@ -103,7 +106,7 @@ public class PlayerSpawnManager : MonoBehaviour
                     player.Nickname = nickname;
                     player.Skin = skin;
 
-                    networkPlayerManager.Add(id, player);
+                    clientManager.Add(id, player);
                 }
             }
         }
@@ -113,7 +116,7 @@ public class PlayerSpawnManager : MonoBehaviour
     {
         using (Message message = e.GetMessage())
         using (DarkRiftReader reader = message.GetReader())
-            networkPlayerManager.DestroyPlayer(reader.ReadUInt16());
+            clientManager.DestroyPlayer(reader.ReadUInt16());
     }
 
 }
