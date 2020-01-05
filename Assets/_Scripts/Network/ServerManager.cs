@@ -15,8 +15,8 @@ public class ServerManager : MonoBehaviour
     [SerializeField]
     public GameObject[] playerSkinPrefabs;
 
-    Dictionary<IClient, PlayerServer> players = new Dictionary<IClient, PlayerServer>();
-    Dictionary<IClient, GameObject> serverPlayers = new Dictionary<IClient, GameObject>();
+    Dictionary<IClient, ServerPlayer> players = new Dictionary<IClient, ServerPlayer>();
+    Dictionary<IClient, GameObject> serverPlayersInScene = new Dictionary<IClient, GameObject>();
 
     // Start is called before the first frame update
     void Awake()
@@ -35,69 +35,61 @@ public class ServerManager : MonoBehaviour
     {
         e.Client.MessageReceived += MessageReceived;
 
-        //Create a new player for the new client
+        
         string nickname = "Mage" + Random.Range(1000, 9999);
-
-        //Create the Message for new connected player
-        PlayerServer playerServer = new PlayerServer(
-            e.Client.ID,
-            0f,
-            0f,
-            0f,
-            0f,
-            nickname,
-            0
-            );
-
-        //Send the connected player's information to the rest of the players
-        using (DarkRiftWriter playerWriter = DarkRiftWriter.Create())
+        //Create a new player for the new client
+        ServerPlayer playerServer = new ServerPlayer
         {
-            playerWriter.Write(playerServer.ID);
-            playerWriter.Write(playerServer.X);
-            playerWriter.Write(playerServer.Z);
-            playerWriter.Write(playerServer.Horizontal);
-            playerWriter.Write(playerServer.Vertical);
-            playerWriter.Write(playerServer.Nickname);
-            playerWriter.Write(playerServer.Skin);
-            
-            using (Message playerMessage = Message.Create(NetworkTags.SpawnPlayerTag, playerWriter))
+            ID = e.Client.ID,
+            X = 0f,
+            Z = 0f,
+            Horizontal = 0f,
+            Vertical = 0f,
+            Nickname = nickname,
+            Skin = 0,
+        };
+
+        //Create and send message for new connected player to all other players
+        using (DarkRiftWriter playerMessage = DarkRiftWriter.Create())
+        {
+            using (Message myMessage = Message.Create(NetworkTags.SpawnPlayerTag, playerServer))
+            {
                 foreach (IClient client in gameServer.Server.ClientManager.GetAllClients().Where(x => x != e.Client))
-                    client.SendMessage(playerMessage, SendMode.Reliable);
+                    client.SendMessage(myMessage, SendMode.Reliable);
+            }
         }
+
+        GameObject playerObject = Instantiate(playerPrefab, PoisonShopManager.Instance.spawnLocations[playerServer.ID % 7].transform.position, Quaternion.identity) as GameObject;
+        GameObject skinObject = Instantiate(playerSkinPrefabs[playerServer.Skin], playerObject.transform);
+        playerObject.GetComponent<Player>().IsServer = true;
+        playerObject.GetComponent<Player>().ID = e.Client.ID;
+
+        //Add playerObject to the list
+        serverPlayersInScene.Add(e.Client, playerObject);
 
         //Add the new client to the list
         players.Add(e.Client, playerServer);
 
-        //GameObject obj = Instantiate(playerPrefab, PoisonShopManager.Instance.spawnLocations[e.Client.ID % 7].transform.position, Quaternion.identity) as GameObject;
-        //GameObject skinObject = Instantiate(playerSkinPrefabs[playerServer.Skin], obj.transform);
-        //serverPlayers.Add(e.Client, obj);
-
-        //get other clients' information to the newly connected client including the new client
-        //this is where new client is being instantiated with other players
-        using (DarkRiftWriter playerWriter = DarkRiftWriter.Create())
+        //get all other player data and send it to new connected player
+        using (DarkRiftWriter playerMessageWriter = DarkRiftWriter.Create())
         {
-            Debug.Log("Players " + players.Count);
-            foreach (PlayerServer player in players.Values)
+            foreach (ServerPlayer player in players.Values)
             {
-                playerWriter.Write(player.ID);
-                playerWriter.Write(player.X);
-                playerWriter.Write(player.Z);
-                playerWriter.Write(player.Horizontal);
-                playerWriter.Write(player.Vertical);
-                playerWriter.Write(player.Nickname);
-                playerWriter.Write(player.Skin);
+                playerMessageWriter.Write(player);
             }
-            
-            using (Message playerMessage = Message.Create(NetworkTags.SpawnPlayerTag, playerWriter))
+
+            using (Message playerMessage = Message.Create(NetworkTags.SpawnPlayerTag, playerMessageWriter))
                 e.Client.SendMessage(playerMessage, SendMode.Reliable);
         }
+
+        ObjectPooler.Instance.GenerateParticlesForServer();
     }
 
     private void ClientDisconnected(object sender, ClientDisconnectedEventArgs e)
     {
         players.Remove(e.Client);
-        Destroy(serverPlayers[e.Client]);
-        serverPlayers.Remove(e.Client);
+        Destroy(serverPlayersInScene[e.Client]);
+        serverPlayersInScene.Remove(e.Client);
 
         using (DarkRiftWriter writer = DarkRiftWriter.Create())
         {
@@ -136,7 +128,7 @@ public class ServerManager : MonoBehaviour
                 float horizontal = reader.ReadSingle();
                 float vertical = reader.ReadSingle();
 
-                PlayerServer player = players[e.Client];
+                ServerPlayer player = players[e.Client];
 
                 player.Horizontal = horizontal;
                 player.Vertical = vertical;
@@ -144,7 +136,7 @@ public class ServerManager : MonoBehaviour
                 player.Z = newZ;
 
                 //move the copy of the character on the server
-                //serverPlayers[e.Client].GetComponent<PlayerMovementController>().SetMovement(new Vector3(player.X, 0f, player.Z), player.Horizontal, player.Vertical);
+                serverPlayersInScene[e.Client].GetComponent<PlayerMovementController>().SetMovement(new Vector3(player.X, 0f, player.Z), player.Horizontal, player.Vertical);
 
                 using (DarkRiftWriter writer = DarkRiftWriter.Create())
                 {
@@ -155,8 +147,12 @@ public class ServerManager : MonoBehaviour
                     writer.Write(player.Vertical);
                     message.Serialize(writer);
                 }
-                
+                /*
                 foreach (IClient c in gameServer.Server.ClientManager.GetAllClients().Where(x => x != e.Client))
+                    c.SendMessage(message, e.SendMode);*/
+
+                //Movement sent to all players including the client who sent the message
+                foreach (IClient c in gameServer.Server.ClientManager.GetAllClients())
                     c.SendMessage(message, e.SendMode);
             }
         }
@@ -172,16 +168,22 @@ public class ServerManager : MonoBehaviour
         {
             using (DarkRiftReader reader = message.GetReader())
             {
-                bool state = reader.ReadBoolean();
+                float x = reader.ReadSingle();
+                float y = reader.ReadSingle();
+                float z = reader.ReadSingle();
 
-                PlayerServer player = players[e.Client];
+                ServerPlayer player = players[e.Client];
 
                 using (DarkRiftWriter writer = DarkRiftWriter.Create())
                 {
                     writer.Write(player.ID);
-                    writer.Write(state);
+                    writer.Write(x);
+                    writer.Write(y);
+                    writer.Write(z);
                     message.Serialize(writer);
                 }
+
+                serverPlayersInScene[e.Client].GetComponent<PlayerCombatManager>().PrimarySkillMessageReceived(x, y, z);
 
                 //foreach (IClient c in gameServer.Server.ClientManager.GetAllClients().Where(x => x != e.Client))
                 //c.SendMessage(message, e.SendMode);
@@ -198,7 +200,7 @@ public class ServerManager : MonoBehaviour
             {
                 bool state = reader.ReadBoolean();
 
-                PlayerServer player = players[e.Client];
+                ServerPlayer player = players[e.Client];
 
                 using (DarkRiftWriter writer = DarkRiftWriter.Create())
                 {
@@ -207,9 +209,11 @@ public class ServerManager : MonoBehaviour
                     message.Serialize(writer);
                 }
 
-                serverPlayers[e.Client].GetComponent<PlayerCombatManager>().SetCombat(false, true);
+                serverPlayersInScene[e.Client].GetComponent<PlayerCombatManager>().SecondarySkillMessageReceived();
+
                 //foreach (IClient c in gameServer.Server.ClientManager.GetAllClients().Where(x => x != e.Client))
                 //c.SendMessage(message, e.SendMode);
+
                 foreach (IClient c in gameServer.Server.ClientManager.GetAllClients())
                     c.SendMessage(message, e.SendMode);
             }

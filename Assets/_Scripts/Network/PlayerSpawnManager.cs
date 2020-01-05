@@ -31,7 +31,6 @@ public class PlayerSpawnManager : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
-        
         if (client == null)
         {
             Debug.LogError("Client unassigned in PlayerSpawner");
@@ -43,13 +42,12 @@ public class PlayerSpawnManager : MonoBehaviour
             Debug.LogError("Controllable Prefab unassigned in PlayerSpawner.");
             Application.Quit();
         }
-        
+    
         client.MessageReceived += MessageReceived;
     }
 
     private void MessageReceived(object sender, MessageReceivedEventArgs e)
     {
-        Debug.Log("Message Received " + e.GetMessage() + " " + sender.ToString());
         using (Message message = e.GetMessage() as Message)
         {
             if (message.Tag == NetworkTags.SpawnPlayerTag)
@@ -65,56 +63,48 @@ public class PlayerSpawnManager : MonoBehaviour
         using (Message message = e.GetMessage())
         using (DarkRiftReader reader = message.GetReader())
         {
-            if (message.Tag == NetworkTags.SpawnPlayerTag)
+            if (reader.Length % 39 != 0)
             {
-                Debug.LogWarning("Reader length " + reader.Length);
-                
-                if (reader.Length % 39 != 0)
+                Debug.LogWarning("Received malformed spawn packet.");
+                return;
+            }
+            while (reader.Position < reader.Length)
+            {
+                Debug.LogWarning("Pos " + reader.Position + "-- Length " + reader.Length);
+                ServerPlayer content = reader.ReadSerializable<ServerPlayer>();
+
+                ushort id = content.ID;
+                Vector3 position = new Vector3(content.X, 0, content.Z);
+                float h = content.Horizontal;
+                float v = content.Vertical;
+                string nickname = content.Nickname;
+                byte skin = content.Skin;
+
+                GameObject obj = Instantiate(playerPrefab, PoisonShopManager.Instance.spawnLocations[id % 7].transform.position, Quaternion.identity) as GameObject;
+                GameObject skinObject = Instantiate(playerSkinPrefabs[skin], obj.transform);
+                Player player = obj.GetComponent<Player>();
+
+                if (id == client.ID)
                 {
-                    Debug.LogWarning("Received malformed spawn packet.");
-                    return;
+                    player.IsControllable = true;
+                    player.Client = client;
+                    player.ID = client.ID;
+
+                }
+                else
+                {
+                    player.ID = id;
+                    player.IsControllable = false;
                 }
 
-                while (reader.Position < reader.Length)
-                {
+                player.Nickname = nickname;
+                player.Skin = skin;
 
-                    Debug.LogWarning("Pos " + reader.Position + "-- Length " + reader.Length);
-
-                    ushort id = reader.ReadUInt16();
-                    Vector3 position = new Vector3(reader.ReadSingle(), 0, reader.ReadSingle());
-                    float h = reader.ReadSingle();
-                    float v = reader.ReadSingle();
-                    string nickname = reader.ReadString();
-                    byte skin = reader.ReadByte();
-
-                    Debug.LogWarning("ID " + id);
-                    Debug.LogWarning("Nickname " + nickname);
-                    Debug.LogWarning("skin " + skin);
-
-                    GameObject obj = Instantiate(playerPrefab, PoisonShopManager.Instance.spawnLocations[id % 7].transform.position, Quaternion.identity) as GameObject;
-                    GameObject skinObject = Instantiate(playerSkinPrefabs[skin], obj.transform);
-                    Player player = obj.GetComponent<Player>();
-
-                    if (id == client.ID)
-                    {
-                        player.IsControllable = true;
-                        player.Client = client;
-                        
-                    }
-                    else
-                    {
-                        player.IsControllable = false;
-                    }
-
-                    player.Nickname = nickname;
-                    player.Skin = skin;
-
-                    clientManager.Add(id, player);
-                }
+                clientManager.Add(id, player);
             }
         }
 
-        ObjectPooler.Instance.GenerateParticles();
+        ObjectPooler.Instance.GenerateParticlesForClient();
     }
 
     void DespawnPlayer(object sender, MessageReceivedEventArgs e)

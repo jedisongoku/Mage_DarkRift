@@ -26,10 +26,11 @@ public class PlayerMovementController : MonoBehaviour
         player = GetComponent<Player>();
         m_Animator = GetComponent<Animator>();
         m_Rigidbody = GetComponent<Rigidbody>();
-        SetBaseStats(); 
+
+        SetPlayerBaseStats(); 
     }
 
-    void SetBaseStats()
+    void SetPlayerBaseStats()
     {
         walkSpeed = PlayerBaseStats.Instance.WalkSpeed;
         turnSpeed = PlayerBaseStats.Instance.TurnSpeed;

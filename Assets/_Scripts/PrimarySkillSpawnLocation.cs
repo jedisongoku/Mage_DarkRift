@@ -9,7 +9,7 @@ public class PrimarySkillSpawnLocation : MonoBehaviour
 
     private void Start()
     {
-        //transform.root.GetComponent<PlayerCombatManager>().PrimarySkillSpawnLocation = primarySkillSpawnLocation;
+        transform.root.GetComponent<PlayerCombatManager>().primarySkillSpawnLocation = primarySkillSpawnLocation;
     }
 
 

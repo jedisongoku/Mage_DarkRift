@@ -24,10 +24,8 @@ public class ObjectPooler : MonoBehaviour
         Instance = this;
     }
 
-    // Start is called before the first frame update
-    public void GenerateParticles()
+    public void GenerateParticlesForClient()
     {
-        Debug.Log("Count " + ClientManager.Instance.TotalPlayer);
         primarySkillPrefabList = new List<GameObject>();
         primarySkillExplosionPrefabList = new List<GameObject>();
         primarySkillFrostNovaPrefabList = new List<GameObject>();
@@ -50,6 +48,37 @@ public class ObjectPooler : MonoBehaviour
 
         //Primary Skill OnHit FrostNova Particle Instantiation 
         for (int i = 0; i < primarySkillFrostNovaPrefabPooledAmount * ClientManager.Instance.TotalPlayer; i++)
+        {
+            GameObject obj = (GameObject)Instantiate(primarySkillFrostNovaPrefab);
+            obj.SetActive(false);
+            primarySkillFrostNovaPrefabList.Add(obj);
+        }
+    }
+
+    public void GenerateParticlesForServer()
+    {
+        primarySkillPrefabList = new List<GameObject>();
+        primarySkillExplosionPrefabList = new List<GameObject>();
+        primarySkillFrostNovaPrefabList = new List<GameObject>();
+
+        //Primary Skill Particle Instantiation 
+        for (int i = 0; i < primarySkillPrefabPooledAmount; i++)
+        {
+            GameObject obj = (GameObject)Instantiate(primarySkillPrefab);
+            obj.SetActive(false);
+            primarySkillPrefabList.Add(obj);
+        }
+
+        //Primary Skill OnHit Particle Instantiation 
+        for (int i = 0; i < primarySkillExplosionPrefabPooledAmount; i++)
+        {
+            GameObject obj = (GameObject)Instantiate(primarySkillExplosionPrefab);
+            obj.SetActive(false);
+            primarySkillExplosionPrefabList.Add(obj);
+        }
+
+        //Primary Skill OnHit FrostNova Particle Instantiation 
+        for (int i = 0; i < primarySkillFrostNovaPrefabPooledAmount; i++)
         {
             GameObject obj = (GameObject)Instantiate(primarySkillFrostNovaPrefab);
             obj.SetActive(false);

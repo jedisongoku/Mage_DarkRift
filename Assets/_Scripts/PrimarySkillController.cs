@@ -39,10 +39,6 @@ public class PrimarySkillController : MonoBehaviour
         isChill = false;
         isBouncy = false;
         isFrostNova = false;
-        
-        
-        
-
     }
 
     public bool Frostbite
@@ -162,10 +158,20 @@ public class PrimarySkillController : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         if(isTraveling)
-        {/*
+        {
             Debug.Log("HIT : " + LayerMask.LayerToName(other.gameObject.layer));
-            if (other.gameObject.layer == 8 && other.gameObject.GetComponent<PhotonView>() != null)
+            Debug.Log("Origin : " + PlayerOrigin);
+
+            
+
+            if (other.gameObject.layer == 8)
             {
+                if(other.gameObject.GetComponent<Player>().ID != PlayerOrigin)
+                {
+                    Destroy(other.gameObject);
+                }
+                
+                /*
                 if (other.gameObject.GetComponent<PhotonView>().ViewID != playerViewId)
                 {
 
@@ -176,14 +182,14 @@ public class PrimarySkillController : MonoBehaviour
                     if (isFrostbite) other.gameObject.GetComponent<PlayerHealthManager>().StartFrostbite(playerViewId);
                     if (isChill) other.gameObject.GetComponent<PlayerMovementController>().StartChill(PlayerBaseStats.Instance.ChillDuration);
                     isPlayer = true;
-                    Destroy(other.gameObject);
-                }
+                    
+                }*/
             }
             else if (other.gameObject.layer == 11)
             {
                 isPlayer = false;
                 Destroy(other.gameObject);
-            }*/
+            }
         }
         
         

@@ -38,6 +38,8 @@ public class ClientManager : MonoBehaviour
         {
             if (message.Tag == NetworkTags.MovePlayerTag)
                 Movement(sender, e);
+            else if (message.Tag == NetworkTags.PrimarySkillTag)
+                PrimarySkill(sender, e);
             else if (message.Tag == NetworkTags.SecondarySkillTag)
                 SecondarySkill(sender, e);
         }
@@ -70,7 +72,25 @@ public class ClientManager : MonoBehaviour
 
 
                 if (networkPlayers.ContainsKey(id))
-                    networkPlayers[id].GetComponent<PlayerCombatManager>().SetCombat(false, secondary);
+                    networkPlayers[id].GetComponent<PlayerCombatManager>().SecondarySkillMessageReceived();
+            }
+        }
+    }
+
+    void PrimarySkill(object sender, MessageReceivedEventArgs e)
+    {
+        using (Message message = e.GetMessage() as Message)
+        {
+            using (DarkRiftReader reader = message.GetReader())
+            {
+                ushort id = reader.ReadUInt16();
+                float x = reader.ReadSingle();
+                float y = reader.ReadSingle();
+                float z = reader.ReadSingle();
+
+
+                if (networkPlayers.ContainsKey(id))
+                    networkPlayers[id].GetComponent<PlayerCombatManager>().PrimarySkillMessageReceived(x, y, z);
             }
         }
     }

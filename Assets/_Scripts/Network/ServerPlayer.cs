@@ -1,6 +1,8 @@
 ﻿using DarkRift;
-class PlayerServer
+
+public class ServerPlayer : IDarkRiftSerializable
 {
+
     public ushort ID { get; set; }
     public float X { get; set; }
     public float Z { get; set; }
@@ -9,18 +11,11 @@ class PlayerServer
     public string Nickname { get; set; }
     public byte Skin { get; set; }
 
-    public PlayerServer(ushort _id, float _x, float _z, float _horizontal, float _vertical, string _nickname, byte _skin)
+    public ServerPlayer()
     {
-        ID = _id;
-        X = _x;
-        Z = _z;
-        Horizontal = _horizontal;
-        Vertical = _vertical;
-        Nickname = _nickname;
-        Skin = _skin;
 
     }
-    /*
+
     public void Deserialize(DeserializeEvent e)
     {
         ID = e.Reader.ReadUInt16();
@@ -42,5 +37,5 @@ class PlayerServer
         e.Writer.Write(Nickname);
         e.Writer.Write(Skin);
 
-    }*/
+    }
 }
