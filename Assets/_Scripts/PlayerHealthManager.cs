@@ -14,12 +14,13 @@ public class PlayerHealthManager : MonoBehaviour
     private Player player;
     private Animator m_Animator;
     private Rigidbody m_Rigidbody;
+    private int playerhealth;
     private int playerMaxHealth;
     private float healthGenerationRate;
     private int bloodthirstHealAmount;
     private int hpBoostAmount;
     private float shieldGuardDamageReductionRate;
-    private int playerhealth;
+    
     private bool isBloodthirst;
     private bool isHpBoost;
     private bool isStrongHeart;
@@ -34,7 +35,7 @@ public class PlayerHealthManager : MonoBehaviour
 
         //StartCoroutine(HealhtRegeneration());
         SetPlayerBaseStats();
-        UpdateHealth();
+        //UpdateHealth();
     }
 
     void SetPlayerBaseStats()
@@ -57,6 +58,7 @@ public class PlayerHealthManager : MonoBehaviour
 
     void UpdateHealth()
     {
+        Debug.Log("health " + playerhealth);
         if(playerhealth <= 0)
         {
             Dead();
@@ -65,51 +67,63 @@ public class PlayerHealthManager : MonoBehaviour
         }
         else
         {
-            playerHealthBar.fillAmount = playerhealth / playerMaxHealth;
+            Debug.Log(playerhealth + "/" + playerMaxHealth + " - " + (float)playerhealth / (float)playerMaxHealth);
+            playerHealthBar.fillAmount = (float)playerhealth / (float)playerMaxHealth;
             playerHealthText.text = playerhealth.ToString();
         }
-
+        /*
         if(player.IsServer)
         {
-            //SendHealthMessage();
-        }
+            SendHealthMessage();
+        }*/
         
     }
-    
+
+    #region Server Only Calls
     public void TakeDamage(int _damageTaken, IClient _damageOrigin)
     {
         //Add other rune variables here before applying the damage to self
 
-        playerhealth = (playerhealth - _damageTaken) <= 0 ? 0 : playerhealth - _damageTaken;
+        playerhealth = (playerhealth - _damageTaken) <= 0 ? 0 : (playerhealth - _damageTaken);
         if(playerhealth <= 0)
         {
             //register the killer in the scoreboard
         }
         UpdateHealth();
+        SendHealthMessage();
     }
 
-    public void HealthMessageReceived(ushort _health)
-    {
-        playerhealth = _health;
-        UpdateHealth();
-    }
-    
     void SendHealthMessage()
     {
         using (DarkRiftWriter writer = DarkRiftWriter.Create())
         {
-            writer.Write(player.IsDead);
-            writer.Write(playerhealth);
+            HealthMessageModel newMessage = new HealthMessageModel()
+            {
+                NetworkID = (ushort)player.ID,
+                Health = playerhealth
+            };
+            //writer.Write(player.ID);
+            //writer.Write(playerhealth);
             //probably add the rune applications for particles
 
-            using (Message message = Message.Create(NetworkTags.HealthPlayerTag, writer))
+            using (Message message = Message.Create(NetworkTags.HealthPlayerTag, newMessage))
                 foreach (IClient c in ServerManager.Instance.gameServer.Server.ClientManager.GetAllClients())
                     c.SendMessage(message, SendMode.Reliable);
         }
     }
 
+    #endregion
+
+    public void HealthMessageReceived(int _health)
+    {
+        Debug.Log("Message Received in manager");
+        playerhealth = _health;
+        UpdateHealth();
+    }
+    
     void Dead()
     {
+        Debug.Log("Dead");
         GetComponent<CapsuleCollider>().enabled = false;
         playerUI.SetActive(false);
         player.IsDead = true;

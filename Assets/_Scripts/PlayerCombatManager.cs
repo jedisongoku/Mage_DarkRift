@@ -10,6 +10,7 @@ public class PlayerCombatManager : MonoBehaviour
     private Animator m_Animator;
     private Rigidbody m_Rigidbody;
     private PlayerMovementManager playerMovementManager;
+    private PlayerHealthManager playerHealthManager;
 
     Plane plane = new Plane(Vector3.up, Vector3.zero);
 
@@ -40,6 +41,7 @@ public class PlayerCombatManager : MonoBehaviour
         m_Animator = GetComponent<Animator>();
         m_Rigidbody = GetComponent<Rigidbody>();
         playerMovementManager = GetComponent<PlayerMovementManager>();
+        playerHealthManager = GetComponent<PlayerHealthManager>();
 
         SetPlayerBaseStats();
         
@@ -182,7 +184,9 @@ public class PlayerCombatManager : MonoBehaviour
     
     public void ReadyForDamage(IClient _enemyClient)
     {
-        float damageToApply = primarySkillDamage;
-        if (isRage) damageToApply += damageToApply * PlayerBaseStats.Instance.RageDamageRate;
+        int damageToApply = primarySkillDamage;
+        if (isRage) damageToApply += Mathf.RoundToInt(damageToApply * PlayerBaseStats.Instance.RageDamageRate);
+        ServerManager.Instance.serverPlayersInScene[_enemyClient].GetComponent<PlayerHealthManager>().TakeDamage(damageToApply, player.ServerClient);
+        //playerHealthManager.TakeDamage(damageToApply, _enemyClient);
     }
 }

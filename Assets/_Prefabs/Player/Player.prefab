@@ -37932,7 +37932,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 100/100
+  m_text: 100
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -38001,10 +38001,10 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_textInfo:
     textComponent: {fileID: 8075389111401290141}
-    characterCount: 7
+    characterCount: 3
     spriteCount: 0
     spaceCount: 0
-    wordCount: 2
+    wordCount: 1
     linkCount: 0
     lineCount: 1
     pageCount: 1
@@ -38564,6 +38564,7 @@ GameObject:
   - component: {fileID: 678787078503693556}
   - component: {fileID: 5061779938565317016}
   - component: {fileID: -7094498262923247961}
+  - component: {fileID: 5650472987659434443}
   m_Layer: 8
   m_Name: Player
   m_TagString: Untagged
@@ -38684,6 +38685,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   primarySkillSpawnLocation: {fileID: 0}
+--- !u!114 &5650472987659434443
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6361094391380882287}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c03d2dd9beda8042b012c5102c2e55a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerUI: {fileID: 6361094391380882233}
+  playerHealthBar: {fileID: 6361094391380883953}
+  playerHealthText: {fileID: 8075389111401290141}
 --- !u!1 &6830049393364381262
 GameObject:
   m_ObjectHideFlags: 0

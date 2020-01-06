@@ -34,7 +34,6 @@ public class ClientManager : MonoBehaviour
 
     private void MessageReceived(object sender, MessageReceivedEventArgs e)
     {
-        
         using (Message message = e.GetMessage() as Message)
         {
             if (message.Tag == NetworkTags.MovePlayerTag)
@@ -50,13 +49,19 @@ public class ClientManager : MonoBehaviour
 
     void Health(object sender, MessageReceivedEventArgs e)
     {
+        Debug.Log("Health Message " + e.GetMessage());
         using (Message message = e.GetMessage() as Message)
         {
             using (DarkRiftReader reader = message.GetReader())
             {
-                ushort id = reader.ReadUInt16();
-                bool isDead = reader.ReadBoolean();
-                ushort health = reader.ReadUInt16();
+                HealthMessageModel newMessage = reader.ReadSerializable<HealthMessageModel>();
+                ushort id = newMessage.NetworkID;
+                Debug.Log("Health returned in the message " + newMessage.Health);
+                ushort health = (ushort)newMessage.Health;
+
+                //ushort id = reader.ReadUInt16();
+                //ushort health = reader.ReadUInt16();
+                
 
                 if (networkPlayers.ContainsKey(id))
                     networkPlayers[id].GetComponent<PlayerHealthManager>().HealthMessageReceived(health);
