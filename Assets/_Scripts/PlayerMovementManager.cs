@@ -38,11 +38,7 @@ public class PlayerMovementManager : MonoBehaviour
 
     private void Start()
     {
-        if (player.IsControllable)
-        {
-            GameObject.Find("VirtualCamera").GetComponent<CinemachineVirtualCamera>().Follow = this.transform;
-            
-        }
+        
         m_Animator.Rebind();
     }
 

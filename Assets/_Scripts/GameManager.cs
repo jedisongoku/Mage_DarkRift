@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PoisonShopManager : MonoBehaviour
+public class GameManager : MonoBehaviour
 {
-    public static PoisonShopManager Instance;
+    public static GameManager Instance;
 
     public GameObject[] spawnLocations;
 

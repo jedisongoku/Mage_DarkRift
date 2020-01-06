@@ -5,6 +5,7 @@ using DarkRift.Server;
 using DarkRift;
 using UnityEngine.SceneManagement;
 using UnityEngine;
+using System;
 
 public class ServerManager : MonoBehaviour
 {
@@ -36,7 +37,7 @@ public class ServerManager : MonoBehaviour
         e.Client.MessageReceived += MessageReceived;
 
         
-        string nickname = "Mage" + Random.Range(1000, 9999);
+        string nickname = "Mage" + UnityEngine.Random.Range(1000, 9999);
         //Create a new player for the new client
         ServerPlayer playerServer = new ServerPlayer
         {
@@ -59,11 +60,12 @@ public class ServerManager : MonoBehaviour
             }
         }
 
-        GameObject playerObject = Instantiate(playerPrefab, PoisonShopManager.Instance.spawnLocations[playerServer.ID % 7].transform.position, Quaternion.identity) as GameObject;
+        GameObject playerObject = Instantiate(playerPrefab, GameManager.Instance.spawnLocations[playerServer.ID % 7].transform.position, Quaternion.identity) as GameObject;
         GameObject skinObject = Instantiate(playerSkinPrefabs[playerServer.Skin], playerObject.transform);
         playerObject.GetComponent<Player>().IsServer = true;
         playerObject.GetComponent<Player>().ID = e.Client.ID;
         playerObject.GetComponent<Player>().ServerClient = e.Client;
+        playerObject.GetComponent<Player>().playerSkin = skinObject;
 
 
         //Add playerObject to the list
@@ -115,6 +117,22 @@ public class ServerManager : MonoBehaviour
                 PrimarySkill(sender, e);
             else if (message.Tag == NetworkTags.SecondarySkillTag)
                 SecondarySkill(sender, e);
+            else if (message.Tag == NetworkTags.RespawnPlayerTag)
+                Respawn(sender, e);
+        }
+    }
+
+    private void Respawn(object sender, MessageReceivedEventArgs e)
+    {
+        using (Message message = e.GetMessage() as Message)
+        {
+            using (DarkRiftReader reader = message.GetReader())
+            {
+                bool respawn = reader.ReadBoolean();
+
+                serverPlayersInScene[e.Client].GetComponent<Player>().RespawnPlayer();
+
+            }
         }
     }
 

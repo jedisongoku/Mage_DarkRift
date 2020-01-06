@@ -227,7 +227,7 @@ MonoBehaviour:
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
-  m_FillAmount: 0
+  m_FillAmount: 1
   m_FillClockwise: 0
   m_FillOrigin: 2
   m_UseSpriteMesh: 0
@@ -499,7 +499,7 @@ MonoBehaviour:
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
-  m_FillAmount: 0
+  m_FillAmount: 1
   m_FillClockwise: 0
   m_FillOrigin: 2
   m_UseSpriteMesh: 0
@@ -698,7 +698,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 495c9e2a934bcc640a8d7427b13cb680, type: 3}
+    m_Font: {fileID: 12800000, guid: d94c1b310fedacd40ab43f799587ff3d, type: 3}
     m_FontSize: 75
     m_FontStyle: 0
     m_BestFit: 0
@@ -1263,7 +1263,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 495c9e2a934bcc640a8d7427b13cb680, type: 3}
+    m_Font: {fileID: 12800000, guid: d94c1b310fedacd40ab43f799587ff3d, type: 3}
     m_FontSize: 40
     m_FontStyle: 0
     m_BestFit: 0
@@ -1587,7 +1587,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &416095903333442640
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1687,7 +1687,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 8801015358493838175}
+      - m_Target: {fileID: 0}
         m_MethodName: Host
         m_Mode: 1
         m_Arguments:
@@ -1713,7 +1713,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &5010980640732653062
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2463,7 +2463,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_FontData:
-    m_Font: {fileID: 12800000, guid: 495c9e2a934bcc640a8d7427b13cb680, type: 3}
+    m_Font: {fileID: 12800000, guid: d94c1b310fedacd40ab43f799587ff3d, type: 3}
     m_FontSize: 50
     m_FontStyle: 0
     m_BestFit: 0
@@ -2750,7 +2750,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &8347362070736714637
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2850,7 +2850,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 562713753}
         m_MethodName: OnRespawnButtonClicked
         m_Mode: 1
         m_Arguments:
@@ -4446,7 +4446,7 @@ GameObject:
   - component: {fileID: 8493507549391617680}
   - component: {fileID: 8493507549391617681}
   - component: {fileID: 8493507549391617686}
-  - component: {fileID: 8801015358493838175}
+  - component: {fileID: 562713753}
   m_Layer: 5
   m_Name: HUD
   m_TagString: Untagged
@@ -4537,7 +4537,7 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
---- !u!114 &8801015358493838175
+--- !u!114 &562713753
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -4546,27 +4546,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 8493507549391617684}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a12681ffb6b62f7408139a85cc6e5bc5, type: 3}
+  m_Script: {fileID: 11500000, guid: 57a6379fbc89e0647a336314e960d598, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DontChangeSceneOnConnect: 0
-  masterServerHost: 
-  masterServerPort: 15940
-  natServerHost: 
-  natServerPort: 15941
-  connectUsingMatchmaking: 0
-  useElo: 0
-  myElo: 0
-  eloRequired: 0
-  networkManager: {fileID: 7274244733716591053, guid: efa3f5864c70560429cba46c99ec05ea,
-    type: 3}
-  ToggledButtons:
-  - {fileID: 8493507550858642152}
-  - {fileID: 4181968080376844418}
-  useMainThreadManagerForRPCs: 1
-  useInlineChat: 0
-  getLocalNetworkConnections: 0
-  useTCP: 0
+  menuPanel: {fileID: 8493507550502061275}
+  waitingAreaPanel: {fileID: 8493507549097918041}
+  loadingPanel: {fileID: 8817341977295624346}
+  gamePanel: {fileID: 8810164229670817359}
+  respawnButton: {fileID: 7275358101001630773}
+  primarySkillCooldownImage: {fileID: 8474352125359632790}
+  secondarySkillCooldownImage: {fileID: 1766483811942578778}
 --- !u!1 &8493507549694739761
 GameObject:
   m_ObjectHideFlags: 0
@@ -4982,7 +4971,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &8493507550047150597
 RectTransform:
   m_ObjectHideFlags: 0
@@ -5607,8 +5596,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 8801015358493838175}
-        m_MethodName: Connect
+      - m_Target: {fileID: 562713753}
+        m_MethodName: PlayGame
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -5822,7 +5811,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &7885685417724171702
 RectTransform:
   m_ObjectHideFlags: 0

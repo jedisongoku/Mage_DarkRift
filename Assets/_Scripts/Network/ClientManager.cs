@@ -12,6 +12,7 @@ public class ClientManager : MonoBehaviour
     public UnityClient client;
 
     Dictionary<ushort, Player> networkPlayers = new Dictionary<ushort, Player>();
+    public GameObject localPlayer;
 
     void Awake()
     {
@@ -44,6 +45,25 @@ public class ClientManager : MonoBehaviour
                 SecondarySkill(sender, e);
             else if (message.Tag == NetworkTags.HealthPlayerTag)
                 Health(sender, e);
+            else if (message.Tag == NetworkTags.RespawnPlayerTag)
+                Respawn(sender, e);
+        }
+    }
+
+    private void Respawn(object sender, MessageReceivedEventArgs e)
+    {
+        using (Message message = e.GetMessage() as Message)
+        {
+            using (DarkRiftReader reader = message.GetReader())
+            {
+                RespawnPlayerMessageModel newMessage = reader.ReadSerializable<RespawnPlayerMessageModel>();
+                ushort id = newMessage.NetworkID;
+                ushort spawnLocation = (ushort)newMessage.SpawnLocation;
+
+
+                if (networkPlayers.ContainsKey(id))
+                    networkPlayers[id].GetComponent<Player>().RespawnPlayer(spawnLocation);
+            }
         }
     }
 

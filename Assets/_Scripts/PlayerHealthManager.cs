@@ -54,6 +54,8 @@ public class PlayerHealthManager : MonoBehaviour
         //strongHeartParticle.SetActive(false);
         //shieldGuardParticle.SetActive(false);
         //frostbiteParticle.SetActive(false);
+
+        Invoke("UpdateHealth", 1f);
     }
 
     void UpdateHealth()
@@ -71,11 +73,11 @@ public class PlayerHealthManager : MonoBehaviour
             playerHealthBar.fillAmount = (float)playerhealth / (float)playerMaxHealth;
             playerHealthText.text = playerhealth.ToString();
         }
-        /*
+        
         if(player.IsServer)
         {
             SendHealthMessage();
-        }*/
+        }
         
     }
 
@@ -90,7 +92,7 @@ public class PlayerHealthManager : MonoBehaviour
             //register the killer in the scoreboard
         }
         UpdateHealth();
-        SendHealthMessage();
+        //SendHealthMessage();
     }
 
     void SendHealthMessage()
@@ -127,12 +129,17 @@ public class PlayerHealthManager : MonoBehaviour
         GetComponent<CapsuleCollider>().enabled = false;
         playerUI.SetActive(false);
         player.IsDead = true;
+        if(player.IsControllable)
+        {
+            HUDManager.Instance.OnPlayerDeath();
+        }
+        
     }
 
-    void Respawn()
+    public void RespawnPlayer()
     {
+        SetPlayerBaseStats();
         GetComponent<CapsuleCollider>().enabled = true;
         playerUI.SetActive(true);
-        player.IsDead = false;
     }
 }

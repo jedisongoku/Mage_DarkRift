@@ -14,6 +14,8 @@ public class PlayerCombatManager : MonoBehaviour
 
     Plane plane = new Plane(Vector3.up, Vector3.zero);
 
+    [SerializeField] GameObject dashTrail;
+
     public GameObject primarySkillSpawnLocation;
     private int primarySkillDamage;
     private float primarySkillCooldown;
@@ -67,10 +69,14 @@ public class PlayerCombatManager : MonoBehaviour
     {
         primarySkillCooldownTimer += Time.deltaTime;
         secondarySkillCooldownTimer += Time.deltaTime;
+        
 
 
         if (player.IsControllable && !player.IsDead)
         {
+            HUDManager.Instance.SetPrimarySkillCooldownUI = 1 - primarySkillCooldownTimer / primarySkillCooldown;
+            HUDManager.Instance.SetSecondarySkillCooldownUI = 1 - secondarySkillCooldownTimer / secondarySkillCooldown;
+
             if (Input.GetButtonDown("Dash"))
             {
                 SecondarySkill();
@@ -179,6 +185,8 @@ public class PlayerCombatManager : MonoBehaviour
     public void SecondarySkillMessageReceived()
     {
         m_Animator.SetTrigger("Dashing");
+        dashTrail.SetActive(false);
+        dashTrail.SetActive(true);
     }
 
     

@@ -131,6 +131,7 @@ GameObject:
   - component: {fileID: 36006657}
   - component: {fileID: 36006656}
   - component: {fileID: 36006658}
+  - component: {fileID: 36006659}
   m_Layer: 0
   m_Name: GameServerManager
   m_TagString: Untagged
@@ -185,3 +186,15 @@ MonoBehaviour:
   playerSkinPrefabs:
   - {fileID: 135428, guid: eea1710edb5bbe447a454fcb7c112cab, type: 3}
   - {fileID: 155690, guid: 985b620247f8ea24bbe8554017e32fb6, type: 3}
+--- !u!114 &36006659
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 36006655}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b7526abea585c9449de6cf2bca62b07, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

@@ -211,24 +211,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
---- !u!1 &998508483 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8493507549391617684, guid: 575472098a6134849a16569a72c64778,
-    type: 3}
-  m_PrefabInstance: {fileID: 1392165155237441}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &998508484
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 998508483}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f46f678efc90c46498169ed915b2b473, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1800342327
 GameObject:
   m_ObjectHideFlags: 0
@@ -396,7 +378,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1001 &1392165155237441
+--- !u!1001 &8689261671543598788
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -513,37 +495,15 @@ PrefabInstance:
       propertyPath: m_Pivot.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 4181968080376844418, guid: 575472098a6134849a16569a72c64778,
+    - target: {fileID: 8810164229670817359, guid: 575472098a6134849a16569a72c64778,
         type: 3}
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 8493507550047150603, guid: 575472098a6134849a16569a72c64778,
+    - target: {fileID: 7275358101001630773, guid: 575472098a6134849a16569a72c64778,
         type: 3}
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 8493507550177011696, guid: 575472098a6134849a16569a72c64778,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8493507550177011597, guid: 575472098a6134849a16569a72c64778,
-        type: 3}
-      propertyPath: m_FontData.m_Font
-      value: 
-      objectReference: {fileID: 12800000, guid: d94c1b310fedacd40ab43f799587ff3d,
-        type: 3}
-    - target: {fileID: 8493507550858642154, guid: 575472098a6134849a16569a72c64778,
-        type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 998508484}
-    - target: {fileID: 8493507550858642154, guid: 575472098a6134849a16569a72c64778,
-        type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: PlayGame
-      objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 8801015358493838175, guid: 575472098a6134849a16569a72c64778, type: 3}
+    m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 575472098a6134849a16569a72c64778, type: 3}

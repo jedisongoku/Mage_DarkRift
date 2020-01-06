@@ -80,17 +80,19 @@ public class PlayerSpawnManager : MonoBehaviour
                 string nickname = content.Nickname;
                 byte skin = content.Skin;
 
-                Debug.Log("spawning on this position - " + PoisonShopManager.Instance.spawnLocations[id % 7].transform.position);
-                GameObject obj = Instantiate(playerPrefab, PoisonShopManager.Instance.spawnLocations[id % 7].transform.position, Quaternion.identity) as GameObject;
+                Debug.Log("spawning on this position - " + GameManager.Instance.spawnLocations[id % 7].transform.position);
+                GameObject obj = Instantiate(playerPrefab, GameManager.Instance.spawnLocations[id % 7].transform.position, Quaternion.identity) as GameObject;
                 Debug.Log("Player position " + obj.transform.position);
                 GameObject skinObject = Instantiate(playerSkinPrefabs[skin], obj.transform);
                 Player player = obj.GetComponent<Player>();
 
+                player.playerSkin = skinObject;
                 player.IsServer = false;
                 player.Nickname = nickname;
                 player.Skin = skin;
                 if (id == client.ID)
                 {
+                    clientManager.localPlayer = obj;
                     player.IsControllable = true;
                     player.Client = client;
                     player.ID = client.ID;
