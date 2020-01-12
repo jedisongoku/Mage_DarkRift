@@ -45,7 +45,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d2b44c570cb28644b8762e0b13e7c23, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  address: 127.0.0.1
+  address: 167.71.113.137
   port: 4296
   ipVersion: 0
   autoConnect: 1
@@ -69,6 +69,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   client: {fileID: 0}
+  localPlayer: {fileID: 0}
 --- !u!114 &8766409296749979380
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -85,6 +86,7 @@ MonoBehaviour:
   clientManager: {fileID: 8766409296749979377}
   playerPrefab: {fileID: 6361094391380882287, guid: d0b9cc1c9bc34f24fb8b35d64b7ada39,
     type: 3}
+  spawnLocations: []
   playerSkinPrefabs:
   - {fileID: 135428, guid: eea1710edb5bbe447a454fcb7c112cab, type: 3}
   - {fileID: 155690, guid: 985b620247f8ea24bbe8554017e32fb6, type: 3}

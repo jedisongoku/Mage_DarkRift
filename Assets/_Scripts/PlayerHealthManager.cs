@@ -63,7 +63,7 @@ public class PlayerHealthManager : MonoBehaviour
         Debug.Log("health " + playerhealth);
         if(playerhealth <= 0)
         {
-            Dead();
+            Invoke("Dead", 0.1f);
             m_Animator.SetTrigger("Dead");
             //dead here
         }
