@@ -89,7 +89,7 @@ public class PlayerHealthManager : MonoBehaviour
         playerhealth = (playerhealth - _damageTaken) <= 0 ? 0 : (playerhealth - _damageTaken);
         if(playerhealth <= 0)
         {
-            //register the killer in the scoreboard
+            ScoreManager.Instance.UpdateScoreboard(_damageOrigin.ID, player.ID);            
         }
         UpdateHealth();
         //SendHealthMessage();

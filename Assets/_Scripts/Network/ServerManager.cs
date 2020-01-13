@@ -37,7 +37,7 @@ public class ServerManager : MonoBehaviour
         e.Client.MessageReceived += MessageReceived;
 
         
-        string nickname = "Mage" + UnityEngine.Random.Range(1000, 9999);
+        string nickname = "Mage#" + UnityEngine.Random.Range(1000, 9999);
         //Create a new player for the new client
         ServerPlayer playerServer = new ServerPlayer
         {
@@ -70,6 +70,8 @@ public class ServerManager : MonoBehaviour
 
         //Add playerObject to the list
         serverPlayersInScene.Add(e.Client, playerObject);
+        ScoreManager.Instance.AddPlayer(e.Client.ID, new ScorePlayer(e.Client.ID, playerServer.Nickname, 0), true);
+        //ScoreManager.Instance.AddPlayer(e.Client);
 
         //Add the new client to the list
         players.Add(e.Client, playerServer);
@@ -94,6 +96,7 @@ public class ServerManager : MonoBehaviour
         players.Remove(e.Client);
         Destroy(serverPlayersInScene[e.Client]);
         serverPlayersInScene.Remove(e.Client);
+        ScoreManager.Instance.RemovePlayer(e.Client.ID, true);
 
         using (DarkRiftWriter writer = DarkRiftWriter.Create())
         {

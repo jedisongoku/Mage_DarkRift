@@ -106,6 +106,7 @@ public class PlayerSpawnManager : MonoBehaviour
                 
 
                 clientManager.Add(id, player);
+                ScoreManager.Instance.AddPlayer(player.ID, new ScorePlayer(player.ID, player.Nickname, 0), false);
             }
         }
 

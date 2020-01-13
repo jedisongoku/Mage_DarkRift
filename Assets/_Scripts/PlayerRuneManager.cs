@@ -26,9 +26,9 @@ public class PlayerRuneManager : MonoBehaviour
         if(runeCatalog != null)
         {
             //Primary SKill Runes
-            runeCatalog.Add(new Rune("Damage Boost", "DamageBoost", "Deal Higher Damage", 1,3));
-            runeCatalog.Add(new Rune("Attack Speed Boost", "AttackSpeedBoost", "Primary Skill Cooldown Reduced", 1, 3));
-            runeCatalog.Add(new Rune("Dash Reduced Cooldown", "DashReducedCooldown", "Secondary Skill Cooldown Reduced", 1, 3));
+            runeCatalog.Add(new Rune("Damage Boost", "DamageBoost", "Deal Higher Damage", 1,1));
+            runeCatalog.Add(new Rune("Attack Speed Boost", "AttackSpeedBoost", "Primary Skill Cooldown Reduced", 1, 1));
+            runeCatalog.Add(new Rune("Dash Reduced Cooldown", "DashReducedCooldown", "Secondary Skill Cooldown Reduced", 1, 1));
             runeCatalog.Add(new Rune("Frostbite", "Frostbite", "Attacks cause damage over time burn", 1, 1));
             runeCatalog.Add(new Rune("Chill", "Chill", "Attack slow enemies", 1, 1));
             runeCatalog.Add(new Rune("Multi Shot", "MultiShot", "Fires an additional attack rapidly", 1, 1));

@@ -3,6 +3,7 @@ using DarkRift.Client.Unity;
 using DarkRift.Server;
 using DarkRift;
 using Cinemachine;
+using TMPro;
 
 public class Player : MonoBehaviour
 {
@@ -23,6 +24,8 @@ public class Player : MonoBehaviour
     [SerializeField] GameObject playerUI;
     [SerializeField] MeshRenderer playerBaseRenderer;
     [SerializeField] Material playerBaseColor;
+    [SerializeField] TextMeshProUGUI playerName;
+
 
     private bool isDead = false;
     private bool isServer = false;
@@ -48,6 +51,7 @@ public class Player : MonoBehaviour
             cinemachineCamera = GameObject.Find("VirtualCamera").GetComponent<CinemachineVirtualCamera>();
             cinemachineCamera.Follow = transform;
             playerBaseRenderer.material = playerBaseColor;
+            playerName.text = Nickname;
 
         }
     }

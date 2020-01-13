@@ -47,6 +47,26 @@ public class ClientManager : MonoBehaviour
                 Health(sender, e);
             else if (message.Tag == NetworkTags.RespawnPlayerTag)
                 Respawn(sender, e);
+            else if (message.Tag == NetworkTags.ScoreboardTag)
+                Scoreboard(sender, e);
+        }
+    }
+
+    void Scoreboard(object sender, MessageReceivedEventArgs e)
+    {
+        Debug.Log("Scoreboard message " + e.GetMessage());
+        using (Message message = e.GetMessage() as Message)
+        {
+            using (DarkRiftReader reader = message.GetReader())
+            {
+                ScoreboardMessageModel newMessage = reader.ReadSerializable<ScoreboardMessageModel>();
+                ushort killerId = newMessage.KillerID;
+                Debug.Log("score returned in the message " + newMessage.Score);
+                ushort score = (ushort)newMessage.Score;
+                ushort victimId = newMessage.VictimID;
+
+                ScoreManager.Instance.UpdateScoreboard(killerId, score, victimId);
+            }
         }
     }
 
@@ -147,6 +167,7 @@ public class ClientManager : MonoBehaviour
         Destroy(o.gameObject);
 
         networkPlayers.Remove(id);
+        ScoreManager.Instance.RemovePlayer(id, false);
     }
 
     public int TotalPlayer

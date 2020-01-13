@@ -3,10 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using System.Linq;
 
 public class HUDManager : MonoBehaviour
 {
     public static HUDManager Instance;
+
+    List<ScorePlayer> scoreboardPlayers = new List<ScorePlayer>();
+
     [Header("Menu Panel")]
     [SerializeField]
     public GameObject menuPanel;
@@ -22,6 +26,7 @@ public class HUDManager : MonoBehaviour
     public GameObject respawnButton;
     public Image primarySkillCooldownImage;
     public Image secondarySkillCooldownImage;
+    public GameObject[] scoreboardList;
 
     // Start is called before the first frame update
     void Start()
@@ -69,6 +74,31 @@ public class HUDManager : MonoBehaviour
         OnGameLevelLoaded();
         respawnButton.SetActive(false);
         ClientManager.Instance.localPlayer.GetComponent<Player>().SendRespawnMessage();
+    }
+
+    public void RefreshScoreboard()
+    {
+        scoreboardPlayers.Clear();
+        foreach(var player in ScoreManager.Instance.scoreBoard)
+        {
+            scoreboardPlayers.Add(player.Value);
+        }
+
+        ScorePlayer[] scoreboardSorted = scoreboardPlayers.OrderByDescending(Player => Player.score).ToArray();
+
+        for (int i = 0; i < scoreboardList.Length; i++)
+        {
+            if(i < scoreboardSorted.Length)
+            {
+                scoreboardList[i].transform.Find("ScoreboardPlayerNameText").GetComponent<Text>().text = scoreboardSorted[i].name;
+                scoreboardList[i].transform.Find("ScoreboardPlayerScoreText").GetComponent<Text>().text = scoreboardSorted[i].score.ToString();
+                scoreboardList[i].SetActive(true);
+            }
+            else
+            {
+                scoreboardList[i].SetActive(false);
+            }
+        }
     }
 
     public float SetPrimarySkillCooldownUI
