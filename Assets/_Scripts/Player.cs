@@ -51,9 +51,11 @@ public class Player : MonoBehaviour
             cinemachineCamera = GameObject.Find("VirtualCamera").GetComponent<CinemachineVirtualCamera>();
             cinemachineCamera.Follow = transform;
             playerBaseRenderer.material = playerBaseColor;
-            playerName.text = Nickname;
+            
 
         }
+        if (!IsServer) playerName.text = Nickname;
+
     }
     public void SendRespawnMessage()
     {
