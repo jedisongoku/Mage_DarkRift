@@ -36,6 +36,7 @@ public class ScoreManager : MonoBehaviour
         if (!isServer) HUDManager.Instance.RefreshScoreboard();
     }
 
+    //Server-Side Method
     public void UpdateScoreboard(int _killerID, int _victimID)
     {
         //Increment the killer's score
@@ -52,6 +53,7 @@ public class ScoreManager : MonoBehaviour
         SendScoreboardMessage(_killerID, (ushort)scoreBoard[_killerID].score, _victimID);
     }
 
+    //Client-Side Call
     public void UpdateScoreboard(ushort _killerID, ushort score, ushort _victimID)
     {
         if (scoreBoard.ContainsKey(_killerID))

@@ -59,11 +59,11 @@ public class PlayerSpawnManager : MonoBehaviour
 
     void SpawnPlayer(object sender, MessageReceivedEventArgs e)
     {
-        Debug.LogWarning("SPAWNINNG");
+        Debug.LogWarning("SPAWNINNG " + e.GetMessage());
         using (Message message = e.GetMessage())
         using (DarkRiftReader reader = message.GetReader())
         {
-            if (reader.Length % 39 != 0)
+            if (reader.Length % 41 != 0)
             {
                 Debug.LogWarning("Received malformed spawn packet.");
                 return;

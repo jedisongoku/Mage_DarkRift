@@ -22,6 +22,7 @@ public class ServerManager : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
+        Application.targetFrameRate = 60;
         Instance = this;
         gameServer = GetComponent<XmlUnityServer>();
 
