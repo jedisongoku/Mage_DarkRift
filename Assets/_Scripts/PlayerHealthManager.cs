@@ -96,22 +96,23 @@ public class PlayerHealthManager : MonoBehaviour
     }
 
     void SendHealthMessage()
-    {
+    {/*
         using (DarkRiftWriter writer = DarkRiftWriter.Create())
         {
-            HealthMessageModel newMessage = new HealthMessageModel()
-            {
-                NetworkID = (ushort)player.ID,
-                Health = playerhealth
-            };
-            //writer.Write(player.ID);
-            //writer.Write(playerhealth);
-            //probably add the rune applications for particles
+            
+        }*/
+        HealthMessageModel newMessage = new HealthMessageModel()
+        {
+            NetworkID = (ushort)player.ID,
+            Health = playerhealth
+        };
+        //writer.Write(player.ID);
+        //writer.Write(playerhealth);
+        //probably add the rune applications for particles
 
-            using (Message message = Message.Create(NetworkTags.HealthPlayerTag, newMessage))
-                foreach (IClient c in ServerManager.Instance.gameServer.Server.ClientManager.GetAllClients())
-                    c.SendMessage(message, SendMode.Reliable);
-        }
+        using (Message message = Message.Create(NetworkTags.HealthPlayerTag, newMessage))
+            foreach (IClient c in ServerManager.Instance.gameServer.Server.ClientManager.GetAllClients())
+                c.SendMessage(message, SendMode.Reliable);
     }
 
     #endregion

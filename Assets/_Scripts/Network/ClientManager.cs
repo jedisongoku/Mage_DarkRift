@@ -115,13 +115,20 @@ public class ClientManager : MonoBehaviour
         {
             using (DarkRiftReader reader = message.GetReader())
             {
+                MovementMessageModel newMessage = reader.ReadSerializable<MovementMessageModel>();
+                ushort id = newMessage.NetworkID;
+                float horizontal = newMessage.Horizontal;
+                float vertical = newMessage.Vertical;
+                float x = newMessage.X;
+                float z = newMessage.Z;
+                /*
                 ushort id = reader.ReadUInt16();
                 Vector3 position = new Vector3(reader.ReadSingle(), 0f, reader.ReadSingle());
                 float horizontal = reader.ReadSingle();
-                float vertical = reader.ReadSingle();
+                float vertical = reader.ReadSingle();*/
 
                 if (networkPlayers.ContainsKey(id))
-                    networkPlayers[id].GetComponent<PlayerMovementManager>().SetMovement(position, horizontal, vertical);
+                    networkPlayers[id].GetComponent<PlayerMovementManager>().SetMovement(new Vector3(x,0,z), horizontal, vertical);
             }
         }
     }

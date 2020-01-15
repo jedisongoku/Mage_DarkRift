@@ -147,21 +147,25 @@ public class ServerManager : MonoBehaviour
         {
             using (DarkRiftReader reader = message.GetReader())
             {
-                float newX = reader.ReadSingle();
-                float newZ = reader.ReadSingle();
-                float horizontal = reader.ReadSingle();
-                float vertical = reader.ReadSingle();
+                MovementMessageModel newMessage = reader.ReadSerializable<MovementMessageModel>();
+                //float newX = reader.ReadSingle();
+                //float newZ = reader.ReadSingle();
+                float horizontal = newMessage.Horizontal;
+                float vertical = newMessage.Vertical;
 
                 ServerPlayer player = players[e.Client];
 
-                player.Horizontal = horizontal;
-                player.Vertical = vertical;
-                player.X = newX;
-                player.Z = newZ;
+                //player.Horizontal = horizontal;
+                //player.Vertical = vertical;
+                //player.X = newX;
+                //player.Z = newZ;
 
                 //move the copy of the character on the server
-                serverPlayersInScene[e.Client].GetComponent<PlayerMovementManager>().SetMovement(new Vector3(player.X, 0f, player.Z), player.Horizontal, player.Vertical);
+                serverPlayersInScene[e.Client].GetComponent<PlayerMovementManager>().SetMovement(horizontal, vertical);
 
+
+                //remove after this and add send message to movement
+                /*
                 using (DarkRiftWriter writer = DarkRiftWriter.Create())
                 {
                     writer.Write(player.ID);
@@ -170,14 +174,14 @@ public class ServerManager : MonoBehaviour
                     writer.Write(player.Horizontal);
                     writer.Write(player.Vertical);
                     message.Serialize(writer);
-                }
+                }*/
                 /*
                 foreach (IClient c in gameServer.Server.ClientManager.GetAllClients().Where(x => x != e.Client))
                     c.SendMessage(message, e.SendMode);*/
 
                 //Movement sent to all players including the client who sent the message
-                foreach (IClient c in gameServer.Server.ClientManager.GetAllClients())
-                    c.SendMessage(message, e.SendMode);
+                /*foreach (IClient c in gameServer.Server.ClientManager.GetAllClients())
+                    c.SendMessage(message, e.SendMode);*/
             }
         }
     }
