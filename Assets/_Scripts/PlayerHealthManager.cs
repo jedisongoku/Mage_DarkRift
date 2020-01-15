@@ -3,6 +3,7 @@ using DarkRift.Server;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.Collections;
 
 public class PlayerHealthManager : MonoBehaviour
 {
@@ -36,6 +37,7 @@ public class PlayerHealthManager : MonoBehaviour
         //StartCoroutine(HealhtRegeneration());
         SetPlayerBaseStats();
         //UpdateHealth();
+        StartCoroutine(HealhtRegeneration());
     }
 
     void SetPlayerBaseStats()
@@ -55,7 +57,7 @@ public class PlayerHealthManager : MonoBehaviour
         //shieldGuardParticle.SetActive(false);
         //frostbiteParticle.SetActive(false);
 
-        Invoke("UpdateHealth", 1f);
+        Invoke("UpdateHealth", 0.1f);
     }
 
     void UpdateHealth()
@@ -96,19 +98,12 @@ public class PlayerHealthManager : MonoBehaviour
     }
 
     void SendHealthMessage()
-    {/*
-        using (DarkRiftWriter writer = DarkRiftWriter.Create())
-        {
-            
-        }*/
+    {
         HealthMessageModel newMessage = new HealthMessageModel()
         {
             NetworkID = (ushort)player.ID,
             Health = playerhealth
         };
-        //writer.Write(player.ID);
-        //writer.Write(playerhealth);
-        //probably add the rune applications for particles
 
         using (Message message = Message.Create(NetworkTags.HealthPlayerTag, newMessage))
             foreach (IClient c in ServerManager.Instance.gameServer.Server.ClientManager.GetAllClients())
@@ -142,5 +137,24 @@ public class PlayerHealthManager : MonoBehaviour
         SetPlayerBaseStats();
         GetComponent<CapsuleCollider>().enabled = true;
         playerUI.SetActive(true);
+    }
+
+    //Health Regen happens both in client and server. Server overrides the health on take damage.
+    IEnumerator HealhtRegeneration()
+    {
+        yield return new WaitForSeconds(1f);
+        if (playerhealth < playerMaxHealth)
+        {
+            playerhealth += Mathf.CeilToInt(playerMaxHealth * healthGenerationRate);
+
+            if (playerhealth > playerMaxHealth)
+            {
+                playerhealth = playerMaxHealth;
+            }
+            UpdateHealth();
+
+        }
+        StartCoroutine(HealhtRegeneration());
+
     }
 }
