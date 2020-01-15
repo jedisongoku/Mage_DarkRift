@@ -51,6 +51,7 @@ public class DragObject : MonoBehaviour
 
     void Client_MessageReceived(object sender, MessageReceivedEventArgs e)
     {
+        Debug.LogWarning("MessageREceived");
         using (Message message = e.GetMessage() as Message)
         {
             //Check the message has a zero tag
