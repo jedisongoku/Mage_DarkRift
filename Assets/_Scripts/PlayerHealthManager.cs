@@ -57,7 +57,7 @@ public class PlayerHealthManager : MonoBehaviour
         //shieldGuardParticle.SetActive(false);
         //frostbiteParticle.SetActive(false);
 
-        Invoke("UpdateHealth", 0.1f);
+        Invoke("UpdateHealth", 0.25f);
     }
 
     void UpdateHealth()

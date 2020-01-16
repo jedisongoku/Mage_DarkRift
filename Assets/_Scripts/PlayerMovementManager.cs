@@ -23,7 +23,9 @@ public class PlayerMovementManager : MonoBehaviour
     private float horizontal;
     private float vertical;
     private float fireTimer;
-    
+    private float movementTimeFrame;
+    private bool correctPosition;
+
 
     void Awake()
     {
@@ -60,66 +62,35 @@ public class PlayerMovementManager : MonoBehaviour
             {
                 horizontal = Input.GetAxis("Horizontal");
                 vertical = Input.GetAxis("Vertical");
-
-                using (DarkRiftWriter writer = DarkRiftWriter.Create())
-                {
-                    //send input to the server
-                    MovementMessageModel newMessage = new MovementMessageModel()
-                    {
-
-                        //NetworkID = (ushort)player.ID,
-                        Horizontal = horizontal,
-                        Vertical = vertical
-                    };
-
-                    using (Message message = Message.Create(NetworkTags.MovePlayerTag, newMessage))
-                        player.Client.SendMessage(message, SendMode.Unreliable);
-                }
-
             }
 
-            if (!player.IsServer)
-            {
-                if ((m_Rigidbody.position - m_NetworkPosition).magnitude > 3)
-                {
-                    m_Rigidbody.position = m_NetworkPosition;
-                }
-                m_Rigidbody.position = Vector3.MoveTowards(m_Rigidbody.position, m_NetworkPosition, Time.fixedDeltaTime);
+            m_Movement.Set(horizontal, 0f, vertical);
+            m_Movement.Normalize();
+            
+            m_Animator.SetFloat("Horizontal", horizontal);
+            m_Animator.SetFloat("Vertical", vertical);
+            Vector3 desiredForward = Vector3.RotateTowards(transform.forward, m_Movement, turnSpeed * Time.deltaTime, 0f);
+            m_Rotation = Quaternion.LookRotation(desiredForward);
 
-                m_networkMovement.Set(m_networkHorizontal, 0f, m_networkVertical);
-                m_networkMovement.Normalize();
-                m_Animator.SetFloat("Horizontal", m_networkHorizontal);
-                m_Animator.SetFloat("Vertical", m_networkVertical);
-                Vector3 desiredForward = Vector3.RotateTowards(transform.forward, m_networkMovement, turnSpeed * Time.deltaTime, 0f);
-                m_Rotation = Quaternion.LookRotation(desiredForward);
-
-            }
-            else
-            {
-                m_Movement.Set(horizontal, 0f, vertical);
-                m_Movement.Normalize();
-                m_Animator.SetFloat("Horizontal", horizontal);
-                m_Animator.SetFloat("Vertical", vertical);
-                Vector3 desiredForward = Vector3.RotateTowards(transform.forward, m_Movement, turnSpeed * Time.deltaTime, 0f);
-                m_Rotation = Quaternion.LookRotation(desiredForward);
-            }
- 
         }
         
     }
 
     void OnAnimatorMove()
     {
-        
-        if (player.IsServer)
+        if(player.IsServer)
         {
             m_Rigidbody.MovePosition(m_Rigidbody.position + m_Movement * m_Animator.deltaPosition.magnitude * walkSpeed);
-            SendMovementMessage();
         }
         else
         {
-            m_Rigidbody.MovePosition(m_Rigidbody.position + m_networkMovement * m_Animator.deltaPosition.magnitude * walkSpeed);
+            Vector3 movementDelta = (m_NetworkPosition - m_Rigidbody.position).normalized;
+            Vector3 networkDestination = m_Rigidbody.position + movementDelta * m_Animator.deltaPosition.magnitude * walkSpeed;
+            m_Rigidbody.MovePosition(networkDestination);
+            m_Rigidbody.position = Vector3.MoveTowards(m_Rigidbody.position, m_NetworkPosition, Time.fixedDeltaTime * 0.5f);
         }
+        
+        SendMovementMessage();
         
         if (fireTimer > 0.2f)
         {
@@ -128,21 +99,13 @@ public class PlayerMovementManager : MonoBehaviour
         
     }
 
-    //Client-Side Method
-    public void SetMovement(Vector3 _networkPosition, float _horizontal, float _vertical)
+    public void SetMovement(Vector3 _networkPosition, float _horizontal, float _vertical, bool _isServer)
     {
         m_NetworkPosition = _networkPosition;
-        m_networkHorizontal = _horizontal;
-        m_networkVertical = _vertical;
-    }
-
-    //Server-Side Method
-    public void SetMovement(float _horizontal, float _vertical)
-    {
         horizontal = _horizontal;
         vertical = _vertical;
-        
     }
+
 
     public void TurnForAttack(Vector3 _mousePosition)
     {
@@ -150,11 +113,23 @@ public class PlayerMovementManager : MonoBehaviour
         transform.LookAt(_mousePosition);
     }
 
-    //Server-Side Method
     void SendMovementMessage()
     {
-        using (DarkRiftWriter writer = DarkRiftWriter.Create())
+        if(player.IsControllable)
         {
+            MovementMessageModel newMessage = new MovementMessageModel()
+            {
+                Horizontal = horizontal,
+                Vertical = vertical,
+                X = m_Rigidbody.position.x,
+                Z = m_Rigidbody.position.z
+            };
+            using (Message message = Message.Create(NetworkTags.MovePlayerTag, newMessage))
+                player.Client.SendMessage(message, SendMode.Unreliable);
+        }
+        else if(player.IsServer)
+        {
+
             MovementMessageModel newMessage = new MovementMessageModel()
             {
                 NetworkID = (ushort)player.ID,
@@ -163,14 +138,11 @@ public class PlayerMovementManager : MonoBehaviour
                 X = m_Rigidbody.position.x,
                 Z = m_Rigidbody.position.z
             };
-            //writer.Write(player.ID);
-            //writer.Write(playerhealth);
-            //probably add the rune applications for particles
 
             using (Message message = Message.Create(NetworkTags.MovePlayerTag, newMessage))
                 foreach (IClient c in ServerManager.Instance.gameServer.Server.ClientManager.GetAllClients())
                     c.SendMessage(message, SendMode.Unreliable);
-        }
+        } 
     }
 
 }
