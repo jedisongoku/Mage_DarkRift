@@ -6,7 +6,7 @@ using DarkRift.Server;
 public class PlayerMovementManager : MonoBehaviour
 {
     const byte MOVEMENT_TAG = 1;
-    
+    public float clientWalkSpeed = 20f;
     private Player player;
     private Animator m_Animator;
     private Rigidbody m_Rigidbody;
@@ -45,7 +45,10 @@ public class PlayerMovementManager : MonoBehaviour
 
     private void Start()
     {
-        
+        if(!player.IsServer)
+        {
+            //m_Rigidbody.isKinematic = true;
+        }
         m_Animator.Rebind();
     }
 
@@ -76,18 +79,23 @@ public class PlayerMovementManager : MonoBehaviour
         
     }
 
+
     void OnAnimatorMove()
     {
-        if(player.IsServer)
+        
+        if (player.IsServer)
         {
             m_Rigidbody.MovePosition(m_Rigidbody.position + m_Movement * m_Animator.deltaPosition.magnitude * walkSpeed);
         }
         else
         {
-            Vector3 movementDelta = (m_NetworkPosition - m_Rigidbody.position).normalized;
-            Vector3 networkDestination = m_Rigidbody.position + movementDelta * m_Animator.deltaPosition.magnitude * walkSpeed;
-            m_Rigidbody.MovePosition(networkDestination);
-            m_Rigidbody.position = Vector3.MoveTowards(m_Rigidbody.position, m_NetworkPosition, Time.fixedDeltaTime * 0.5f);
+
+            Debug.Log("Magnitude " + (m_Rigidbody.position - m_NetworkPosition).magnitude);
+            if((m_Rigidbody.position - m_NetworkPosition).magnitude <= 0.02f)
+            {
+                m_NetworkPosition = m_Rigidbody.position + m_Movement * m_Animator.deltaPosition.magnitude * walkSpeed;
+            }
+            m_Rigidbody.position = Vector3.MoveTowards(m_Rigidbody.position, m_NetworkPosition, Time.fixedDeltaTime * clientWalkSpeed);
         }
         
         SendMovementMessage();
