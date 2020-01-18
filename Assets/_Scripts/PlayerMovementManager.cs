@@ -6,7 +6,7 @@ using DarkRift.Server;
 public class PlayerMovementManager : MonoBehaviour
 {
     const byte MOVEMENT_TAG = 1;
-    public float clientWalkSpeed = 20f;
+    public float clientWalkSpeed = 15f;
     private Player player;
     private Animator m_Animator;
     private Rigidbody m_Rigidbody;
@@ -17,6 +17,7 @@ public class PlayerMovementManager : MonoBehaviour
     private float m_networkVertical = 0;
     private Vector3 m_Movement = Vector3.zero;
     private Vector3 m_networkMovement = Vector3.zero;
+    private float animatorSpeed;
 
     private float walkSpeed;
     private float turnSpeed;
@@ -25,7 +26,6 @@ public class PlayerMovementManager : MonoBehaviour
     private float fireTimer;
     private float movementTimeFrame;
     private bool correctPosition;
-
 
     void Awake()
     {
@@ -52,7 +52,6 @@ public class PlayerMovementManager : MonoBehaviour
         m_Animator.Rebind();
     }
 
-    
 
     // Update is called once per frame
     void FixedUpdate()
@@ -63,15 +62,18 @@ public class PlayerMovementManager : MonoBehaviour
 
             if (player.IsControllable)
             {
-                horizontal = Input.GetAxis("Horizontal");
-                vertical = Input.GetAxis("Vertical");
+                horizontal = (float)System.Math.Round(Input.GetAxis("Horizontal"), 1);
+                vertical = (float)System.Math.Round(Input.GetAxis("Vertical"), 1);
+                SendMovementMessage();
             }
 
-            m_Movement.Set(horizontal, 0f, vertical);
+            m_Movement.Set(m_networkHorizontal, 0f, m_networkVertical);
             m_Movement.Normalize();
-            
-            m_Animator.SetFloat("Horizontal", horizontal);
-            m_Animator.SetFloat("Vertical", vertical);
+
+            Debug.Log(m_networkHorizontal + " - " + m_networkVertical);
+            m_Animator.SetFloat("Horizontal", m_networkHorizontal);
+            m_Animator.SetFloat("Vertical", m_networkVertical);
+            animatorSpeed = m_Animator.deltaPosition.magnitude > 0.2 ? 0.3f : m_Animator.deltaPosition.magnitude > 0.025 ? 0.1f : 0;
             Vector3 desiredForward = Vector3.RotateTowards(transform.forward, m_Movement, turnSpeed * Time.deltaTime, 0f);
             m_Rotation = Quaternion.LookRotation(desiredForward);
 
@@ -81,25 +83,22 @@ public class PlayerMovementManager : MonoBehaviour
 
 
     void OnAnimatorMove()
-    {
-        
-        if (player.IsServer)
+    {       
+        if(m_Movement == Vector3.zero) m_Rigidbody.velocity = Vector3.zero;
+
+        if (!player.IsServer)
         {
-            m_Rigidbody.MovePosition(m_Rigidbody.position + m_Movement * m_Animator.deltaPosition.magnitude * walkSpeed);
+            m_Rigidbody.MovePosition(m_Rigidbody.position + m_networkMovement * animatorSpeed * walkSpeed);
+            m_Rigidbody.position = Vector3.MoveTowards(m_Rigidbody.position, m_NetworkPosition, Time.fixedDeltaTime);
         }
         else
         {
-
-            Debug.Log("Magnitude " + (m_Rigidbody.position - m_NetworkPosition).magnitude);
-            if((m_Rigidbody.position - m_NetworkPosition).magnitude <= 0.02f)
-            {
-                m_NetworkPosition = m_Rigidbody.position + m_Movement * m_Animator.deltaPosition.magnitude * walkSpeed;
-            }
-            m_Rigidbody.position = Vector3.MoveTowards(m_Rigidbody.position, m_NetworkPosition, Time.fixedDeltaTime * clientWalkSpeed);
+            m_Rigidbody.MovePosition(m_Rigidbody.position + m_Movement * animatorSpeed * walkSpeed);
+            SendMovementMessage();
         }
+
         
-        SendMovementMessage();
-        
+
         if (fireTimer > 0.2f)
         {
             m_Rigidbody.MoveRotation(m_Rotation);
@@ -107,11 +106,21 @@ public class PlayerMovementManager : MonoBehaviour
         
     }
 
-    public void SetMovement(Vector3 _networkPosition, float _horizontal, float _vertical, bool _isServer)
+    //Client-Side
+    public void SetMovement(Vector3 _networkPosition, Vector3 _movement, float _horizontal, float _vertical)
     {
         m_NetworkPosition = _networkPosition;
-        horizontal = _horizontal;
-        vertical = _vertical;
+        m_networkMovement = _movement;
+        m_networkHorizontal = _horizontal;
+        m_networkVertical = _vertical;
+        
+    }
+
+    //Server-Side
+    public void SetMovement(float _horizontal, float _vertical)
+    {
+        m_networkHorizontal = _horizontal;
+        m_networkVertical = _vertical;
     }
 
 
@@ -123,14 +132,13 @@ public class PlayerMovementManager : MonoBehaviour
 
     void SendMovementMessage()
     {
-        if(player.IsControllable)
+        
+        if (player.IsControllable)
         {
             MovementMessageModel newMessage = new MovementMessageModel()
             {
                 Horizontal = horizontal,
-                Vertical = vertical,
-                X = m_Rigidbody.position.x,
-                Z = m_Rigidbody.position.z
+                Vertical = vertical
             };
             using (Message message = Message.Create(NetworkTags.MovePlayerTag, newMessage))
                 player.Client.SendMessage(message, SendMode.Unreliable);
@@ -141,10 +149,13 @@ public class PlayerMovementManager : MonoBehaviour
             MovementMessageModel newMessage = new MovementMessageModel()
             {
                 NetworkID = (ushort)player.ID,
-                Horizontal = horizontal,
-                Vertical = vertical,
-                X = m_Rigidbody.position.x,
-                Z = m_Rigidbody.position.z
+                Horizontal = m_networkHorizontal,
+                Vertical = m_networkVertical,
+                Pos_X = m_Rigidbody.position.x,
+                Pos_Z = m_Rigidbody.position.z,
+                Move_X = m_Movement.x,
+                Move_Z = m_Movement.z
+                
             };
 
             using (Message message = Message.Create(NetworkTags.MovePlayerTag, newMessage))

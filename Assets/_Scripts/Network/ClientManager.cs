@@ -119,12 +119,14 @@ public class ClientManager : MonoBehaviour
                 ushort id = newMessage.NetworkID;
                 float horizontal = newMessage.Horizontal;
                 float vertical = newMessage.Vertical;
-                float x = newMessage.X;
-                float z = newMessage.Z;
+                float pos_x = newMessage.Pos_X;
+                float pos_z = newMessage.Pos_Z;
+                float move_x = newMessage.Move_X;
+                float move_z = newMessage.Move_Z;
 
 
                 if (networkPlayers.ContainsKey(id))
-                    networkPlayers[id].GetComponent<PlayerMovementManager>().SetMovement(new Vector3(x,0,z), horizontal, vertical, false);
+                    networkPlayers[id].GetComponent<PlayerMovementManager>().SetMovement(new Vector3(pos_x,0,pos_z), new Vector3(move_x,0,move_z), horizontal, vertical);
             }
         }
     }

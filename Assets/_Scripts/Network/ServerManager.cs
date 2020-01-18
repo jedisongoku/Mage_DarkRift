@@ -152,13 +152,11 @@ public class ServerManager : MonoBehaviour
                 //float newZ = reader.ReadSingle();
                 float horizontal = newMessage.Horizontal;
                 float vertical = newMessage.Vertical;
-                float x = newMessage.X;
-                float z = newMessage.Z;
 
                 ServerPlayer player = players[e.Client];
 
                 //move the copy of the character on the server
-                serverPlayersInScene[e.Client].GetComponent<PlayerMovementManager>().SetMovement(new Vector3(x, 0, z),horizontal, vertical, true);
+                serverPlayersInScene[e.Client].GetComponent<PlayerMovementManager>().SetMovement(horizontal, vertical);
 
             }
         }
