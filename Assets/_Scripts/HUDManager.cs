@@ -24,9 +24,11 @@ public class HUDManager : MonoBehaviour
     [Header("Game Panel")]
     public GameObject gamePanel;
     public GameObject respawnButton;
+    public GameObject runeSelection;
     public Image primarySkillCooldownImage;
     public Image secondarySkillCooldownImage;
     public GameObject[] scoreboardList;
+    public GameObject[] runeSelectionList;
 
     // Start is called before the first frame update
     void Start()
@@ -64,6 +66,22 @@ public class HUDManager : MonoBehaviour
         waitingAreaPanel.SetActive(panelToBeActivated.Equals(waitingAreaPanel.name));
         loadingPanel.SetActive(panelToBeActivated.Equals(loadingPanel.name));
         gamePanel.SetActive(panelToBeActivated.Equals(gamePanel.name));
+    }
+
+    public void DisplayRunes(string[] runeNames)
+    {
+        for (int i = 0; i < 3; i++)
+        {
+            
+            runeSelectionList[i].GetComponentInChildren<Text>().text = runeNames[i];
+        }
+        runeSelection.SetActive(true);
+    }
+
+    public void SelectRune(int index)
+    {
+        ClientManager.Instance.localPlayer.GetComponent<PlayerRuneManager>().SendSelectRuneMessage((ushort)index);
+        runeSelection.SetActive(false);
     }
 
     public void OnPlayerDeath()

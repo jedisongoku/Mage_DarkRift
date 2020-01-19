@@ -71,7 +71,7 @@ public class PlayerHealthManager : MonoBehaviour
         }
         else
         {
-            Debug.Log(playerhealth + "/" + playerMaxHealth + " - " + (float)playerhealth / (float)playerMaxHealth);
+            //Debug.Log(playerhealth + "/" + playerMaxHealth + " - " + (float)playerhealth / (float)playerMaxHealth);
             playerHealthBar.fillAmount = (float)playerhealth / (float)playerMaxHealth;
             playerHealthText.text = playerhealth.ToString();
         }

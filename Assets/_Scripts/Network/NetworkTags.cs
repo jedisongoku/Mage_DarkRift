@@ -8,4 +8,6 @@
     public static readonly ushort SecondarySkillTag = 6;
     public static readonly ushort HealthPlayerTag = 7;
     public static readonly ushort ScoreboardTag = 8;
+    public static readonly ushort ShowRuneTag = 9;
+    public static readonly ushort SelectRuneTag = 10;
 }

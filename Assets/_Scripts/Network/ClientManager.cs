@@ -49,6 +49,26 @@ public class ClientManager : MonoBehaviour
                 Respawn(sender, e);
             else if (message.Tag == NetworkTags.ScoreboardTag)
                 Scoreboard(sender, e);
+            else if (message.Tag == NetworkTags.ShowRuneTag)
+                ShowRune(sender, e);
+        }
+    }
+
+    private void ShowRune(object sender, MessageReceivedEventArgs e)
+    {
+        using (Message message = e.GetMessage() as Message)
+        {
+            using (DarkRiftReader reader = message.GetReader())
+            {
+                ushort id = reader.ReadUInt16();
+                ushort runeID_1 = reader.ReadUInt16();
+                ushort runeID_2 = reader.ReadUInt16();
+                ushort runeID_3 = reader.ReadUInt16();
+
+
+                if (networkPlayers.ContainsKey(id))
+                    networkPlayers[id].GetComponent<PlayerRuneManager>().ShowRuneSelection(runeID_1, runeID_2, runeID_3);
+            }
         }
     }
 
@@ -89,14 +109,14 @@ public class ClientManager : MonoBehaviour
 
     void Health(object sender, MessageReceivedEventArgs e)
     {
-        Debug.Log("Health Message " + e.GetMessage());
+        //Debug.Log("Health Message " + e.GetMessage());
         using (Message message = e.GetMessage() as Message)
         {
             using (DarkRiftReader reader = message.GetReader())
             {
                 HealthMessageModel newMessage = reader.ReadSerializable<HealthMessageModel>();
                 ushort id = newMessage.NetworkID;
-                Debug.Log("Health returned in the message " + newMessage.Health);
+                //Debug.Log("Health returned in the message " + newMessage.Health);
                 ushort health = (ushort)newMessage.Health;
 
                 //ushort id = reader.ReadUInt16();
@@ -126,7 +146,8 @@ public class ClientManager : MonoBehaviour
 
 
                 if (networkPlayers.ContainsKey(id))
-                    networkPlayers[id].GetComponent<PlayerMovementManager>().SetMovement(new Vector3(pos_x,0,pos_z), new Vector3(move_x,0,move_z), horizontal, vertical);
+                    networkPlayers[id].GetComponent<PlayerMovementManager>().SetMovement(new Vector3(pos_x,0,pos_z), new Vector3(move_x,0,move_z), horizontal, vertical
+                        );
             }
         }
     }

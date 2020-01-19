@@ -6,6 +6,7 @@ public class Rune
 {
     public static Rune Instance;
 
+    private ushort runeID;
     private string displayName;
     private string functionName;
     private string description;
@@ -35,9 +36,17 @@ public class Rune
             return chargeAmount;
         }
     }
-
-    public Rune(string _displayName, string _functionName, string _description, int _categoryId, int _chargeAmount)
+    public ushort RuneID
     {
+        get
+        {
+            return runeID;
+        }
+    }
+
+    public Rune(ushort _runeID, string _displayName, string _functionName, string _description, int _categoryId, int _chargeAmount)
+    {
+        runeID = _runeID;
         displayName = _displayName;
         functionName = _functionName;
         description = _description;

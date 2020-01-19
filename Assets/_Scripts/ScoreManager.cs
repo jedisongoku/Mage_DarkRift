@@ -43,6 +43,14 @@ public class ScoreManager : MonoBehaviour
         if (scoreBoard.ContainsKey(_killerID))
         {
             scoreBoard[_killerID].score = (ushort)(scoreBoard[_killerID].score + 1);
+            foreach(var player in ServerManager.Instance.serverPlayersInScene.Values)
+            {
+                if(player.GetComponent<Player>().ID == _killerID)
+                {
+                    player.GetComponent<PlayerRuneManager>().SendShowRuneMessage();
+                }
+                
+            }
         }
         //reset the victim's score
         if (scoreBoard.ContainsKey(_victimID))

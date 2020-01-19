@@ -123,6 +123,22 @@ public class ServerManager : MonoBehaviour
                 SecondarySkill(sender, e);
             else if (message.Tag == NetworkTags.RespawnPlayerTag)
                 Respawn(sender, e);
+            else if (message.Tag == NetworkTags.SelectRuneTag)
+                SelectRune(sender, e);
+        }
+    }
+
+    private void SelectRune(object sender, MessageReceivedEventArgs e)
+    {
+        using (Message message = e.GetMessage() as Message)
+        {
+            using (DarkRiftReader reader = message.GetReader())
+            {
+                ushort runeSelection = reader.ReadUInt16();
+
+                serverPlayersInScene[e.Client].GetComponent<PlayerRuneManager>().SelectRune(runeSelection);
+
+            }
         }
     }
 

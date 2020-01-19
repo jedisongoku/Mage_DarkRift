@@ -21,6 +21,7 @@ public class Player : MonoBehaviour
     [SerializeField] PlayerCombatManager playerCombatManager;
     [SerializeField] PlayerHealthManager playerHealthManager;
     [SerializeField] PlayerMovementManager playerMovementManager;
+    [SerializeField] PlayerRuneManager playerRuneManager;
     [SerializeField] GameObject playerUI;
     [SerializeField] MeshRenderer playerBaseRenderer;
     [SerializeField] Material playerBaseColor;
@@ -106,6 +107,7 @@ public class Player : MonoBehaviour
     {
         transform.position = GameManager.Instance.spawnLocations[_spawnLocation].transform.position;
         isDead = false;
+        playerRuneManager.RestartPlayerRunes();
         playerHealthManager.RespawnPlayer();
         GetComponent<Animator>().SetTrigger("Respawn");
         playerSkin.SetActive(true);

@@ -70,7 +70,7 @@ public class PlayerMovementManager : MonoBehaviour
             m_Movement.Set(m_networkHorizontal, 0f, m_networkVertical);
             m_Movement.Normalize();
 
-            Debug.Log(m_networkHorizontal + " - " + m_networkVertical);
+            //Debug.Log(m_networkHorizontal + " - " + m_networkVertical);
             m_Animator.SetFloat("Horizontal", m_networkHorizontal);
             m_Animator.SetFloat("Vertical", m_networkVertical);
             animatorSpeed = m_Animator.deltaPosition.magnitude > 0.2 ? 0.3f : m_Animator.deltaPosition.magnitude > 0.025 ? 0.1f : 0;
@@ -86,16 +86,24 @@ public class PlayerMovementManager : MonoBehaviour
     {       
         if(m_Movement == Vector3.zero) m_Rigidbody.velocity = Vector3.zero;
 
-        if (!player.IsServer)
+        if(!player.IsDead)
         {
-            m_Rigidbody.MovePosition(m_Rigidbody.position + m_networkMovement * animatorSpeed * walkSpeed);
-            m_Rigidbody.position = Vector3.MoveTowards(m_Rigidbody.position, m_NetworkPosition, Time.fixedDeltaTime);
+            if (!player.IsServer)
+            {
+                m_Rigidbody.MovePosition(m_Rigidbody.position + m_networkMovement * animatorSpeed * walkSpeed);
+                m_Rigidbody.position = Vector3.MoveTowards(m_Rigidbody.position, m_NetworkPosition, Time.fixedDeltaTime);
+                if ((m_Rigidbody.position - m_NetworkPosition).magnitude > 2f)
+                {
+                    m_Rigidbody.position = m_NetworkPosition;
+                }
+            }
+            else
+            {
+                m_Rigidbody.MovePosition(m_Rigidbody.position + m_Movement * animatorSpeed * walkSpeed);
+                SendMovementMessage();
+            }
         }
-        else
-        {
-            m_Rigidbody.MovePosition(m_Rigidbody.position + m_Movement * animatorSpeed * walkSpeed);
-            SendMovementMessage();
-        }
+        
 
         
 

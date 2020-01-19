@@ -17,9 +17,9 @@ public class PlayerCombatManager : MonoBehaviour
     [SerializeField] GameObject dashTrail;
 
     public GameObject primarySkillSpawnLocation;
-    private int primarySkillDamage;
-    private float primarySkillCooldown;
-    private float secondarySkillCooldown;
+    public int PrimarySkillDamage { get; set; }
+    public float PrimarySkillCooldown { get; set; }
+    public float SecondarySkillCooldown { get; set; }
     private bool isFrostbite;
     private bool isPoison;
     private bool isChill;
@@ -50,11 +50,11 @@ public class PlayerCombatManager : MonoBehaviour
     }
     void SetPlayerBaseStats()
     {
-        primarySkillDamage = PlayerBaseStats.Instance.PrimarySkillDamage;
-        primarySkillCooldown = PlayerBaseStats.Instance.PrimarySkillCooldown;
-        secondarySkillCooldown = PlayerBaseStats.Instance.SecondarySkillCooldown;
-        primarySkillCooldownTimer = primarySkillCooldown;
-        secondarySkillCooldownTimer = secondarySkillCooldown;
+        PrimarySkillDamage = PlayerBaseStats.Instance.PrimarySkillDamage;
+        PrimarySkillCooldown = PlayerBaseStats.Instance.PrimarySkillCooldown;
+        SecondarySkillCooldown = PlayerBaseStats.Instance.SecondarySkillCooldown;
+        primarySkillCooldownTimer = PrimarySkillCooldown;
+        secondarySkillCooldownTimer = SecondarySkillCooldown;
         isFrostbite = false;
         isPoison = false;
         isChill = false;
@@ -74,8 +74,8 @@ public class PlayerCombatManager : MonoBehaviour
 
         if (player.IsControllable && !player.IsDead)
         {
-            HUDManager.Instance.SetPrimarySkillCooldownUI = 1 - primarySkillCooldownTimer / primarySkillCooldown;
-            HUDManager.Instance.SetSecondarySkillCooldownUI = 1 - secondarySkillCooldownTimer / secondarySkillCooldown;
+            HUDManager.Instance.SetPrimarySkillCooldownUI = 1 - primarySkillCooldownTimer / PrimarySkillCooldown;
+            HUDManager.Instance.SetSecondarySkillCooldownUI = 1 - secondarySkillCooldownTimer / SecondarySkillCooldown;
 
             if (Input.GetButtonDown("Dash"))
             {
@@ -91,7 +91,7 @@ public class PlayerCombatManager : MonoBehaviour
 
     void PrimarySkill()
     {
-        if (primarySkillCooldownTimer >= primarySkillCooldown)
+        if (primarySkillCooldownTimer >= PrimarySkillCooldown)
         {
             SetFireDirection();
             primarySkillCooldownTimer = 0;
@@ -168,8 +168,8 @@ public class PlayerCombatManager : MonoBehaviour
 
     void SecondarySkill()
     {
-        Debug.Log("Dash Timer " + secondarySkillCooldownTimer + " / " + secondarySkillCooldown);
-        if (secondarySkillCooldownTimer >= secondarySkillCooldown)
+        Debug.Log("Dash Timer " + secondarySkillCooldownTimer + " / " + SecondarySkillCooldown);
+        if (secondarySkillCooldownTimer >= SecondarySkillCooldown)
         {
             secondarySkillCooldownTimer = 0;
             using (DarkRiftWriter writer = DarkRiftWriter.Create())
@@ -192,7 +192,7 @@ public class PlayerCombatManager : MonoBehaviour
     
     public void ReadyForDamage(IClient _enemyClient)
     {
-        int damageToApply = primarySkillDamage;
+        int damageToApply = PrimarySkillDamage;
         if (isRage) damageToApply += Mathf.RoundToInt(damageToApply * PlayerBaseStats.Instance.RageDamageRate);
         ServerManager.Instance.serverPlayersInScene[_enemyClient].GetComponent<PlayerHealthManager>().TakeDamage(damageToApply, player.ServerClient);
         //playerHealthManager.TakeDamage(damageToApply, _enemyClient);

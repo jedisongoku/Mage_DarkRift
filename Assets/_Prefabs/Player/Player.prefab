@@ -38565,6 +38565,7 @@ GameObject:
   - component: {fileID: 5061779938565317016}
   - component: {fileID: -7094498262923247961}
   - component: {fileID: 5650472987659434443}
+  - component: {fileID: -2517951135824627344}
   m_Layer: 8
   m_Name: Player
   m_TagString: Untagged
@@ -38660,6 +38661,7 @@ MonoBehaviour:
   playerCombatManager: {fileID: -7094498262923247961}
   playerHealthManager: {fileID: 5650472987659434443}
   playerMovementManager: {fileID: 5061779938565317016}
+  playerRuneManager: {fileID: -2517951135824627344}
   playerUI: {fileID: 6361094391380882233}
   playerBaseRenderer: {fileID: 6361094391380883376}
   playerBaseColor: {fileID: 2100000, guid: 8038e96eab7499a40bcd22aba153a7ed, type: 2}
@@ -38706,6 +38708,18 @@ MonoBehaviour:
   playerUI: {fileID: 6361094391380882233}
   playerHealthBar: {fileID: 6361094391380883953}
   playerHealthText: {fileID: 8075389111401290141}
+--- !u!114 &-2517951135824627344
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6361094391380882287}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c7a7785f0207b14080e92daea3bff9a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &6830049393364381262
 GameObject:
   m_ObjectHideFlags: 0
