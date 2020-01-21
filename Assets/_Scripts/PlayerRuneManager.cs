@@ -39,11 +39,11 @@ public class PlayerRuneManager : MonoBehaviour
             runeCatalog.Add(1, new Rune(1, "Damage Boost", "DamageBoost", "Deal Higher Damage", 1,1));
             runeCatalog.Add(2, new Rune(2, "Attack Speed Boost", "AttackSpeedBoost", "Primary Skill Cooldown Reduced", 1, 1));
             runeCatalog.Add(3, new Rune(3, "Dash Reduced Cooldown", "DashReducedCooldown", "Secondary Skill Cooldown Reduced", 1, 1));
-            //runeCatalog.Add(4, new Rune(4, "Frostbite", "Frostbite", "Attacks cause damage over time burn", 1, 1));
-            //runeCatalog.Add(5, new Rune(5, "Chill", "Chill", "Attack slow enemies", 1, 1));
-            //runeCatalog.Add(6, new Rune(6, "Multi Shot", "MultiShot", "Fires an additional attack rapidly", 1, 1));
-            //runeCatalog.Add(7, new Rune(7, "Rage", "Rage", "Attacks deal more damage at low HP", 1, 1));
-            //runeCatalog.Add(8, new Rune(8, "Frost Nova", "FrostNova", "Attacks explode on hit, slowing nearby players", 1, 1));
+            runeCatalog.Add(4, new Rune(4, "Frostbite", "Frostbite", "Attacks cause damage over time burn", 1, 1));
+            runeCatalog.Add(5, new Rune(5, "Chill", "Chill", "Attack slow enemies", 1, 1));
+            runeCatalog.Add(6, new Rune(6, "Multi Shot", "MultiShot", "Fires an additional attack rapidly", 1, 1));
+            runeCatalog.Add(7, new Rune(7, "Rage", "Rage", "Attacks deal more damage at low HP", 1, 1));
+            runeCatalog.Add(8, new Rune(8, "Frost Nova", "FrostNova", "Attacks explode on hit, slowing nearby players", 1, 1));
             /*
             runeCatalog.Add(new Rune("Poison", "Poison", "Attacks cause poison spreading nearby players", 1, 1));
             runeCatalog.Add(new Rune("Bouncy", "Bouncy", "Attacks bounce of walls", 1, 1));
@@ -52,12 +52,12 @@ public class PlayerRuneManager : MonoBehaviour
             
             */
             //Survivability Runes
-            //runeCatalog.Add(9, new Rune(9, "Bloodthirst", "Bloodthirst", "Restores HP when you kill an enemy", 1, 1));
-            //runeCatalog.Add(10, new Rune(10, "HP Boost", "HpBoost", "Max HP increased", 1, 1));
+            runeCatalog.Add(9, new Rune(9, "Bloodthirst", "Bloodthirst", "Restores HP when you kill an enemy", 1, 1));
+            runeCatalog.Add(10, new Rune(10, "HP Boost", "HpBoost", "Max HP increased", 1, 1));
             //runeCatalog.Add(new Rune("Invincible", "Invincible", "Become invincible once in a while", 1, 1));
             //runeCatalog.Add(new Rune("Life", "Life", "Get +1 life to continue adventure", 1, 1));
-            //runeCatalog.Add(11, new Rune(11, "Shield Guard", "ShieldGuard", "A shield circles around you reducing damage taken", 1, 1));
-            //runeCatalog.Add(12, new Rune(12, "Strong Heart", "StrongHeart", "You are healed for more HP than before", 1, 1));
+            runeCatalog.Add(11, new Rune(11, "Shield Guard", "ShieldGuard", "A shield circles around you reducing damage taken", 1, 1));
+            runeCatalog.Add(12, new Rune(12, "Strong Heart", "StrongHeart", "You are healed for more HP than before", 1, 1));
             /*
             //Offensive Runes
             runeCatalog.Add(new Rune("Flame Circle", "FlameCircle", "Summon 2 lightning bolts to spin around you", 1, 1));
