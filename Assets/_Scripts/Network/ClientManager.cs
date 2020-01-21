@@ -51,6 +51,72 @@ public class ClientManager : MonoBehaviour
                 Scoreboard(sender, e);
             else if (message.Tag == NetworkTags.ShowRuneTag)
                 ShowRune(sender, e);
+            else if (message.Tag == NetworkTags.ParticleEffectTag)
+                ParticleEffect(sender, e);
+            else if (message.Tag == NetworkTags.UpdateCooldownTag)
+                UpdateCooldown(sender, e);
+            else if (message.Tag == NetworkTags.IncreaseHealthTag)
+                IncreaseHealth(sender, e);
+        }
+    }
+
+    private void IncreaseHealth(object sender, MessageReceivedEventArgs e)
+    {
+        using (Message message = e.GetMessage() as Message)
+        {
+            using (DarkRiftReader reader = message.GetReader())
+            {
+                ushort id = reader.ReadUInt16();
+                ushort playerMaxHealth = reader.ReadUInt16();
+
+
+                if (networkPlayers.ContainsKey(id))
+                    networkPlayers[id].GetComponent<PlayerHealthManager>().IncreaseMaxHP(playerMaxHealth);
+            }
+        }
+    }
+
+    private void UpdateCooldown(object sender, MessageReceivedEventArgs e)
+    {
+        using (Message message = e.GetMessage() as Message)
+        {
+            using (DarkRiftReader reader = message.GetReader())
+            {
+                ushort id = reader.ReadUInt16();
+                float primaryCooldown = reader.ReadSingle();
+                float secondaryCooldown = reader.ReadSingle();
+
+
+                if (networkPlayers.ContainsKey(id))
+                    networkPlayers[id].GetComponent<PlayerCombatManager>().UpdateSkillCooldowns(primaryCooldown, secondaryCooldown);
+            }
+        }
+    }
+
+    private void ParticleEffect(object sender, MessageReceivedEventArgs e)
+    {
+        using (Message message = e.GetMessage() as Message)
+        {
+            using (DarkRiftReader reader = message.GetReader())
+            {
+                ParticleEffectMessageModel newMessage = reader.ReadSerializable<ParticleEffectMessageModel>();
+                ushort id = newMessage.NetworkID;
+                ushort particleID = newMessage.ParticleID;
+
+
+                if (networkPlayers.ContainsKey(id))
+                {
+                    if (particleID == PlayerRuneManager.Frostbite_ID) networkPlayers[id].GetComponent<PlayerParticleManager>().Frostbite(newMessage.Frostbite);
+                    if (particleID == PlayerRuneManager.Chill_ID) networkPlayers[id].GetComponent<PlayerParticleManager>().Chill(newMessage.Chill);
+                    if (particleID == PlayerRuneManager.Bloodthirst_ID) networkPlayers[id].GetComponent<PlayerParticleManager>().Bloodthirst();
+                    if (particleID == PlayerRuneManager.HpBoost_ID) networkPlayers[id].GetComponent<PlayerParticleManager>().HpBoost();
+                    if (particleID == PlayerRuneManager.Rage_ID) networkPlayers[id].GetComponent<PlayerParticleManager>().Rage(newMessage.Rage);
+                    if (particleID == PlayerRuneManager.ShieldGuard_ID) networkPlayers[id].GetComponent<PlayerParticleManager>().ShieldGuard(true);
+                    if (particleID == PlayerRuneManager.StrongHeart_ID) networkPlayers[id].GetComponent<PlayerParticleManager>().StrongHeart(true);
+                    if (particleID == PlayerRuneManager.Multishot_ID) networkPlayers[id].GetComponent<PlayerCombatManager>().MultiShot = newMessage.Multishot;
+                    if (particleID == PlayerRuneManager.FrostNova_ID) networkPlayers[id].GetComponent<PlayerCombatManager>().FrostNova = newMessage.FrostNova;
+                }
+            }
         }
     }
 
@@ -143,11 +209,11 @@ public class ClientManager : MonoBehaviour
                 float pos_z = newMessage.Pos_Z;
                 float move_x = newMessage.Move_X;
                 float move_z = newMessage.Move_Z;
+                float speed = newMessage.WalkSpeed;
 
 
                 if (networkPlayers.ContainsKey(id))
-                    networkPlayers[id].GetComponent<PlayerMovementManager>().SetMovement(new Vector3(pos_x,0,pos_z), new Vector3(move_x,0,move_z), horizontal, vertical
-                        );
+                    networkPlayers[id].GetComponent<PlayerMovementManager>().SetMovement(new Vector3(pos_x,0,pos_z), new Vector3(move_x,0,move_z), horizontal, vertical, speed);
             }
         }
     }
@@ -178,10 +244,12 @@ public class ClientManager : MonoBehaviour
                 float x = reader.ReadSingle();
                 float y = reader.ReadSingle();
                 float z = reader.ReadSingle();
+                bool multishot = reader.ReadBoolean();
+                Debug.Log("Multishot " + multishot);
 
 
                 if (networkPlayers.ContainsKey(id))
-                    networkPlayers[id].GetComponent<PlayerCombatManager>().PrimarySkillMessageReceived(x, y, z);
+                    networkPlayers[id].GetComponent<PlayerCombatManager>().PrimarySkillMessageReceived(x, y, z, multishot);
             }
         }
     }

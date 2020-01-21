@@ -4,15 +4,16 @@ using UnityEngine;
 
 public class FrostNova : MonoBehaviour
 {
-
+    public int PlayerOrigin { get; set; }
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log("HIT : " + LayerMask.LayerToName(other.gameObject.layer));
-        /*if (other.gameObject.layer == 8 && other.gameObject.GetComponent<PhotonView>() != null)
+        if (other.gameObject.layer == 8 && other.gameObject.GetComponent<Player>().ID != PlayerOrigin)
         {
-            other.gameObject.GetComponent<PlayerMovementController>().StartChill(PlayerBaseStats.Instance.ChillDuration);
-        }*/
-
+            if (other.gameObject.GetComponent<Player>().IsServer)
+            {
+                other.gameObject.GetComponent<PlayerMovementManager>().ApplyChill(PlayerBaseStats.Instance.ChillDuration, PlayerRuneManager.Chill_ID);
+            }
+        }
 
     }
 }

@@ -8,25 +8,17 @@ public class PrimarySkillController : MonoBehaviour
     [SerializeField] private float travelSpeed = 1.5f;
     [SerializeField] private float maxTravelDistance;
 
-    private bool isTraveling = false;
     private Vector3 impactNormal;
     private Vector3 particleMoveDirection = Vector3.zero;
-    private float damageDone = 0;
-    private float destroyTimer = 0f;
-    private bool isHit = false;
     private bool isPlayer = false;
-    private int playerViewId;
+    
     private float travelDistance = 0f;
     private Vector3 initialPosition = Vector3.zero;
     public IClient ServerClient { get; set; }
-
-    [Header("Runes")]
-    bool isFrostbite = false;
-    bool isPoison = false;
-    bool isChill = false;
-    bool isBouncy = false;
-    bool isRage = false;
-    bool isFrostNova = false;
+    public int PlayerOrigin { get; set; }
+    public bool Traveling { get; set; }
+    public bool FrostNova { get; set; }
+    public bool Hit { get; set; }
 
 
     // Start is called before the first frame update
@@ -34,62 +26,11 @@ public class PrimarySkillController : MonoBehaviour
     {
         travelDistance = 0;
         initialPosition = transform.position;
-        isHit = false;
-        isTraveling = false;
-        isFrostbite = false;
-        isRage = false;
-        isChill = false;
-        isBouncy = false;
-        isFrostNova = false;
+        Hit = false;
+        Traveling = false;
+        FrostNova = false;
     }
 
-    public bool Frostbite
-    {
-        get
-        {
-            return isFrostbite;
-        }
-        set
-        {
-            isFrostbite = value;
-        }
-    }
-
-    public bool Chill
-    {
-        get
-        {
-            return isChill;
-        }
-        set
-        {
-            isChill = value;
-        }
-    }
-
-    public bool Rage
-    {
-        get
-        {
-            return isRage;
-        }
-        set
-        {
-            isRage = value;
-        }
-    }
-
-    public int PlayerOrigin
-    {
-        set
-        {
-            playerViewId = value;
-        }
-        get
-        {
-            return playerViewId;
-        }
-    }
     //Player sets the direction of where the particle will move
     public Vector3 SetParticleMoveDirection
     {
@@ -98,35 +39,6 @@ public class PrimarySkillController : MonoBehaviour
             particleMoveDirection = value;
             StartCoroutine(ParticleTravel());
 
-        }
-    }
-
-    //Player sets the damage the particle with hit
-    public float DamageDone
-    {
-        get
-        {
-            return damageDone;
-        }
-        set
-        {
-            damageDone = value;
-        }
-    }
-
-    public bool Traveling
-    {
-        set
-        {
-            isTraveling = value;
-        }
-    }
-
-    public bool FrostNova
-    {
-        set
-        {
-            isFrostNova = value;
         }
     }
 
@@ -146,7 +58,7 @@ public class PrimarySkillController : MonoBehaviour
 
         }
 
-        if(isHit)
+        if(Hit)
         {
             yield return null;
         }
@@ -159,7 +71,7 @@ public class PrimarySkillController : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if(isTraveling)
+        if(Traveling)
         {
             Debug.Log("HIT : " + LayerMask.LayerToName(other.gameObject.layer));
             Debug.Log("Origin : " + PlayerOrigin);
@@ -176,25 +88,9 @@ public class PrimarySkillController : MonoBehaviour
                         Debug.Log("Server Apply Damage");
                         ServerManager.Instance.serverPlayersInScene[ServerClient].GetComponent<PlayerCombatManager>().ReadyForDamage(other.gameObject.GetComponent<Player>().ServerClient);
                     }
-
                     Destroy(other.gameObject);
-
                 }
-                
-                
-                /*
-                if (other.gameObject.GetComponent<PhotonView>().ViewID != playerViewId)
-                {
-
-                    if (isRage) damageDone += damageDone * PlayerBaseStats.Instance.RageDamageRate;
-                    //other.gameObject.GetComponent<PlayerHealthManager>().DamageTaken = damageDone;
-                    other.gameObject.GetComponent<PlayerHealthManager>().DamageOrigin = playerViewId;
-                    other.gameObject.GetComponent<PlayerHealthManager>().TakeDamage(damageDone);
-                    if (isFrostbite) other.gameObject.GetComponent<PlayerHealthManager>().StartFrostbite(playerViewId);
-                    if (isChill) other.gameObject.GetComponent<PlayerMovementController>().StartChill(PlayerBaseStats.Instance.ChillDuration);
-                    isPlayer = true;
-                    
-                }*/
+              
             }
             else if (other.gameObject.layer == 11)
             {
@@ -209,7 +105,7 @@ public class PrimarySkillController : MonoBehaviour
     private void Destroy(GameObject other)
     {
         GameObject obj;
-        if (isFrostNova)
+        if (FrostNova)
         {
             obj = ObjectPooler.Instance.GetPrimarySkillFrostNovaPrefab();
         }
@@ -220,7 +116,7 @@ public class PrimarySkillController : MonoBehaviour
         
         if(isPlayer)
         {
-            if(isFrostNova)
+            if(FrostNova)
             {
                 obj.transform.position = other.transform.position + Vector3.up;
             }
@@ -234,7 +130,7 @@ public class PrimarySkillController : MonoBehaviour
         else
         {
             obj.transform.position = transform.position;
-            if(!isFrostNova)
+            if(!FrostNova)
             {
                 obj.transform.rotation = Quaternion.FromToRotation(Vector3.up, impactNormal);
             }
@@ -242,7 +138,7 @@ public class PrimarySkillController : MonoBehaviour
         }
         
         obj.SetActive(true);
-        isHit = true;
+        Hit = true;
         Invoke("DelayDisable", 0.25f);
     }
 

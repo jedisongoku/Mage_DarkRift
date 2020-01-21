@@ -200,10 +200,11 @@ public class ServerManager : MonoBehaviour
                     writer.Write(x);
                     writer.Write(y);
                     writer.Write(z);
+                    writer.Write(serverPlayersInScene[e.Client].GetComponent<PlayerCombatManager>().MultiShot);
                     message.Serialize(writer);
                 }
 
-                serverPlayersInScene[e.Client].GetComponent<PlayerCombatManager>().PrimarySkillMessageReceived(x, y, z);
+                serverPlayersInScene[e.Client].GetComponent<PlayerCombatManager>().PrimarySkillMessageReceived(x, y, z, false);
 
                 //foreach (IClient c in gameServer.Server.ClientManager.GetAllClients().Where(x => x != e.Client))
                 //c.SendMessage(message, e.SendMode);

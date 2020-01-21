@@ -83,6 +83,8 @@ public class Player : MonoBehaviour
         transform.position = GameManager.Instance.spawnLocations[spawnLocationIndex].transform.position;
         isDead = false;
         playerHealthManager.RespawnPlayer();
+        playerCombatManager.RespawnPlayer();
+        playerMovementManager.RespawnPlayer();
         GetComponent<Animator>().SetTrigger("Respawn");
         playerSkin.SetActive(true);
 
@@ -109,6 +111,8 @@ public class Player : MonoBehaviour
         isDead = false;
         playerRuneManager.RestartPlayerRunes();
         playerHealthManager.RespawnPlayer();
+        playerCombatManager.RespawnPlayer();
+        playerMovementManager.RespawnPlayer();
         GetComponent<Animator>().SetTrigger("Respawn");
         playerSkin.SetActive(true);
         playerUI.SetActive(true);

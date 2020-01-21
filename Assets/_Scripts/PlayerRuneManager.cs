@@ -6,6 +6,15 @@ using UnityEngine;
 public class PlayerRuneManager : MonoBehaviour
 {
     //public static PlayerRuneManager Instance;
+    public static readonly ushort Frostbite_ID = 4;
+    public static readonly ushort Chill_ID = 5;
+    public static readonly ushort Multishot_ID = 6;
+    public static readonly ushort Rage_ID = 7;
+    public static readonly ushort FrostNova_ID = 8;
+    public static readonly ushort Bloodthirst_ID = 9;
+    public static readonly ushort HpBoost_ID = 10;
+    public static readonly ushort ShieldGuard_ID = 11;
+    public static readonly ushort StrongHeart_ID = 12;
 
     private Dictionary<ushort, Rune> runeCatalog = new Dictionary<ushort, Rune>();
 
@@ -15,6 +24,7 @@ public class PlayerRuneManager : MonoBehaviour
 
     private PlayerCombatManager playerCombatManager;
     private PlayerHealthManager playerHealthManager;
+    private ushort[] runeOptions;
 
 
     // Start is called before the first frame update
@@ -47,7 +57,7 @@ public class PlayerRuneManager : MonoBehaviour
             //runeCatalog.Add(new Rune("Invincible", "Invincible", "Become invincible once in a while", 1, 1));
             //runeCatalog.Add(new Rune("Life", "Life", "Get +1 life to continue adventure", 1, 1));
             runeCatalog.Add(11, new Rune(11, "Shield Guard", "ShieldGuard", "A shield circles around you reducing damage taken", 1, 1));
-            runeCatalog.Add(12, new Rune(12, "Strong Hearth", "StrongHearth", "You are healed for more HP than before", 1, 1));
+            runeCatalog.Add(12, new Rune(12, "Strong Heart", "StrongHeart", "You are healed for more HP than before", 1, 1));
             /*
             //Offensive Runes
             runeCatalog.Add(new Rune("Flame Circle", "FlameCircle", "Summon 2 lightning bolts to spin around you", 1, 1));
@@ -94,7 +104,7 @@ public class PlayerRuneManager : MonoBehaviour
 
     void ArrangeListAfterSelection(int index)
     {
-        if(playerRuneList.Count > 4)
+        if(playerRuneList.Count > 0)
         {
             for (int i = 0; i < 3; i++)
             {
@@ -159,65 +169,82 @@ public class PlayerRuneManager : MonoBehaviour
         Debug.Log("RuneID " + rune_2 + " RuneName " + runeCatalog[rune_2].DisplayName);
         Debug.Log("RuneID " + rune_3 + " RuneName " + runeCatalog[rune_3].DisplayName);
         string[] runeNames = { runeCatalog[rune_1].DisplayName, runeCatalog[rune_2].DisplayName, runeCatalog[rune_3].DisplayName };
+        ushort[] runeIDs = { rune_1, rune_2, rune_3};
+        runeOptions = runeIDs;
 
         HUDManager.Instance.DisplayRunes(runeNames);
+        
     }
 
     void DamageBoost()
     {
         playerCombatManager.PrimarySkillDamage += Mathf.RoundToInt(PlayerBaseStats.Instance.PrimarySkillDamage * PlayerBaseStats.Instance.PrimarySkillBoostMultiplier);
         Debug.Log("Primary Skill Damage " + playerCombatManager.PrimarySkillDamage);
+        playerCombatManager.UpdateCooldownMessage();
     }
 
     void AttackSpeedBoost()
     {
         playerCombatManager.PrimarySkillCooldown -= PlayerBaseStats.Instance.PrimarySkillCooldown * PlayerBaseStats.Instance.PrimarySkillSpeedMultiplier;
         Debug.Log("Primary Skill Cooldown " + playerCombatManager.PrimarySkillCooldown);
+        playerCombatManager.UpdateCooldownMessage();
     }
 
     void DashReducedCooldown()
     {
         playerCombatManager.SecondarySkillCooldown -= PlayerBaseStats.Instance.SecondarySkillCooldown * PlayerBaseStats.Instance.SecondarySkillSpeedMultiplier;
         Debug.Log("Secondary Skill Cooldown " + playerCombatManager.SecondarySkillCooldown);
+        playerCombatManager.UpdateCooldownMessage();
     }
 
     void Frostbite()
     {
-        //playerCombatManager.Frostbite = true;
+        playerCombatManager.Frostbite = true;
     }
 
     void Chill()
     {
-        //playerCombatManager.Chill = true;
+        playerCombatManager.Chill = true;
     }
-    void Poison()
-    {
-        //playerCombatManager.Poison = true;
-    }
-    void Bouncy()
-    {
-        //playerCombatManager.Bouncy = true;
-    }
+
     void MultiShot()
     {
-        //playerCombatManager.MultiShot = true;
-    }
-    void Rage()
-    {
-        //playerHealthManager.Rage = true;
+        playerCombatManager.MultiShot = true;
+        playerCombatManager.UpdateMultishotMessage(true, Multishot_ID);
     }
     void FrostNova()
     {
-        //playerCombatManager.FrostNova = true;
+        playerCombatManager.FrostNova = true;
+        playerCombatManager.UpdateFrostNovaMessage(true, FrostNova_ID);
     }
-
+    void Rage()
+    {
+        playerHealthManager.Rage = true;
+    }
     void Bloodthirst()
     {
-        //playerHealthManager.Bloodthirst = true;
+        playerHealthManager.Bloodthirst = true;
     }
     void HpBoost()
     {
-        //playerHealthManager.HpBoost = true;
+        playerHealthManager.HpBoost();
+    }
+
+    void ShieldGuard()
+    {
+        playerHealthManager.ShieldGuard = true;
+    }
+    void StrongHeart()
+    {
+        playerHealthManager.StrongHeart();
+    }
+    void Poison()
+    {
+
+    }
+    void Bouncy()
+    {
+
     }
     void Invincible()
     {
@@ -225,16 +252,6 @@ public class PlayerRuneManager : MonoBehaviour
     }
     void Life()
     {
-
-    }
-    void ShieldGuard()
-    {
-        //playerHealthManager.ShieldGuard = true;
-    }
-    void StrongHearth()
-    {
-        //playerHealthManager.StrongHeart = true;
-        //playerHealthManager.HealthGenerationRate += strongHeartMultiplier;
 
     }
     void FlameCircle()

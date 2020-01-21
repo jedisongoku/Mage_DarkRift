@@ -20,14 +20,13 @@ public class PlayerCombatManager : MonoBehaviour
     public int PrimarySkillDamage { get; set; }
     public float PrimarySkillCooldown { get; set; }
     public float SecondarySkillCooldown { get; set; }
-    private bool isFrostbite;
-    private bool isPoison;
-    private bool isChill;
-    private bool isBouncy;
-    private bool isRage;
-    private bool isMultiShot;
-    private bool isFrostNova;
-
+    public bool Frostbite { get; set; }
+    public bool Chill { get; set; }
+    public bool MultiShot { get; set; }
+    public bool FrostNova { get; set; }
+    public bool Poison { get; set; }
+    public bool Rage { get; set; }
+    
     private float primarySkillCooldownTimer;
     private float secondarySkillCooldownTimer;
     private float turnSpeed = 20f;
@@ -48,6 +47,11 @@ public class PlayerCombatManager : MonoBehaviour
         SetPlayerBaseStats();
         
     }
+
+    public void RespawnPlayer()
+    {
+        SetPlayerBaseStats();
+    }
     void SetPlayerBaseStats()
     {
         PrimarySkillDamage = PlayerBaseStats.Instance.PrimarySkillDamage;
@@ -55,13 +59,13 @@ public class PlayerCombatManager : MonoBehaviour
         SecondarySkillCooldown = PlayerBaseStats.Instance.SecondarySkillCooldown;
         primarySkillCooldownTimer = PrimarySkillCooldown;
         secondarySkillCooldownTimer = SecondarySkillCooldown;
-        isFrostbite = false;
-        isPoison = false;
-        isChill = false;
-        isBouncy = false;
-        isRage = false;
-        isMultiShot = false;
-        isFrostNova = false;
+        Frostbite = false;
+        Poison = false;
+        Chill = false;
+        Rage = false;
+        MultiShot = false;
+        FrostNova = false;
+        Debug.Log("Multishot Reset " + MultiShot);
     }
 
     // Update is called once per frame
@@ -100,6 +104,7 @@ public class PlayerCombatManager : MonoBehaviour
                 writer.Write(mousePosition.x);
                 writer.Write(mousePosition.y);
                 writer.Write(mousePosition.z);
+                //writer.Write(MultiShot);
 
                 using (Message message = Message.Create(NetworkTags.PrimarySkillTag, writer))
                     player.Client.SendMessage(message, SendMode.Reliable);
@@ -110,11 +115,14 @@ public class PlayerCombatManager : MonoBehaviour
         }
     }
 
-    public void PrimarySkillMessageReceived(float _x, float _y, float _z)
+    public void PrimarySkillMessageReceived(float _x, float _y, float _z, bool _multishot)
     {
         primarySkillCooldownTimer = 0;
         mousePosition = new Vector3(_x, _y, _z);
         StartCoroutine(UsePrimarySkill(0f));
+        if (!player.IsServer) MultiShot = _multishot;
+        Debug.Log("Multishot " + MultiShot);
+        if(MultiShot) StartCoroutine(UsePrimarySkill(PlayerBaseStats.Instance.MultishotDelayTime));
     }
 
     IEnumerator UsePrimarySkill(float _delayTime)
@@ -135,6 +143,7 @@ public class PlayerCombatManager : MonoBehaviour
         obj.GetComponent<PrimarySkillController>().SetParticleMoveDirection = new Vector3(direction.x, 0, direction.z);
         obj.GetComponent<PrimarySkillController>().Traveling = true;
         obj.GetComponent<PrimarySkillController>().PlayerOrigin = player.ID;
+        if (FrostNova) obj.GetComponent<PrimarySkillController>().FrostNova = FrostNova;
         if(player.IsServer) obj.GetComponent<PrimarySkillController>().ServerClient = player.ServerClient;
 
 
@@ -193,8 +202,59 @@ public class PlayerCombatManager : MonoBehaviour
     public void ReadyForDamage(IClient _enemyClient)
     {
         int damageToApply = PrimarySkillDamage;
-        if (isRage) damageToApply += Mathf.RoundToInt(damageToApply * PlayerBaseStats.Instance.RageDamageRate);
+        if (Rage) damageToApply += Mathf.RoundToInt(damageToApply * PlayerBaseStats.Instance.RageDamageRate);
         ServerManager.Instance.serverPlayersInScene[_enemyClient].GetComponent<PlayerHealthManager>().TakeDamage(damageToApply, player.ServerClient);
+        if (Chill) ServerManager.Instance.serverPlayersInScene[_enemyClient].GetComponent<PlayerMovementManager>().ApplyChill(PlayerBaseStats.Instance.ChillDuration, PlayerRuneManager.Chill_ID);
+        if (Frostbite) ServerManager.Instance.serverPlayersInScene[_enemyClient].GetComponent<PlayerHealthManager>().ApplyFrostbite(player.ServerClient, PlayerRuneManager.Frostbite_ID);
         //playerHealthManager.TakeDamage(damageToApply, _enemyClient);
     }
+
+    public void UpdateCooldownMessage()
+    {
+        using (DarkRiftWriter writer = DarkRiftWriter.Create())
+        {
+            writer.Write((ushort)player.ID);
+            writer.Write(PrimarySkillCooldown);
+            writer.Write(SecondarySkillCooldown);
+
+            using (Message message = Message.Create(NetworkTags.UpdateCooldownTag, writer))
+                player.ServerClient.SendMessage(message, SendMode.Reliable);
+        }
+    }
+
+    public void UpdateSkillCooldowns(float _primary, float _secondary)
+    {
+        PrimarySkillCooldown = _primary;
+        SecondarySkillCooldown = _secondary;
+    }
+
+    public void UpdateMultishotMessage(bool _value, ushort _runeID)
+    {
+        ParticleEffectMessageModel newMessage = new ParticleEffectMessageModel()
+        {
+            NetworkID = (ushort)player.ID,
+            ParticleID = _runeID,
+            Multishot = _value
+        };
+
+        using (Message message = Message.Create(NetworkTags.ParticleEffectTag, newMessage))
+            foreach (IClient c in ServerManager.Instance.gameServer.Server.ClientManager.GetAllClients())
+                c.SendMessage(message, SendMode.Reliable);
+    }
+
+    public void UpdateFrostNovaMessage(bool _value, ushort _runeID)
+    {
+        ParticleEffectMessageModel newMessage = new ParticleEffectMessageModel()
+        {
+            NetworkID = (ushort)player.ID,
+            ParticleID = _runeID,
+            FrostNova = _value
+        };
+
+        using (Message message = Message.Create(NetworkTags.ParticleEffectTag, newMessage))
+            foreach (IClient c in ServerManager.Instance.gameServer.Server.ClientManager.GetAllClients())
+                c.SendMessage(message, SendMode.Reliable);
+    }
+
+
 }

@@ -19,13 +19,14 @@ public class PlayerBaseStats : MonoBehaviour
     [SerializeField] private int bloodthirstHealAmount;
     [SerializeField] private int hpBoostAmount;
     [SerializeField] private float shieldGuardDamageReductionRate;
-    [SerializeField] private float flameDamageRate;
-    [SerializeField] private int flameDuration;
+    [SerializeField] private float frostbiteDamageRate;
+    [SerializeField] private int frostbiteDuration;
     [SerializeField] private float chillSlowRate;
     [SerializeField] private float chillDuration;
     [SerializeField] private float multishotDelayTime;
     [SerializeField] private float rageStartRate;
     [SerializeField] private float rageDamageRate;
+    [SerializeField] private float strongHeartRate;
     [SerializeField] private float poisonPickupTime;
 
 
@@ -106,6 +107,14 @@ public class PlayerBaseStats : MonoBehaviour
         }
     }
 
+    public float StrongHeartRate
+    {
+        get
+        {
+            return strongHeartRate;
+        }
+    }
+
     public int HpBoostAmount
     {
         get
@@ -122,19 +131,19 @@ public class PlayerBaseStats : MonoBehaviour
         }
     }
 
-    public float FlameDamageRate
+    public float FrostbiteDamageRate
     {
         get
         {
-            return flameDamageRate;
+            return frostbiteDamageRate;
         }
     }
 
-    public int FlameDuration
+    public int FrostbiteDuration
     {
         get
         {
-            return flameDuration;
+            return frostbiteDuration;
         }
     }
 
@@ -170,7 +179,7 @@ public class PlayerBaseStats : MonoBehaviour
         }
     }
 
-    public float Multishot
+    public float MultishotDelayTime
     {
         get
         {

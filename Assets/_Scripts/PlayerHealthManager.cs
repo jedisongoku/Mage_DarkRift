@@ -13,80 +13,150 @@ public class PlayerHealthManager : MonoBehaviour
     [SerializeField] TextMeshProUGUI playerHealthText;
 
     private Player player;
+    private PlayerCombatManager playerCombatManager;
+    private PlayerParticleManager playerParticleManager;
     private Animator m_Animator;
     private Rigidbody m_Rigidbody;
     private int playerhealth;
     private int playerMaxHealth;
-    private float healthGenerationRate;
-    private int bloodthirstHealAmount;
-    private int hpBoostAmount;
-    private float shieldGuardDamageReductionRate;
+    public float HealthGenerationRate { get; set; }
+    private float frostbiteDurationTick;
+
+    [Header("Runes")]
+    private bool isBloodthirstActive;
+    private bool isShieldGuardActive;
+    public bool Rage { get; set; }
+    private bool HasPlayerRaged { get; set; }
+    private bool IsFrostbited { get; set; }
     
-    private bool isBloodthirst;
-    private bool isHpBoost;
-    private bool isStrongHeart;
-    private bool isShieldGuard;
-    private bool isRage;
 
     void Start()
     {
         player = GetComponent<Player>();
+        playerCombatManager = GetComponent<PlayerCombatManager>();
+        playerParticleManager = GetComponent<PlayerParticleManager>();
         m_Animator = GetComponent<Animator>();
         m_Rigidbody = GetComponent<Rigidbody>();
+
 
         //StartCoroutine(HealhtRegeneration());
         SetPlayerBaseStats();
         //UpdateHealth();
-        StartCoroutine(HealhtRegeneration());
+        if(player.IsServer)
+        {
+            StartCoroutine(HealhtRegeneration());
+        }
+        
     }
+
 
     void SetPlayerBaseStats()
     {
         playerMaxHealth = PlayerBaseStats.Instance.Health;
-        healthGenerationRate = PlayerBaseStats.Instance.HealthGenerationRate;
-        bloodthirstHealAmount = PlayerBaseStats.Instance.BloodthirstHealAmount;
-        hpBoostAmount = PlayerBaseStats.Instance.HpBoostAmount;
-        shieldGuardDamageReductionRate = PlayerBaseStats.Instance.ShieldGuardDamageReductionRate;
+        HealthGenerationRate = PlayerBaseStats.Instance.HealthGenerationRate;
         playerhealth = playerMaxHealth;
-        isBloodthirst = false;
-        isHpBoost = false;
-        isStrongHeart = false;
-        isShieldGuard = false;
-        isRage = false;
-        //strongHeartParticle.SetActive(false);
-        //shieldGuardParticle.SetActive(false);
-        //frostbiteParticle.SetActive(false);
+        Bloodthirst = false;
+        ShieldGuard = false;
+        Rage = false;
+        IsFrostbited = false;
 
         Invoke("UpdateHealth", 0.25f);
     }
 
     void UpdateHealth()
     {
-        Debug.Log("health " + playerhealth);
-        if(playerhealth <= 0)
+        //Debug.Log("health " + playerhealth);
+        if(playerhealth <= 0 && !player.IsDead)
         {
-            Invoke("Dead", 0.1f);
+            player.IsDead = true;
             m_Animator.SetTrigger("Dead");
-            //dead here
+            Invoke("Dead", 0.1f);
         }
         else
         {
-            //Debug.Log(playerhealth + "/" + playerMaxHealth + " - " + (float)playerhealth / (float)playerMaxHealth);
             playerHealthBar.fillAmount = (float)playerhealth / (float)playerMaxHealth;
             playerHealthText.text = playerhealth.ToString();
         }
-        
-        if(player.IsServer)
+
+        if (((float)playerhealth / (float)playerMaxHealth <= PlayerBaseStats.Instance.RageStartRate) && Rage && !HasPlayerRaged)
+        {
+            HasPlayerRaged = true;
+            playerCombatManager.Rage = true;
+            SendRageParticleMessage(true, PlayerRuneManager.Rage_ID);
+            
+        }
+        else if (((float)playerhealth / (float)playerMaxHealth >= PlayerBaseStats.Instance.RageStartRate) && Rage && HasPlayerRaged)
+        {
+            HasPlayerRaged = false;
+            playerCombatManager.Rage = false;
+            SendRageParticleMessage(false, PlayerRuneManager.Rage_ID);
+        }
+
+        if (player.IsServer)
         {
             SendHealthMessage();
         }
         
     }
 
+    public void ApplyFrostbite(IClient _damageOrigin, ushort _runeID)
+    {
+        if(!IsFrostbited)
+        {
+            IsFrostbited = true;
+            playerParticleManager.Frostbite(true);
+            StartCoroutine(Frostbite(_damageOrigin, _runeID));
+            SendFrostbiteParticleMessage(true, _runeID);
+        }
+        
+    }
+
+    void SendFrostbiteParticleMessage(bool _value, ushort _runeID)
+    {
+        ParticleEffectMessageModel newMessage = new ParticleEffectMessageModel()
+        {
+            NetworkID = (ushort)player.ID,
+            ParticleID = _runeID,
+            Frostbite = _value
+        };
+
+        using (Message message = Message.Create(NetworkTags.ParticleEffectTag, newMessage))
+            foreach (IClient c in ServerManager.Instance.gameServer.Server.ClientManager.GetAllClients())
+                c.SendMessage(message, SendMode.Reliable);
+    }
+
+    IEnumerator Frostbite(IClient _damageOrigin, ushort _runeID)
+    {
+
+        yield return new WaitForSeconds(1f);
+        if (frostbiteDurationTick < PlayerBaseStats.Instance.FrostbiteDuration)
+        {
+            int damage = Mathf.RoundToInt((playerMaxHealth * PlayerBaseStats.Instance.FrostbiteDamageRate) / PlayerBaseStats.Instance.FrostbiteDuration);
+            TakeDamage(damage, _damageOrigin);
+            frostbiteDurationTick++;
+
+            if (playerhealth > 0)
+            {
+                StartCoroutine(Frostbite(_damageOrigin, _runeID));
+            }
+        }
+        else
+        {
+            IsFrostbited = false;
+            frostbiteDurationTick = 0;
+            SendFrostbiteParticleMessage(false, _runeID);
+            playerParticleManager.Frostbite(false);
+        }
+    }
+
     #region Server Only Calls
     public void TakeDamage(int _damageTaken, IClient _damageOrigin)
     {
         //Add other rune variables here before applying the damage to self
+        if (isShieldGuardActive)
+        {
+            _damageTaken -= Mathf.RoundToInt(_damageTaken * PlayerBaseStats.Instance.ShieldGuardDamageReductionRate);
+        }
 
         playerhealth = (playerhealth - _damageTaken) <= 0 ? 0 : (playerhealth - _damageTaken);
         if(playerhealth <= 0)
@@ -94,7 +164,6 @@ public class PlayerHealthManager : MonoBehaviour
             ScoreManager.Instance.UpdateScoreboard(_damageOrigin.ID, player.ID);            
         }
         UpdateHealth();
-        //SendHealthMessage();
     }
 
     void SendHealthMessage()
@@ -114,7 +183,7 @@ public class PlayerHealthManager : MonoBehaviour
 
     public void HealthMessageReceived(int _health)
     {
-        Debug.Log("Message Received in manager");
+        //Debug.Log("Message Received in manager");
         playerhealth = _health;
         UpdateHealth();
     }
@@ -122,9 +191,9 @@ public class PlayerHealthManager : MonoBehaviour
     void Dead()
     {
         Debug.Log("Dead");
+        playerParticleManager.DisableParticles();
         GetComponent<CapsuleCollider>().enabled = false;
         playerUI.SetActive(false);
-        player.IsDead = true;
         if(player.IsControllable)
         {
             HUDManager.Instance.OnPlayerDeath();
@@ -145,7 +214,7 @@ public class PlayerHealthManager : MonoBehaviour
         yield return new WaitForSeconds(1f);
         if (playerhealth < playerMaxHealth)
         {
-            playerhealth += Mathf.CeilToInt(playerMaxHealth * healthGenerationRate);
+            playerhealth += Mathf.CeilToInt(playerMaxHealth * HealthGenerationRate);
 
             if (playerhealth > playerMaxHealth)
             {
@@ -156,5 +225,153 @@ public class PlayerHealthManager : MonoBehaviour
         }
         StartCoroutine(HealhtRegeneration());
 
+    }
+    public bool ShieldGuard
+    {
+        get
+        {
+            return isShieldGuardActive;
+        }
+        set
+        {
+            isShieldGuardActive = value;
+            if (isShieldGuardActive) SendShieldGuardParticleMessage(PlayerRuneManager.ShieldGuard_ID);
+        }
+    }
+
+    public void StrongHeart()
+    {
+        HealthGenerationRate += PlayerBaseStats.Instance.StrongHeartRate;
+        SendStrongHeartParticleMessage(PlayerRuneManager.StrongHeart_ID);
+    }
+
+    public bool Bloodthirst
+    {
+        get
+        {
+            return isBloodthirstActive;
+        }
+        set
+        {
+            isBloodthirstActive = value;
+
+        }
+    }
+
+    public void BloodthirstHeal()
+    {
+        if (isBloodthirstActive)
+        {
+            if (playerhealth + PlayerBaseStats.Instance.BloodthirstHealAmount > playerMaxHealth)
+            {
+                playerhealth = playerMaxHealth;
+            }
+            else
+            {
+                playerhealth += PlayerBaseStats.Instance.BloodthirstHealAmount;
+            }
+            SendBloodthirstParticleMessage(PlayerRuneManager.Bloodthirst_ID);
+        }
+    }
+
+    void SendBloodthirstParticleMessage(ushort _runeID)
+    {
+        ParticleEffectMessageModel newMessage = new ParticleEffectMessageModel()
+        {
+            NetworkID = (ushort)player.ID,
+            ParticleID = _runeID
+        };
+
+        using (Message message = Message.Create(NetworkTags.ParticleEffectTag, newMessage))
+            foreach (IClient c in ServerManager.Instance.gameServer.Server.ClientManager.GetAllClients())
+                c.SendMessage(message, SendMode.Reliable);
+    }
+
+    public void HpBoost()
+    {
+        playerMaxHealth += PlayerBaseStats.Instance.HpBoostAmount;
+        if (playerhealth + PlayerBaseStats.Instance.HpBoostAmount > playerMaxHealth)
+        {
+            playerhealth = playerMaxHealth;
+        }
+        else
+        {
+            playerhealth += PlayerBaseStats.Instance.HpBoostAmount;
+        }
+        UpdateHealth();
+        SendIncreaseMaxHPMessage();
+        SendHpBoostParticleMessage(PlayerRuneManager.HpBoost_ID);
+        
+    }
+
+    public void SendIncreaseMaxHPMessage()
+    {
+        using (DarkRiftWriter writer = DarkRiftWriter.Create())
+        {
+            writer.Write((ushort)player.ID);
+            writer.Write(playerMaxHealth);
+
+            using (Message message = Message.Create(NetworkTags.IncreaseHealthTag, writer))
+                foreach (IClient c in ServerManager.Instance.gameServer.Server.ClientManager.GetAllClients())
+                    c.SendMessage(message, SendMode.Reliable);
+        }
+    }
+
+    public void IncreaseMaxHP(ushort _playerMaxHeath)
+    {
+        playerMaxHealth = _playerMaxHeath;
+    }
+
+    void SendHpBoostParticleMessage(ushort _runeID)
+    {
+        ParticleEffectMessageModel newMessage = new ParticleEffectMessageModel()
+        {
+            NetworkID = (ushort)player.ID,
+            ParticleID = _runeID
+        };
+
+        using (Message message = Message.Create(NetworkTags.ParticleEffectTag, newMessage))
+            foreach (IClient c in ServerManager.Instance.gameServer.Server.ClientManager.GetAllClients())
+                c.SendMessage(message, SendMode.Reliable);
+    }
+
+    void SendRageParticleMessage(bool _value, ushort _runeID)
+    {
+        ParticleEffectMessageModel newMessage = new ParticleEffectMessageModel()
+        {
+            NetworkID = (ushort)player.ID,
+            Rage = _value,
+            ParticleID = _runeID
+        };
+
+        using (Message message = Message.Create(NetworkTags.ParticleEffectTag, newMessage))
+            foreach (IClient c in ServerManager.Instance.gameServer.Server.ClientManager.GetAllClients())
+                c.SendMessage(message, SendMode.Reliable);
+    }
+
+    void SendShieldGuardParticleMessage(ushort _runeID)
+    {
+        ParticleEffectMessageModel newMessage = new ParticleEffectMessageModel()
+        {
+            NetworkID = (ushort)player.ID,
+            ParticleID = _runeID
+        };
+
+        using (Message message = Message.Create(NetworkTags.ParticleEffectTag, newMessage))
+            foreach (IClient c in ServerManager.Instance.gameServer.Server.ClientManager.GetAllClients())
+                c.SendMessage(message, SendMode.Reliable);
+    }
+
+    void SendStrongHeartParticleMessage(ushort _runeID)
+    {
+        ParticleEffectMessageModel newMessage = new ParticleEffectMessageModel()
+        {
+            NetworkID = (ushort)player.ID,
+            ParticleID = _runeID
+        };
+
+        using (Message message = Message.Create(NetworkTags.ParticleEffectTag, newMessage))
+            foreach (IClient c in ServerManager.Instance.gameServer.Server.ClientManager.GetAllClients())
+                c.SendMessage(message, SendMode.Reliable);
     }
 }

@@ -48,6 +48,7 @@ public class ScoreManager : MonoBehaviour
                 if(player.GetComponent<Player>().ID == _killerID)
                 {
                     player.GetComponent<PlayerRuneManager>().SendShowRuneMessage();
+                    player.GetComponent<PlayerHealthManager>().BloodthirstHeal();
                 }
                 
             }

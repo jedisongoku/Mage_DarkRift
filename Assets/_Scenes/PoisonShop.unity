@@ -9863,13 +9863,14 @@ MonoBehaviour:
   bloodthirstHealAmount: 30
   hpBoostAmount: 50
   shieldGuardDamageReductionRate: 0.2
-  flameDamageRate: 0.2
-  flameDuration: 8
-  chillSlowRate: 0.15
+  frostbiteDamageRate: 0.2
+  frostbiteDuration: 6
+  chillSlowRate: 0.3
   chillDuration: 2.5
   multishotDelayTime: 0.2
   rageStartRate: 0.3
-  rageDamageRate: 0.1
+  rageDamageRate: 0.2
+  strongHeartRate: 0.015
   poisonPickupTime: 5
 --- !u!114 &206528785
 MonoBehaviour:
@@ -9891,7 +9892,7 @@ MonoBehaviour:
     type: 3}
   primarySkillPrefabPooledAmount: 2
   primarySkillExplosionPrefabPooledAmount: 2
-  primarySkillFrostNovaPrefabPooledAmount: 1
+  primarySkillFrostNovaPrefabPooledAmount: 2
 --- !u!114 &206528786
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -41585,6 +41586,7 @@ GameObject:
   - component: {fileID: 881048183}
   - component: {fileID: 881048182}
   - component: {fileID: 881048181}
+  - component: {fileID: 881048184}
   m_Layer: 0
   m_Name: EventSystem
   m_TagString: Untagged
@@ -41640,6 +41642,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &881048184
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 881048180}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3ea33ecba83c6e84987e21660e2a7fec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &881150197
 GameObject:
   m_ObjectHideFlags: 0

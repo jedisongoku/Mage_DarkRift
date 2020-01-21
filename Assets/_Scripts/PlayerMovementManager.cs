@@ -2,12 +2,14 @@
 using UnityEngine;
 using Cinemachine;
 using DarkRift.Server;
+using System.Collections;
 
 public class PlayerMovementManager : MonoBehaviour
 {
     const byte MOVEMENT_TAG = 1;
     public float clientWalkSpeed = 15f;
     private Player player;
+    private PlayerParticleManager playerParticleManager;
     private Animator m_Animator;
     private Rigidbody m_Rigidbody;
 
@@ -26,10 +28,12 @@ public class PlayerMovementManager : MonoBehaviour
     private float fireTimer;
     private float movementTimeFrame;
     private bool correctPosition;
+    private bool IsChilled { get; set; }
 
     void Awake()
     {
         player = GetComponent<Player>();
+        playerParticleManager = GetComponent<PlayerParticleManager>();
         m_Animator = GetComponent<Animator>();
         m_Rigidbody = GetComponent<Rigidbody>();
         m_NetworkPosition = m_Rigidbody.position;
@@ -37,10 +41,16 @@ public class PlayerMovementManager : MonoBehaviour
         SetPlayerBaseStats(); 
     }
 
+    public void RespawnPlayer()
+    {
+        SetPlayerBaseStats();
+    }
+
     void SetPlayerBaseStats()
     {
         walkSpeed = PlayerBaseStats.Instance.WalkSpeed;
         turnSpeed = PlayerBaseStats.Instance.TurnSpeed;
+        IsChilled = false;
     }
 
     private void Start()
@@ -115,12 +125,13 @@ public class PlayerMovementManager : MonoBehaviour
     }
 
     //Client-Side
-    public void SetMovement(Vector3 _networkPosition, Vector3 _movement, float _horizontal, float _vertical)
+    public void SetMovement(Vector3 _networkPosition, Vector3 _movement, float _horizontal, float _vertical, float _walkSpeed)
     {
         m_NetworkPosition = _networkPosition;
         m_networkMovement = _movement;
         m_networkHorizontal = _horizontal;
         m_networkVertical = _vertical;
+        walkSpeed = _walkSpeed;
         
     }
 
@@ -162,7 +173,8 @@ public class PlayerMovementManager : MonoBehaviour
                 Pos_X = m_Rigidbody.position.x,
                 Pos_Z = m_Rigidbody.position.z,
                 Move_X = m_Movement.x,
-                Move_Z = m_Movement.z
+                Move_Z = m_Movement.z,
+                WalkSpeed = walkSpeed
                 
             };
 
@@ -170,6 +182,45 @@ public class PlayerMovementManager : MonoBehaviour
                 foreach (IClient c in ServerManager.Instance.gameServer.Server.ClientManager.GetAllClients())
                     c.SendMessage(message, SendMode.Unreliable);
         } 
+    }
+
+    public void ApplyChill(float _duration, ushort _runeID)
+    {
+        if (!IsChilled)
+        {
+            IsChilled = true;
+            playerParticleManager.Chill(true);
+            StartCoroutine(Chill(_duration, _runeID));
+            SendChillParticleMessage(true, _runeID);
+        }
+        
+    }
+
+    void SendChillParticleMessage(bool _value, ushort _runeID)
+    {
+        ParticleEffectMessageModel newMessage = new ParticleEffectMessageModel()
+        {
+            NetworkID = (ushort)player.ID,
+            ParticleID = _runeID,
+            Chill = _value
+        };
+
+        using (Message message = Message.Create(NetworkTags.ParticleEffectTag, newMessage))
+            foreach (IClient c in ServerManager.Instance.gameServer.Server.ClientManager.GetAllClients())
+                c.SendMessage(message, SendMode.Reliable);
+    }
+
+    IEnumerator Chill(float _duration, ushort _runeID)
+    {
+        walkSpeed -= walkSpeed * PlayerBaseStats.Instance.ChillSlowRate;
+
+        yield return new WaitForSeconds(_duration);
+
+        IsChilled = false;
+        SendChillParticleMessage(false, _runeID);
+        playerParticleManager.Chill(false);
+        walkSpeed = PlayerBaseStats.Instance.WalkSpeed;
+
     }
 
 }

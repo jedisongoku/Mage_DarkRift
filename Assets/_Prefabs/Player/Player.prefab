@@ -28368,7 +28368,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1578900019379570661
 Transform:
   m_ObjectHideFlags: 0
@@ -38566,6 +38566,7 @@ GameObject:
   - component: {fileID: -7094498262923247961}
   - component: {fileID: 5650472987659434443}
   - component: {fileID: -2517951135824627344}
+  - component: {fileID: 1848272768536254343}
   m_Layer: 8
   m_Name: Player
   m_TagString: Untagged
@@ -38720,6 +38721,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c7a7785f0207b14080e92daea3bff9a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1848272768536254343
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6361094391380882287}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 61238bf936f6d9a42a31497caf67cec0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  frostbite: {fileID: 6830049393364381262}
+  strongHeart: {fileID: 9198737067867424218}
+  shieldGuard: {fileID: 1296872166}
+  healing: {fileID: 1578900019379883753}
+  dashTrail: {fileID: 8486014248380566485}
+  chill: {fileID: 1144890270291671385}
+  rage: {fileID: 8913305232906215315}
 --- !u!1 &6830049393364381262
 GameObject:
   m_ObjectHideFlags: 0
@@ -58855,16 +58875,16 @@ ParticleSystem:
       maxColor: {r: 1, g: 1, b: 1, a: 1}
       maxGradient:
         serializedVersion: 2
-        key0: {r: 0.9622642, g: 0.09204251, b: 0, a: 1}
-        key1: {r: 1, g: 0.015846698, b: 0, a: 1}
+        key0: {r: 0.56078434, g: 1, b: 0, a: 1}
+        key1: {r: 0, g: 1, b: 0, a: 0}
         key2: {r: 1, g: 1, b: 1, a: 0}
         key3: {r: 1, g: 1, b: 1, a: 0}
         key4: {r: 0, g: 0, b: 0, a: 0}
         key5: {r: 0, g: 0, b: 0, a: 0}
         key6: {r: 0, g: 0, b: 0, a: 0}
         key7: {r: 0, g: 0, b: 0, a: 0}
-        ctime0: 23119
-        ctime1: 65535
+        ctime0: 578
+        ctime1: 65150
         ctime2: 65535
         ctime3: 64389
         ctime4: 0
@@ -58873,7 +58893,7 @@ ParticleSystem:
         ctime7: 0
         atime0: 0
         atime1: 65535
-        atime2: 0
+        atime2: 65535
         atime3: 0
         atime4: 0
         atime5: 0

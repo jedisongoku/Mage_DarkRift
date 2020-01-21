@@ -52,6 +52,7 @@ public class HUDManager : MonoBehaviour
 
     public void OnGameLevelLoaded()
     {
+
         ActivatePanels(loadingPanel.name);
         Invoke("EnableGameHUD", 2f);
     }
@@ -70,10 +71,16 @@ public class HUDManager : MonoBehaviour
 
     public void DisplayRunes(string[] runeNames)
     {
-        for (int i = 0; i < 3; i++)
+        foreach(var listItem in runeSelectionList)
+        {
+            listItem.SetActive(false);
+        }
+
+        for (int i = 0; i < runeNames.Length; i++)
         {
             
             runeSelectionList[i].GetComponentInChildren<Text>().text = runeNames[i];
+            runeSelectionList[i].SetActive(true);
         }
         runeSelection.SetActive(true);
     }
