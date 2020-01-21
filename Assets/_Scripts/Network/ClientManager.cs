@@ -127,13 +127,33 @@ public class ClientManager : MonoBehaviour
             using (DarkRiftReader reader = message.GetReader())
             {
                 ushort id = reader.ReadUInt16();
+                ushort listCount = reader.ReadUInt16();
+                Debug.Log("Rune List count in ShowRune " + listCount);
+                ushort[] runeIDs;
+                if (listCount > 3)
+                {
+                    runeIDs = new ushort[3];
+                    for (int i = 0; i < 3; i++)
+                    {
+                        runeIDs[i] = reader.ReadUInt16();
+                    }
+                }
+                else
+                {
+                    runeIDs = new ushort[listCount];
+                    for (int i = 0; i < listCount; i++)
+                    {
+                        runeIDs[i] = reader.ReadUInt16();
+                    }
+                }
+                /*
                 ushort runeID_1 = reader.ReadUInt16();
                 ushort runeID_2 = reader.ReadUInt16();
-                ushort runeID_3 = reader.ReadUInt16();
+                ushort runeID_3 = reader.ReadUInt16();*/
 
 
                 if (networkPlayers.ContainsKey(id))
-                    networkPlayers[id].GetComponent<PlayerRuneManager>().ShowRuneSelection(runeID_1, runeID_2, runeID_3);
+                    networkPlayers[id].GetComponent<PlayerRuneManager>().ShowRuneSelection(runeIDs);
             }
         }
     }

@@ -39,11 +39,11 @@ public class PlayerRuneManager : MonoBehaviour
             runeCatalog.Add(1, new Rune(1, "Damage Boost", "DamageBoost", "Deal Higher Damage", 1,1));
             runeCatalog.Add(2, new Rune(2, "Attack Speed Boost", "AttackSpeedBoost", "Primary Skill Cooldown Reduced", 1, 1));
             runeCatalog.Add(3, new Rune(3, "Dash Reduced Cooldown", "DashReducedCooldown", "Secondary Skill Cooldown Reduced", 1, 1));
-            runeCatalog.Add(4, new Rune(4, "Frostbite", "Frostbite", "Attacks cause damage over time burn", 1, 1));
-            runeCatalog.Add(5, new Rune(5, "Chill", "Chill", "Attack slow enemies", 1, 1));
-            runeCatalog.Add(6, new Rune(6, "Multi Shot", "MultiShot", "Fires an additional attack rapidly", 1, 1));
-            runeCatalog.Add(7, new Rune(7, "Rage", "Rage", "Attacks deal more damage at low HP", 1, 1));
-            runeCatalog.Add(8, new Rune(8, "Frost Nova", "FrostNova", "Attacks explode on hit, slowing nearby players", 1, 1));
+            //runeCatalog.Add(4, new Rune(4, "Frostbite", "Frostbite", "Attacks cause damage over time burn", 1, 1));
+            //runeCatalog.Add(5, new Rune(5, "Chill", "Chill", "Attack slow enemies", 1, 1));
+            //runeCatalog.Add(6, new Rune(6, "Multi Shot", "MultiShot", "Fires an additional attack rapidly", 1, 1));
+            //runeCatalog.Add(7, new Rune(7, "Rage", "Rage", "Attacks deal more damage at low HP", 1, 1));
+            //runeCatalog.Add(8, new Rune(8, "Frost Nova", "FrostNova", "Attacks explode on hit, slowing nearby players", 1, 1));
             /*
             runeCatalog.Add(new Rune("Poison", "Poison", "Attacks cause poison spreading nearby players", 1, 1));
             runeCatalog.Add(new Rune("Bouncy", "Bouncy", "Attacks bounce of walls", 1, 1));
@@ -52,12 +52,12 @@ public class PlayerRuneManager : MonoBehaviour
             
             */
             //Survivability Runes
-            runeCatalog.Add(9, new Rune(9, "Bloodthirst", "Bloodthirst", "Restores HP when you kill an enemy", 1, 1));
-            runeCatalog.Add(10, new Rune(10, "HP Boost", "HpBoost", "Max HP increased", 1, 1));
+            //runeCatalog.Add(9, new Rune(9, "Bloodthirst", "Bloodthirst", "Restores HP when you kill an enemy", 1, 1));
+            //runeCatalog.Add(10, new Rune(10, "HP Boost", "HpBoost", "Max HP increased", 1, 1));
             //runeCatalog.Add(new Rune("Invincible", "Invincible", "Become invincible once in a while", 1, 1));
             //runeCatalog.Add(new Rune("Life", "Life", "Get +1 life to continue adventure", 1, 1));
-            runeCatalog.Add(11, new Rune(11, "Shield Guard", "ShieldGuard", "A shield circles around you reducing damage taken", 1, 1));
-            runeCatalog.Add(12, new Rune(12, "Strong Heart", "StrongHeart", "You are healed for more HP than before", 1, 1));
+            //runeCatalog.Add(11, new Rune(11, "Shield Guard", "ShieldGuard", "A shield circles around you reducing damage taken", 1, 1));
+            //runeCatalog.Add(12, new Rune(12, "Strong Heart", "StrongHeart", "You are healed for more HP than before", 1, 1));
             /*
             //Offensive Runes
             runeCatalog.Add(new Rune("Flame Circle", "FlameCircle", "Summon 2 lightning bolts to spin around you", 1, 1));
@@ -139,12 +139,28 @@ public class PlayerRuneManager : MonoBehaviour
         using (DarkRiftWriter writer = DarkRiftWriter.Create())
         {
             writer.Write((ushort)player.ID);
+            writer.Write((ushort)playerRuneList.Count);
+            if(playerRuneList.Count >= 3)
+            {
+                for(int i = 0; i < 3; i++)
+                {
+                    writer.Write(playerRuneList[i].RuneID);
+                }
+            }
+            else
+            {
+                for (int i = 0; i < playerRuneList.Count; i++)
+                {
+                    writer.Write(playerRuneList[i].RuneID);
+                }
+            }
+            /*
             writer.Write(playerRuneList[0].RuneID);
             writer.Write(playerRuneList[1].RuneID);
             writer.Write(playerRuneList[2].RuneID);
             Debug.Log("Rune" + playerRuneList[0].RuneID + " " + playerRuneList[0].DisplayName);
             Debug.Log("Rune" + playerRuneList[1].RuneID + " " + playerRuneList[1].DisplayName);
-            Debug.Log("Rune" + playerRuneList[2].RuneID + " " + playerRuneList[2].DisplayName);
+            Debug.Log("Rune" + playerRuneList[2].RuneID + " " + playerRuneList[2].DisplayName);*/
 
             using (Message message = Message.Create(NetworkTags.ShowRuneTag, writer))
                 player.ServerClient.SendMessage(message, SendMode.Reliable);
@@ -163,15 +179,18 @@ public class PlayerRuneManager : MonoBehaviour
         }
     }
 
-    public void ShowRuneSelection(ushort rune_1, ushort rune_2, ushort rune_3)
+    public void ShowRuneSelection(ushort[] runeIDs)
     {
-        Debug.Log("RuneID " + rune_1 + " RuneName " + runeCatalog[rune_1].DisplayName);
-        Debug.Log("RuneID " + rune_2 + " RuneName " + runeCatalog[rune_2].DisplayName);
-        Debug.Log("RuneID " + rune_3 + " RuneName " + runeCatalog[rune_3].DisplayName);
-        string[] runeNames = { runeCatalog[rune_1].DisplayName, runeCatalog[rune_2].DisplayName, runeCatalog[rune_3].DisplayName };
-        ushort[] runeIDs = { rune_1, rune_2, rune_3};
-        runeOptions = runeIDs;
+        string[] runeNames = new string[runeIDs.Length];
+        ushort[] rune_id = new ushort[runeIDs.Length];
+        for(int i = 0; i < runeIDs.Length; i++)
+        {
+            runeNames[i] = runeCatalog[runeIDs[i]].DisplayName;
+            rune_id[i] = runeIDs[i];
+        }
 
+        runeOptions = rune_id;
+        Debug.Log("Number of runes to display " + runeNames.Length);
         HUDManager.Instance.DisplayRunes(runeNames);
         
     }

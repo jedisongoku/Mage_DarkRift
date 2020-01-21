@@ -85,6 +85,7 @@ public class Player : MonoBehaviour
         playerHealthManager.RespawnPlayer();
         playerCombatManager.RespawnPlayer();
         playerMovementManager.RespawnPlayer();
+        playerRuneManager.RestartPlayerRunes();
         GetComponent<Animator>().SetTrigger("Respawn");
         playerSkin.SetActive(true);
 
