@@ -13,4 +13,5 @@
     public static readonly ushort ParticleEffectTag = 11;
     public static readonly ushort UpdateCooldownTag = 12;
     public static readonly ushort IncreaseHealthTag = 13;
+    public static readonly ushort PoisonShopTag = 14;
 }

@@ -127,6 +127,33 @@ public class HUDManager : MonoBehaviour
         }
     }
 
+    public void EnablePoisonPickupLoader()
+    {
+
+    }
+
+    public void SetPoisonPickupProgress(float _amount)
+    {
+
+    }
+
+    public void DisablePoisonPickupLoader()
+    {
+
+    }
+
+    //timer that counts for the next poison
+    public void UpdatePoisonTimer(int _timer)
+    {
+
+    }
+
+    //disable the timer when time runs out
+    public void DisablePoisonTimer()
+    {
+
+    }
+
     public float SetPrimarySkillCooldownUI
     {
         set

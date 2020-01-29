@@ -243,8 +243,4 @@ public class ServerManager : MonoBehaviour
     }
 
     #endregion
-
-    #region Health Manager
-        
-    #endregion
 }
