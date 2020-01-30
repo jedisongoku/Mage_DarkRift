@@ -61,81 +61,78 @@ namespace DarkRift.Client.Unity
         volatile bool sniffData = false;
 
         #region Cache settings
-
+        #region Legacy
         /// <summary>
         ///     The maximum number of <see cref="DarkRiftWriter"/> instances stored per thread.
         /// </summary>
+        [Obsolete("Use the ObjectCahceSettings property instead.")]
         public int MaxCachedWriters
         {
             get
             {
-                return maxCachedWriters;
+                return ObjectCacheSettings.MaxWriters;
             }
         }
-
-        [SerializeField]
-        [Tooltip("The maximum number of DarkRiftWriter instances stored per thread.")]
-        int maxCachedWriters = 2;
 
         /// <summary>
         ///     The maximum number of <see cref="DarkRiftReader"/> instances stored per thread.
         /// </summary>
+        [Obsolete("Use the ObjectCahceSettings property instead.")]
         public int MaxCachedReaders
         {
             get
             {
-                return maxCachedReaders;
+                return ObjectCacheSettings.MaxReaders;
             }
         }
-
-        [SerializeField]
-        [Tooltip("The maximum number of DarkRiftReader instances stored per thread.")]
-        int maxCachedReaders = 2;
 
         /// <summary>
         ///     The maximum number of <see cref="Message"/> instances stored per thread.
         /// </summary>
+        [Obsolete("Use the ObjectCahceSettings property instead.")]
         public int MaxCachedMessages
         {
             get
             {
-                return maxCachedMessages;
+                return ObjectCacheSettings.MaxMessages;
             }
         }
-
-        [SerializeField]
-        [Tooltip("The maximum number of Message instances stored per thread.")]
-        int maxCachedMessages = 8;
 
         /// <summary>
         ///     The maximum number of <see cref="System.Net.Sockets.SocketAsyncEventArgs"/> instances stored per thread.
         /// </summary>
+        [Obsolete("Use the ObjectCahceSettings property instead.")]
         public int MaxCachedSocketAsyncEventArgs
         {
             get
             {
-                return maxCachedSocketAsyncEventArgs;
+                return ObjectCacheSettings.MaxSocketAsyncEventArgs;
             }
         }
-
-        [SerializeField]
-        [Tooltip("The maximum number of SocketAsyncEventArgs instances stored per thread.")]
-        int maxCachedSocketAsyncEventArgs = 32;
 
         /// <summary>
         ///     The maximum number of <see cref="ActionDispatcherTask"/> instances stored per thread.
         /// </summary>
+        [Obsolete("Use the ObjectCahceSettings property instead.")]
         public int MaxCachedActionDispatcherTasks
         {
             get
             {
-                return maxCachedActionDispatcherTasks;
+                return ObjectCacheSettings.MaxActionDispatcherTasks;
             }
         }
-        
+        #endregion Legacy
+
+        /// <summary>
+        ///     The object cache settings in use.
+        /// </summary>
+        public ObjectCacheSettings ObjectCacheSettings { get; set; }
+
+        /// <summary>
+        ///     Serialisable version of the object cache settings for Unity.
+        /// </summary>
         [SerializeField]
-        [Tooltip("The maximum number of ActionDispatcherTask instances stored per thread.")]
-        int maxCachedActionDispatcherTasks = 16;
+        SerializableObjectCacheSettings objectCacheSettings = new SerializableObjectCacheSettings();
         #endregion
 
         /// <summary>
@@ -204,7 +201,9 @@ namespace DarkRift.Client.Unity
         
         void Awake()
         {
-            client = new DarkRiftClient(maxCachedWriters, maxCachedReaders, maxCachedMessages, maxCachedSocketAsyncEventArgs, maxCachedActionDispatcherTasks);
+            ObjectCacheSettings = objectCacheSettings.ToObjectCacheSettings();
+
+            client = new DarkRiftClient(ObjectCacheSettings);
 
             //Setup dispatcher
             Dispatcher = new Dispatcher(true);
@@ -231,14 +230,12 @@ namespace DarkRift.Client.Unity
         {
             //Remove resources
             Close();
-            Debug.Log("Destroy");
         }
 
         void OnApplicationQuit()
         {
             //Remove resources
             Close();
-            Debug.Log("Quit");
         }
 
         /// <summary>
@@ -309,14 +306,20 @@ namespace DarkRift.Client.Unity
                 if (sniffData)
                     Debug.Log("Message Received");      //TODO more information!
 
+                // DarkRift will recycle the message inside the event args when this method exits so make a copy now that we control the lifecycle of!
+                Message message = e.GetMessage();
+                MessageReceivedEventArgs args = new MessageReceivedEventArgs(message, e.SendMode);
+
                 Dispatcher.InvokeAsync(
                     () => 
                         {
                             EventHandler<MessageReceivedEventArgs> handler = MessageReceived;
                             if (handler != null)
                             {
-                                handler.Invoke(sender, e);
+                                handler.Invoke(sender, args);
                             }
+
+                            message.Dispose();
                         }
                 );
             }
