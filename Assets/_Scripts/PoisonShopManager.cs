@@ -15,8 +15,11 @@ public class PoisonShopManager : MonoBehaviour
     [SerializeField] GameObject[] captureAreas;
     [SerializeField] SphereCollider pickupCollider;
 
-
-    int poisonTimer;
+    bool isTimerOn = false;
+    bool isPoisonAreaEnabled = false;
+    bool isPoisonActivated = false;
+    public int PoisonID { get; set; }
+    public int PoisonTimer { get; set; }
     float poisonPickupTimer;
     bool isCheckingForPlayers = false;
     bool IsServer { get; set; }
@@ -28,27 +31,47 @@ public class PoisonShopManager : MonoBehaviour
         Instance = this;
         if(ServerManager.Instance != null)
         {
+            PoisonID = -1;
             IsServer = true;
             InitializePoisonTimer();
         }
     }
 
-    void InitializePoisonTimer()
+    public void InitializePoisonTimer()
     {
-        poisonTimer = poisonTime;
-        StartCoroutine(PoisonTimerServer());
+        PoisonTimer = poisonTime;
+        ClearPlayerList();
+
+        if (IsServer)
+        {
+            isTimerOn = true;
+            isPoisonAreaEnabled = false;
+            StartCoroutine(PoisonTimerServer());
+            SendPoisonShopMessage();
+            isPoisonActivated = false;
+        }
+        else
+        {
+            HUDManager.Instance.EnablePoisonTimer();
+            HUDManager.Instance.DisablePoisonPickupProgress();
+            StartCoroutine(PoisonTimerClient());
+        }
+
     }
     
     IEnumerator PoisonTimerServer()
     {
-
         yield return new WaitForSeconds(1f);
-        poisonTimer -= 1;
+        PoisonTimer -= 1;
 
-        if (poisonTimer <= 0)
+        if (PoisonTimer <= 0)
         {
             //Enable the next poison pickup
             //Disable the timer
+            isPoisonAreaEnabled = true;
+            isTimerOn = false;
+            PoisonID = Random.Range(0, captureAreas.Length);
+            EnablePoisonArea(PoisonID);
             SendPoisonShopMessage();
 
         }
@@ -62,26 +85,45 @@ public class PoisonShopManager : MonoBehaviour
 
     public void SendPoisonShopMessage()
     {
+        PoisonShopMessageModel newMessage = new PoisonShopMessageModel()
+        {
+            IsTimerOn = isTimerOn,
+            Time = (ushort)PoisonTimer,
+            PoisonID = (ushort)PoisonID,
+            IsPoisonAreaEnabled = isPoisonAreaEnabled,
+            IsPoisonActivated = isPoisonActivated
 
+        };
+
+        using (Message message = Message.Create(NetworkTags.PoisonShopTag, newMessage))
+            foreach (IClient c in ServerManager.Instance.gameServer.Server.ClientManager.GetAllClients())
+                c.SendMessage(message, SendMode.Reliable);
     }
 
+    public void SendPoisonShopMessageOnClientConncted(IClient _player)
+    {
+        PoisonShopMessageModel newMessage = new PoisonShopMessageModel()
+        {
+            IsTimerOn = isTimerOn,
+            Time = (ushort)PoisonTimer,
+            PoisonID = (ushort)PoisonID,
+            IsPoisonAreaEnabled = isPoisonAreaEnabled,
+            IsPoisonActivated = isPoisonActivated
 
+        };
+
+        using (Message message = Message.Create(NetworkTags.PoisonShopTag, newMessage))
+                _player.SendMessage(message, SendMode.Reliable);
+    }
 
     IEnumerator PoisonTimerClient()
     {
+        HUDManager.Instance.UpdatePoisonTimer(PoisonTimer);
 
-        HUDManager.Instance.UpdatePoisonTimer(poisonTimer);
         yield return new WaitForSeconds(1f);
-        poisonTimer -= 1;
-
-        if (poisonTimer <= 0)
-        {
-            //Enable the next poison pickup
-            EnablePoisonArea(1);//make it random
-            //Disable the timer
-            HUDManager.Instance.DisablePoisonTimer();
-        }
-        else
+        PoisonTimer -= 1;
+        
+        if (PoisonTimer > 0)
         {
             StartCoroutine(PoisonTimerClient());
         }
@@ -89,7 +131,11 @@ public class PoisonShopManager : MonoBehaviour
 
     public void EnablePoisonArea(int _index)
     {
-        for (int i = 0; i < Areas.Length; i++)
+        if(!IsServer)
+        {
+            HUDManager.Instance.DisablePoisonTimer();
+        }
+        for (int i = 0; i < captureAreas.Length; i++)
         {
             if (i == _index)
             {
@@ -104,7 +150,7 @@ public class PoisonShopManager : MonoBehaviour
         }
     }
 
-    void DisablePoisonArea()
+    public void DisablePoisonArea()
     {
         for (int i = 0; i < captureAreas.Length; i++)
         {
@@ -118,8 +164,8 @@ public class PoisonShopManager : MonoBehaviour
 
     public void ActivatePoison(int _playerID)
     {
+        isPoisonActivated = true;
         DisablePoisonArea();
-        SendPoisonShopMessage();
         ApplyPoison();
         InitializePoisonTimer();
 
@@ -135,6 +181,7 @@ public class PoisonShopManager : MonoBehaviour
     public void ClearPlayerList()
     {
         players.Clear();
+        ResetPickupTimer();
     }
 
     IEnumerator CheckPlayersInPortal()
@@ -147,12 +194,14 @@ public class PoisonShopManager : MonoBehaviour
                 if (players[i].enabled == false)
                 {
                     players.Remove(players[i]);
+                    if(i == 0) ResetPickupTimer();
                 }
 
             }
             else
             {
                 players.Remove(players[i]);
+                if (i == 0) ResetPickupTimer();
             }
         }
         if (players.Count > 1)
@@ -161,6 +210,7 @@ public class PoisonShopManager : MonoBehaviour
         }
         else
         {
+            ResetPickupTimer();
             isCheckingForPlayers = false;
         }
 
@@ -174,10 +224,10 @@ public class PoisonShopManager : MonoBehaviour
             isCheckingForPlayers = true;
             StartCoroutine(CheckPlayersInPortal());
         }
-        poisonPickupTimer = 0f;
+        //poisonPickupTimer = 0f;
         if (other.GetComponent<Player>().IsControllable)
         {
-            HUDManager.Instance.EnablePoisonPickupLoader();
+            HUDManager.Instance.EnablePoisonPickupProgress();
         }
 
     }
@@ -198,13 +248,17 @@ public class PoisonShopManager : MonoBehaviour
                 if (IsServer)
                 {
                     ActivatePoison(other.GetComponent<Player>().ID);
+                    
                 }
                 
                 
                 if (other.GetComponent<Player>().IsControllable)
                 {
-                    HUDManager.Instance.DisablePoisonPickupLoader();
+                    HUDManager.Instance.DisablePoisonPickupProgress();
+
                 }
+
+                ClearPlayerList();
 
             }
         }
@@ -225,57 +279,13 @@ public class PoisonShopManager : MonoBehaviour
 
         if (other.GetComponent<Player>().IsControllable)
         {
-            poisonPickupTimer = 0f;
-            HUDManager.Instance.SetPoisonPickupProgress(0);
-            HUDManager.Instance.DisablePoisonPickupLoader();
+            ResetPickupTimer();
+            HUDManager.Instance.DisablePoisonPickupProgress();
         }
     }
 
-    public Material[] ShrineMaterials
+    void ResetPickupTimer()
     {
-        get
-        {
-            return shrineMaterials;
-        }
-    }
-
-    public Material ShrineDefaultMaterials
-    {
-        get
-        {
-            return shrineDefaultMaterial;
-        }
-    }
-
-    public GameObject[] Areas
-    {
-        get
-        {
-            return captureAreas;
-        }
-    }
-
-    public GameObject Shrine
-    {
-        get
-        {
-            return shrine;
-        }
-    }
-
-    public int PoisonTime
-    {
-        get
-        {
-            return poisonTime;
-        }
-    }
-
-    public SphereCollider Collider
-    {
-        get
-        {
-            return pickupCollider;
-        }
+        poisonPickupTimer = 0;
     }
 }

@@ -298,10 +298,11 @@ public class PlayerHealthManager : MonoBehaviour
         {
             playerhealth += PlayerBaseStats.Instance.HpBoostAmount;
         }
-        UpdateHealth();
+        
         SendIncreaseMaxHPMessage();
         SendHpBoostParticleMessage(PlayerRuneManager.HpBoost_ID);
-        
+        UpdateHealth();
+
     }
 
     public void SendIncreaseMaxHPMessage()
@@ -309,7 +310,7 @@ public class PlayerHealthManager : MonoBehaviour
         using (DarkRiftWriter writer = DarkRiftWriter.Create())
         {
             writer.Write((ushort)player.ID);
-            writer.Write(playerMaxHealth);
+            writer.Write((ushort)playerMaxHealth);
 
             using (Message message = Message.Create(NetworkTags.IncreaseHealthTag, writer))
                 foreach (IClient c in ServerManager.Instance.gameServer.Server.ClientManager.GetAllClients())
@@ -319,7 +320,9 @@ public class PlayerHealthManager : MonoBehaviour
 
     public void IncreaseMaxHP(ushort _playerMaxHeath)
     {
+        Debug.Log("MAX HEALTH INCOMING " + _playerMaxHeath);
         playerMaxHealth = _playerMaxHeath;
+        Debug.Log("MAX HEALTH SET " + playerMaxHealth);
     }
 
     void SendHpBoostParticleMessage(ushort _runeID)

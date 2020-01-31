@@ -57,6 +57,25 @@ public class ClientManager : MonoBehaviour
                 UpdateCooldown(sender, e);
             else if (message.Tag == NetworkTags.IncreaseHealthTag)
                 IncreaseHealth(sender, e);
+            else if (message.Tag == NetworkTags.PoisonShopTag)
+                PoisonShop(sender, e);
+        }
+    }
+
+    private void PoisonShop(object sender, MessageReceivedEventArgs e)
+    {
+        using (Message message = e.GetMessage() as Message)
+        {
+            using (DarkRiftReader reader = message.GetReader())
+            {
+                PoisonShopMessageModel newMessage = reader.ReadSerializable<PoisonShopMessageModel>();
+
+                if (newMessage.IsTimerOn) PoisonShopManager.Instance.InitializePoisonTimer();
+                PoisonShopManager.Instance.PoisonTimer = newMessage.Time;
+                if (newMessage.IsPoisonAreaEnabled) PoisonShopManager.Instance.EnablePoisonArea(newMessage.PoisonID);
+                else PoisonShopManager.Instance.DisablePoisonArea();
+
+            }
         }
     }
 
@@ -160,7 +179,7 @@ public class ClientManager : MonoBehaviour
 
     void Scoreboard(object sender, MessageReceivedEventArgs e)
     {
-        Debug.Log("Scoreboard message " + e.GetMessage());
+        //Debug.Log("Scoreboard message " + e.GetMessage());
         using (Message message = e.GetMessage() as Message)
         {
             using (DarkRiftReader reader = message.GetReader())

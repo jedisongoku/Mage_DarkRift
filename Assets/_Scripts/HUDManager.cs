@@ -30,6 +30,12 @@ public class HUDManager : MonoBehaviour
     public GameObject[] scoreboardList;
     public GameObject[] runeSelectionList;
 
+    [Header("Poison Shop")]
+    public Text nextPoisonTimerText;
+    public Image posionPickupProgress;
+
+
+
     // Start is called before the first frame update
     void Start()
     {
@@ -127,31 +133,37 @@ public class HUDManager : MonoBehaviour
         }
     }
 
-    public void EnablePoisonPickupLoader()
+    public void EnablePoisonPickupProgress()
     {
-
+        posionPickupProgress.transform.parent.gameObject.SetActive(true);
     }
 
     public void SetPoisonPickupProgress(float _amount)
     {
-
+        posionPickupProgress.fillAmount = _amount;
     }
 
-    public void DisablePoisonPickupLoader()
+    public void DisablePoisonPickupProgress()
     {
+        SetPoisonPickupProgress(0);
+        posionPickupProgress.transform.parent.gameObject.SetActive(false);
+    }
 
+    public void EnablePoisonTimer()
+    {
+        nextPoisonTimerText.gameObject.SetActive(true);
     }
 
     //timer that counts for the next poison
     public void UpdatePoisonTimer(int _timer)
     {
-
+        nextPoisonTimerText.text = "Next Poison in " + _timer;
     }
 
     //disable the timer when time runs out
     public void DisablePoisonTimer()
     {
-
+        nextPoisonTimerText.gameObject.SetActive(false);
     }
 
     public float SetPrimarySkillCooldownUI
