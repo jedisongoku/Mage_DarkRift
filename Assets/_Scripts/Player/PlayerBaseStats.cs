@@ -28,6 +28,9 @@ public class PlayerBaseStats : MonoBehaviour
     [SerializeField] private float rageDamageRate;
     [SerializeField] private float strongHeartRate;
     [SerializeField] private float poisonPickupTime;
+    [SerializeField] private float poisonDamageRate;
+    [SerializeField] private int poisonDuration;
+
 
 
 
@@ -208,6 +211,22 @@ public class PlayerBaseStats : MonoBehaviour
         get
         {
             return poisonPickupTime;
+        }
+    }
+
+    public float PoisonDamageRate
+    {
+        get
+        {
+            return poisonDamageRate;
+        }
+    }
+
+    public int PoisonDuration
+    {
+        get
+        {
+            return poisonDuration;
         }
     }
 }

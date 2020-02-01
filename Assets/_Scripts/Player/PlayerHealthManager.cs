@@ -21,6 +21,7 @@ public class PlayerHealthManager : MonoBehaviour
     private int playerMaxHealth;
     public float HealthGenerationRate { get; set; }
     private float frostbiteDurationTick;
+    private float poisonDurationTick;
 
     [Header("Runes")]
     private bool isBloodthirstActive;
@@ -28,7 +29,8 @@ public class PlayerHealthManager : MonoBehaviour
     public bool Rage { get; set; }
     private bool HasPlayerRaged { get; set; }
     private bool IsFrostbited { get; set; }
-    
+    private bool IsPoisoned { get; set; }
+
 
     void Start()
     {
@@ -59,6 +61,7 @@ public class PlayerHealthManager : MonoBehaviour
         ShieldGuard = false;
         Rage = false;
         IsFrostbited = false;
+        IsPoisoned = false;
 
         Invoke("UpdateHealth", 0.25f);
     }
@@ -377,4 +380,58 @@ public class PlayerHealthManager : MonoBehaviour
             foreach (IClient c in ServerManager.Instance.gameServer.Server.ClientManager.GetAllClients())
                 c.SendMessage(message, SendMode.Reliable);
     }
+
+    #region Poison
+    public void ApplyPoison(IClient _damageOrigin, ushort _particleID)
+    {
+        if (!IsPoisoned)
+        {
+            IsPoisoned = true;
+            playerParticleManager.Poison(true);
+            StartCoroutine(Poison(_damageOrigin, _particleID));
+            SendPoisonParticleMessage(true, _particleID);
+        }
+
+    }
+
+    void SendPoisonParticleMessage(bool _value, ushort _particleID)
+    {
+        ParticleEffectMessageModel newMessage = new ParticleEffectMessageModel()
+        {
+            NetworkID = (ushort)player.ID,
+            ParticleID = _particleID,
+            Poison = _value
+        };
+
+        using (Message message = Message.Create(NetworkTags.ParticleEffectTag, newMessage))
+            foreach (IClient c in ServerManager.Instance.gameServer.Server.ClientManager.GetAllClients())
+                c.SendMessage(message, SendMode.Reliable);
+    }
+
+    IEnumerator Poison(IClient _damageOrigin, ushort _particleID)
+    {
+
+        yield return new WaitForSeconds(1f);
+        if (poisonDurationTick < PlayerBaseStats.Instance.PoisonDuration)
+        {
+            Debug.Log("Poison Tick " + poisonDurationTick);
+            int damage = Mathf.RoundToInt((playerMaxHealth * PlayerBaseStats.Instance.PoisonDamageRate) / PlayerBaseStats.Instance.PoisonDuration);
+            TakeDamage(damage, _damageOrigin);
+            poisonDurationTick++;
+
+            if (playerhealth > 0)
+            {
+                StartCoroutine(Poison(_damageOrigin, _particleID));
+            }
+        }
+        else
+        {
+            IsPoisoned = false;
+            poisonDurationTick = 0;
+            SendPoisonParticleMessage(false, _particleID);
+            playerParticleManager.Poison(false);
+        }
+    }
+
+    #endregion
 }

@@ -134,6 +134,8 @@ public class ClientManager : MonoBehaviour
                     if (particleID == PlayerRuneManager.StrongHeart_ID) networkPlayers[id].GetComponent<PlayerParticleManager>().StrongHeart(true);
                     if (particleID == PlayerRuneManager.Multishot_ID) networkPlayers[id].GetComponent<PlayerCombatManager>().MultiShot = newMessage.Multishot;
                     if (particleID == PlayerRuneManager.FrostNova_ID) networkPlayers[id].GetComponent<PlayerCombatManager>().FrostNova = newMessage.FrostNova;
+                    if (particleID == PoisonShopManager.Poison_ID) networkPlayers[id].GetComponent<PlayerParticleManager>().Poison(newMessage.Poison);
+
                 }
             }
         }

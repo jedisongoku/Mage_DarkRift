@@ -13,6 +13,8 @@ public class PlayerParticleManager : MonoBehaviour
     [SerializeField] GameObject dashTrail;
     [SerializeField] GameObject chill;
     [SerializeField] GameObject rage;
+    [SerializeField] GameObject poison;
+    [SerializeField] GameObject dashLock;
 
     // Start is called before the first frame update
 
@@ -24,6 +26,8 @@ public class PlayerParticleManager : MonoBehaviour
         StrongHeart(false);
         Rage(false);
         ShieldGuard(false);
+        Poison(false);
+        DashLock(false);
     }
 
     public void Frostbite(bool _value)
@@ -59,6 +63,16 @@ public class PlayerParticleManager : MonoBehaviour
     public void StrongHeart(bool _value)
     {
         strongHeart.SetActive(_value);
+    }
+
+    public void Poison(bool _value)
+    {
+        poison.SetActive(_value);
+    }
+
+    public void DashLock(bool _value)
+    {
+        //dashLock.SetActive(_value);
     }
 
 

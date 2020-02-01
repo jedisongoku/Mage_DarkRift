@@ -9872,6 +9872,8 @@ MonoBehaviour:
   rageDamageRate: 0.2
   strongHeartRate: 0.015
   poisonPickupTime: 5
+  poisonDamageRate: 1.25
+  poisonDuration: 20
 --- !u!114 &206528785
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -33290,6 +33292,16 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 11
       objectReference: {fileID: 0}
+    - target: {fileID: 3803392935648841686, guid: e539672f82d24dd49ac3bea35e061688,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3803392935648841686, guid: e539672f82d24dd49ac3bea35e061688,
+        type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 4294967295
+      objectReference: {fileID: 0}
     - target: {fileID: 3803392935648841682, guid: e539672f82d24dd49ac3bea35e061688,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -40873,7 +40885,7 @@ PrefabInstance:
     - target: {fileID: 8766409296749979376, guid: 8f2d841a46f40504dbd4c33629387443,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8766409296749979379, guid: 8f2d841a46f40504dbd4c33629387443,
         type: 3}
@@ -55445,7 +55457,7 @@ ParticleSystem:
         m_RotationOrder: 4
     startRotationX:
       serializedVersion: 2
-      minMaxState: 0
+      minMaxState: 3
       scalar: 0
       minScalar: 0
       maxCurve:
@@ -55498,7 +55510,7 @@ ParticleSystem:
         m_RotationOrder: 4
     startRotationY:
       serializedVersion: 2
-      minMaxState: 0
+      minMaxState: 3
       scalar: 0
       minScalar: 0
       maxCurve:
@@ -71389,6 +71401,11 @@ MonoBehaviour:
   - {fileID: 1150879612}
   - {fileID: 1150879611}
   pickupCollider: {fileID: 1150879616}
+  poisonNames:
+  - TBD
+  - Poison
+  - Chill
+  - DashLock
 --- !u!1001 &1153235746
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -72,7 +72,7 @@ public class ServerManager : MonoBehaviour
         //Add playerObject to the list
         serverPlayersInScene.Add(e.Client, playerObject);
         ScoreManager.Instance.AddPlayer(e.Client.ID, new ScorePlayer(e.Client.ID, playerServer.Nickname, 0), true);
-        PoisonShopManager.Instance.SendPoisonShopMessageOnClientConncted(e.Client);
+        PoisonShopManager.Instance.SendPoisonShopMessageOnClientConnected(e.Client);
         //ScoreManager.Instance.AddPlayer(e.Client);
 
         //Add the new client to the list

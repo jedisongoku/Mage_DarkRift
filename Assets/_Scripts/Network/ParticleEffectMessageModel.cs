@@ -15,6 +15,8 @@ public class ParticleEffectMessageModel : IDarkRiftSerializable
     public bool HpBoost { get; set; }
     public bool Multishot { get; set; }
     public bool FrostNova { get; set; }
+    public bool Poison { get; set; }
+    public bool DashLock { get; set; }
 
 
     public void Deserialize(DeserializeEvent e)
@@ -32,6 +34,8 @@ public class ParticleEffectMessageModel : IDarkRiftSerializable
         HpBoost = e.Reader.ReadBoolean();
         Multishot = e.Reader.ReadBoolean();
         FrostNova = e.Reader.ReadBoolean();
+        Poison = e.Reader.ReadBoolean();
+        DashLock = e.Reader.ReadBoolean();
     }
 
     public void Serialize(SerializeEvent e)
@@ -49,6 +53,8 @@ public class ParticleEffectMessageModel : IDarkRiftSerializable
         e.Writer.Write(HpBoost);
         e.Writer.Write(Multishot);
         e.Writer.Write(FrostNova);
+        e.Writer.Write(Poison);
+        e.Writer.Write(DashLock);
     }
 }
 

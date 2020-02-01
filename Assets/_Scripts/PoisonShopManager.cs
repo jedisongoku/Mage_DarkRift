@@ -3,9 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using DarkRift;
 using DarkRift.Server;
+using System.Linq;
 
 public class PoisonShopManager : MonoBehaviour
 {
+    public static readonly ushort TBD_ID = 101;
+    public static readonly ushort Poison_ID = 102;
+    public static readonly ushort Chill_ID = 103;
+    public static readonly ushort DashLock_ID = 104;
+
     public static PoisonShopManager Instance;
     [Header("Shop Attributes")]
     [SerializeField] int poisonTime = 150;
@@ -14,15 +20,22 @@ public class PoisonShopManager : MonoBehaviour
     [SerializeField] Material[] shrineMaterials;
     [SerializeField] GameObject[] captureAreas;
     [SerializeField] SphereCollider pickupCollider;
+    [SerializeField] string[] poisonNames;
 
+    public int PoisonID { get; set; }
+    public int PoisonTimer { get; set; }
+    bool IsServer { get; set; }
+    IClient Player { get; set; }
+
+
+    float poisonPickupTimer;
     bool isTimerOn = false;
     bool isPoisonAreaEnabled = false;
     bool isPoisonActivated = false;
-    public int PoisonID { get; set; }
-    public int PoisonTimer { get; set; }
-    float poisonPickupTimer;
     bool isCheckingForPlayers = false;
-    bool IsServer { get; set; }
+    int previousPoisonID;
+
+
     List<Collider> players = new List<Collider>();
 
     // Start is called before the first frame update
@@ -32,6 +45,7 @@ public class PoisonShopManager : MonoBehaviour
         if(ServerManager.Instance != null)
         {
             PoisonID = -1;
+            previousPoisonID = PoisonID;
             IsServer = true;
             InitializePoisonTimer();
         }
@@ -70,7 +84,13 @@ public class PoisonShopManager : MonoBehaviour
             //Disable the timer
             isPoisonAreaEnabled = true;
             isTimerOn = false;
-            PoisonID = Random.Range(0, captureAreas.Length);
+            PoisonID = 1;
+            /*
+            while(PoisonID == previousPoisonID)
+            {
+                PoisonID = Random.Range(0, captureAreas.Length);
+            }*/
+            previousPoisonID = PoisonID;
             EnablePoisonArea(PoisonID);
             SendPoisonShopMessage();
 
@@ -100,7 +120,7 @@ public class PoisonShopManager : MonoBehaviour
                 c.SendMessage(message, SendMode.Reliable);
     }
 
-    public void SendPoisonShopMessageOnClientConncted(IClient _player)
+    public void SendPoisonShopMessageOnClientConnected(IClient _player)
     {
         PoisonShopMessageModel newMessage = new PoisonShopMessageModel()
         {
@@ -162,7 +182,7 @@ public class PoisonShopManager : MonoBehaviour
         pickupCollider.enabled = false;
     }
 
-    public void ActivatePoison(int _playerID)
+    public void ActivatePoison()
     {
         isPoisonActivated = true;
         DisablePoisonArea();
@@ -174,7 +194,7 @@ public class PoisonShopManager : MonoBehaviour
 
     void ApplyPoison()
     {
-
+        Invoke(poisonNames[PoisonID], 0f);
     }
 
 
@@ -247,7 +267,8 @@ public class PoisonShopManager : MonoBehaviour
                 //Activate poison for everyone other than who activated
                 if (IsServer)
                 {
-                    ActivatePoison(other.GetComponent<Player>().ID);
+                    Player = other.GetComponent<Player>().ServerClient;
+                    ActivatePoison();
                     
                 }
                 
@@ -282,10 +303,29 @@ public class PoisonShopManager : MonoBehaviour
             ResetPickupTimer();
             HUDManager.Instance.DisablePoisonPickupProgress();
         }
+
+        if (players.Count == 0) ResetPickupTimer();
     }
 
     void ResetPickupTimer()
     {
         poisonPickupTimer = 0;
+    }
+
+    void Poison()
+    {
+        foreach (IClient player in ServerManager.Instance.serverPlayersInScene.Keys.Where(x => x != Player))
+            ServerManager.Instance.serverPlayersInScene[player].GetComponent<PlayerHealthManager>().ApplyPoison(Player, Poison_ID);
+
+    }
+
+    void Chill()
+    {
+
+    }
+
+    void DashLock()
+    {
+
     }
 }
