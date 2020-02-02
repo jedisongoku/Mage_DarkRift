@@ -414,7 +414,7 @@ public class PlayerHealthManager : MonoBehaviour
         yield return new WaitForSeconds(1f);
         if (poisonDurationTick < PlayerBaseStats.Instance.PoisonDuration)
         {
-            Debug.Log("Poison Tick " + poisonDurationTick);
+            //Debug.Log("Poison Tick " + poisonDurationTick);
             int damage = Mathf.RoundToInt((playerMaxHealth * PlayerBaseStats.Instance.PoisonDamageRate) / PlayerBaseStats.Instance.PoisonDuration);
             TakeDamage(damage, _damageOrigin);
             poisonDurationTick++;

@@ -27,6 +27,7 @@ public class HUDManager : MonoBehaviour
     public GameObject runeSelection;
     public Image primarySkillCooldownImage;
     public Image secondarySkillCooldownImage;
+    public Button secondarySkillButton;
     public GameObject[] scoreboardList;
     public GameObject[] runeSelectionList;
 
@@ -180,5 +181,10 @@ public class HUDManager : MonoBehaviour
         {
             secondarySkillCooldownImage.fillAmount = value;
         }
+    }
+
+    public void DisableDash(bool _value)
+    {
+        secondarySkillButton.interactable = !_value;
     }
 }

@@ -30,6 +30,9 @@ public class PlayerBaseStats : MonoBehaviour
     [SerializeField] private float poisonPickupTime;
     [SerializeField] private float poisonDamageRate;
     [SerializeField] private int poisonDuration;
+    [SerializeField] private float wintersChillSlowRate;
+    [SerializeField] private int wintersChillDuration;
+    [SerializeField] private int dashLockDuration;
 
 
 
@@ -227,6 +230,30 @@ public class PlayerBaseStats : MonoBehaviour
         get
         {
             return poisonDuration;
+        }
+    }
+
+    public float WintersChillSlowRate
+    {
+        get
+        {
+            return wintersChillSlowRate;
+        }
+    }
+
+    public int WintersChillDuration
+    {
+        get
+        {
+            return wintersChillDuration;
+        }
+    }
+
+    public int DashLockDuration
+    {
+        get
+        {
+            return dashLockDuration;
         }
     }
 }

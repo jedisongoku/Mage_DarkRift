@@ -11,6 +11,7 @@ public class PlayerCombatManager : MonoBehaviour
     private Rigidbody m_Rigidbody;
     private PlayerMovementManager playerMovementManager;
     private PlayerHealthManager playerHealthManager;
+    private PlayerParticleManager playerParticleManager;
 
     Plane plane = new Plane(Vector3.up, Vector3.zero);
 
@@ -26,7 +27,9 @@ public class PlayerCombatManager : MonoBehaviour
     public bool FrostNova { get; set; }
     public bool Poison { get; set; }
     public bool Rage { get; set; }
-    
+
+    public bool IsDashLocked { get; set; }
+
     private float primarySkillCooldownTimer;
     private float secondarySkillCooldownTimer;
     private float turnSpeed = 20f;
@@ -43,6 +46,7 @@ public class PlayerCombatManager : MonoBehaviour
         m_Rigidbody = GetComponent<Rigidbody>();
         playerMovementManager = GetComponent<PlayerMovementManager>();
         playerHealthManager = GetComponent<PlayerHealthManager>();
+        playerParticleManager = GetComponent<PlayerParticleManager>();
 
         SetPlayerBaseStats();
         
@@ -65,7 +69,7 @@ public class PlayerCombatManager : MonoBehaviour
         Rage = false;
         MultiShot = false;
         FrostNova = false;
-        Debug.Log("Multishot Reset " + MultiShot);
+        IsDashLocked = false;
     }
 
     // Update is called once per frame
@@ -81,7 +85,7 @@ public class PlayerCombatManager : MonoBehaviour
             HUDManager.Instance.SetPrimarySkillCooldownUI = 1 - primarySkillCooldownTimer / PrimarySkillCooldown;
             HUDManager.Instance.SetSecondarySkillCooldownUI = 1 - secondarySkillCooldownTimer / SecondarySkillCooldown;
 
-            if (Input.GetButtonDown("Dash"))
+            if (Input.GetButtonDown("Dash") && !IsDashLocked)
             {
                 SecondarySkill();
             }
@@ -146,17 +150,6 @@ public class PlayerCombatManager : MonoBehaviour
         if (FrostNova) obj.GetComponent<PrimarySkillController>().FrostNova = FrostNova;
         if(player.IsServer) obj.GetComponent<PrimarySkillController>().ServerClient = player.ServerClient;
 
-
-        /*
-        obj.GetComponent<PrimarySkillController>().PlayerOrigin = photonView.ViewID;
-        obj.GetComponent<PrimarySkillController>().DamageDone = primarySkillDamage;
-        if (isFrostbite) obj.GetComponent<PrimarySkillController>().Frostbite = isFrostbite;
-        if (isChill) obj.GetComponent<PrimarySkillController>().Chill = isChill;
-        if (isRage) obj.GetComponent<PrimarySkillController>().Rage = isRage;
-        if (isFrostNova) obj.GetComponent<PrimarySkillController>().FrostNova = isFrostNova;*/
-
-
-        //GameObject particle = Instantiate(primarySkillPrefab, primarySkillSpawnLocation.transform.position, Quaternion.identity) as GameObject;
     }
 
     void SetFireDirection()
@@ -167,11 +160,6 @@ public class PlayerCombatManager : MonoBehaviour
         {
             mousePosition = ray.GetPoint(enter);   
         }
-        //Vector3 desiredForward = Vector3.RotateTowards(transform.forward, mousePosition, turnSpeed * Time.deltaTime, 0f);
-        //Quaternion m_Rotation = Quaternion.LookRotation(desiredForward);
-        //transform.LookAt(mousePosition);
-
-
 
     }
 
@@ -193,9 +181,13 @@ public class PlayerCombatManager : MonoBehaviour
 
     public void SecondarySkillMessageReceived()
     {
-        m_Animator.SetTrigger("Dashing");
-        dashTrail.SetActive(false);
-        dashTrail.SetActive(true);
+        if(!IsDashLocked)
+        {
+            m_Animator.SetTrigger("Dashing");
+            dashTrail.SetActive(false);
+            dashTrail.SetActive(true);
+        }
+        
     }
 
     
@@ -254,6 +246,44 @@ public class PlayerCombatManager : MonoBehaviour
         using (Message message = Message.Create(NetworkTags.ParticleEffectTag, newMessage))
             foreach (IClient c in ServerManager.Instance.gameServer.Server.ClientManager.GetAllClients())
                 c.SendMessage(message, SendMode.Reliable);
+    }
+
+    public void ApplyDashLock(IClient _damageOrigin, ushort _PoisonID)
+    {
+        if (!IsDashLocked)
+        {
+            IsDashLocked = true;
+            playerParticleManager.DashLock(true);
+            StartCoroutine(DashLock(_damageOrigin, _PoisonID));
+            SendDashLockParticleMessage(true, _PoisonID);
+        }
+
+    }
+
+    void SendDashLockParticleMessage(bool _value, ushort _PoisonID)
+    {
+        ParticleEffectMessageModel newMessage = new ParticleEffectMessageModel()
+        {
+            NetworkID = (ushort)player.ID,
+            ParticleID = _PoisonID,
+            DashLock = _value
+        };
+
+        using (Message message = Message.Create(NetworkTags.ParticleEffectTag, newMessage))
+            foreach (IClient c in ServerManager.Instance.gameServer.Server.ClientManager.GetAllClients())
+                c.SendMessage(message, SendMode.Reliable);
+    }
+
+    IEnumerator DashLock(IClient _damageOrigin, ushort _PoisonID)
+    {
+
+        yield return new WaitForSeconds(PlayerBaseStats.Instance.DashLockDuration);
+
+        IsDashLocked = false;
+        SendDashLockParticleMessage(false, _PoisonID);
+        playerParticleManager.DashLock(false);
+
+
     }
 
 

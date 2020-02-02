@@ -9,7 +9,7 @@ public class PoisonShopManager : MonoBehaviour
 {
     public static readonly ushort TBD_ID = 101;
     public static readonly ushort Poison_ID = 102;
-    public static readonly ushort Chill_ID = 103;
+    public static readonly ushort WintersChill_ID = 103;
     public static readonly ushort DashLock_ID = 104;
 
     public static PoisonShopManager Instance;
@@ -84,12 +84,10 @@ public class PoisonShopManager : MonoBehaviour
             //Disable the timer
             isPoisonAreaEnabled = true;
             isTimerOn = false;
-            PoisonID = 1;
-            /*
             while(PoisonID == previousPoisonID)
             {
                 PoisonID = Random.Range(0, captureAreas.Length);
-            }*/
+            }
             previousPoisonID = PoisonID;
             EnablePoisonArea(PoisonID);
             SendPoisonShopMessage();
@@ -319,13 +317,15 @@ public class PoisonShopManager : MonoBehaviour
 
     }
 
-    void Chill()
+    void WintersChill()
     {
-
+        foreach (IClient player in ServerManager.Instance.serverPlayersInScene.Keys.Where(x => x != Player))
+            ServerManager.Instance.serverPlayersInScene[player].GetComponent<PlayerMovementManager>().ApplyWintersChill(Player, WintersChill_ID);
     }
 
     void DashLock()
     {
-
+        foreach (IClient player in ServerManager.Instance.serverPlayersInScene.Keys.Where(x => x != Player))
+            ServerManager.Instance.serverPlayersInScene[player].GetComponent<PlayerCombatManager>().ApplyDashLock(Player, DashLock_ID);
     }
 }

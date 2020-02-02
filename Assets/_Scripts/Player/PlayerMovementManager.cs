@@ -223,4 +223,43 @@ public class PlayerMovementManager : MonoBehaviour
 
     }
 
+    public void ApplyWintersChill(IClient _damageOrigin, ushort _PoisonID)
+    {
+        if (!IsChilled)
+        {
+            IsChilled = true;
+            playerParticleManager.WintersChill(true);
+            StartCoroutine(WintersChill(_damageOrigin, _PoisonID));
+            SendWintersChillParticleMessage(true, _PoisonID);
+        }
+
+    }
+
+    void SendWintersChillParticleMessage(bool _value, ushort _PoisonID)
+    {
+        ParticleEffectMessageModel newMessage = new ParticleEffectMessageModel()
+        {
+            NetworkID = (ushort)player.ID,
+            ParticleID = _PoisonID,
+            WintersChill = _value
+        };
+
+        using (Message message = Message.Create(NetworkTags.ParticleEffectTag, newMessage))
+            foreach (IClient c in ServerManager.Instance.gameServer.Server.ClientManager.GetAllClients())
+                c.SendMessage(message, SendMode.Reliable);
+    }
+
+    IEnumerator WintersChill(IClient _damageOrigin, ushort _PoisonID)
+    {
+        walkSpeed -= walkSpeed * PlayerBaseStats.Instance.WintersChillSlowRate;
+
+        yield return new WaitForSeconds(PlayerBaseStats.Instance.WintersChillDuration);
+
+        IsChilled = false;
+        SendWintersChillParticleMessage(false, _PoisonID);
+        playerParticleManager.WintersChill(false);
+        walkSpeed = PlayerBaseStats.Instance.WalkSpeed;
+
+    }
+
 }

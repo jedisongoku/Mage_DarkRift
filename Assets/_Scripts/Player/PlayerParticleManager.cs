@@ -72,7 +72,18 @@ public class PlayerParticleManager : MonoBehaviour
 
     public void DashLock(bool _value)
     {
-        //dashLock.SetActive(_value);
+
+        if(GetComponent<Player>().IsControllable)
+        {
+            GetComponent<PlayerCombatManager>().IsDashLocked = _value;
+            HUDManager.Instance.DisableDash(_value);
+        }
+        dashLock.SetActive(_value);
+    }
+
+    public void WintersChill(bool _value)
+    {
+        chill.SetActive(_value);
     }
 
 
