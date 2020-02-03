@@ -6,6 +6,7 @@ public class PlayerBaseStats : MonoBehaviour
 {
     public static PlayerBaseStats Instance;
 
+    [Header("Player")]
     [SerializeField] private float walkSpeed;
     [SerializeField] private float turnSpeed;
     [SerializeField] private int health;
@@ -27,12 +28,18 @@ public class PlayerBaseStats : MonoBehaviour
     [SerializeField] private float rageStartRate;
     [SerializeField] private float rageDamageRate;
     [SerializeField] private float strongHeartRate;
+
+    [Header("Poison Shop")]
     [SerializeField] private float poisonPickupTime;
     [SerializeField] private float poisonDamageRate;
     [SerializeField] private int poisonDuration;
     [SerializeField] private float wintersChillSlowRate;
     [SerializeField] private int wintersChillDuration;
     [SerializeField] private int dashLockDuration;
+    [SerializeField] private int distortAimDuration;
+
+    [Header("Respawn")]
+    [SerializeField] private int respawnTime;
 
 
 
@@ -254,6 +261,22 @@ public class PlayerBaseStats : MonoBehaviour
         get
         {
             return dashLockDuration;
+        }
+    }
+
+    public int DistortAimDuration
+    {
+        get
+        {
+            return distortAimDuration;
+        }
+    }
+
+    public int RespawnTime
+    {
+        get
+        {
+            return respawnTime;
         }
     }
 }

@@ -29,6 +29,7 @@ public class PlayerCombatManager : MonoBehaviour
     public bool Rage { get; set; }
 
     public bool IsDashLocked { get; set; }
+    public bool IsAimDistorted { get; set; }
 
     private float primarySkillCooldownTimer;
     private float secondarySkillCooldownTimer;
@@ -70,6 +71,7 @@ public class PlayerCombatManager : MonoBehaviour
         MultiShot = false;
         FrostNova = false;
         IsDashLocked = false;
+        IsAimDistorted = false;
     }
 
     // Update is called once per frame
@@ -108,6 +110,7 @@ public class PlayerCombatManager : MonoBehaviour
                 writer.Write(mousePosition.x);
                 writer.Write(mousePosition.y);
                 writer.Write(mousePosition.z);
+                writer.Write(Random.Range(-1f, 1f));
                 //writer.Write(MultiShot);
 
                 using (Message message = Message.Create(NetworkTags.PrimarySkillTag, writer))
@@ -119,10 +122,13 @@ public class PlayerCombatManager : MonoBehaviour
         }
     }
 
-    public void PrimarySkillMessageReceived(float _x, float _y, float _z, bool _multishot)
+    public void PrimarySkillMessageReceived(float _x, float _y, float _z, float _distort, bool _multishot)
     {
+        //Add Distort Aim here for mouse position
         primarySkillCooldownTimer = 0;
         mousePosition = new Vector3(_x, _y, _z);
+        if(IsAimDistorted) mousePosition += new Vector3(_distort, 0, _distort);
+
         StartCoroutine(UsePrimarySkill(0f));
         if (!player.IsServer) MultiShot = _multishot;
         Debug.Log("Multishot " + MultiShot);
@@ -248,13 +254,13 @@ public class PlayerCombatManager : MonoBehaviour
                 c.SendMessage(message, SendMode.Reliable);
     }
 
-    public void ApplyDashLock(IClient _damageOrigin, ushort _PoisonID)
+    public void ApplyDashLock(ushort _PoisonID)
     {
         if (!IsDashLocked)
         {
             IsDashLocked = true;
             playerParticleManager.DashLock(true);
-            StartCoroutine(DashLock(_damageOrigin, _PoisonID));
+            StartCoroutine(DashLock(_PoisonID));
             SendDashLockParticleMessage(true, _PoisonID);
         }
 
@@ -274,7 +280,7 @@ public class PlayerCombatManager : MonoBehaviour
                 c.SendMessage(message, SendMode.Reliable);
     }
 
-    IEnumerator DashLock(IClient _damageOrigin, ushort _PoisonID)
+    IEnumerator DashLock(ushort _PoisonID)
     {
 
         yield return new WaitForSeconds(PlayerBaseStats.Instance.DashLockDuration);
@@ -282,6 +288,44 @@ public class PlayerCombatManager : MonoBehaviour
         IsDashLocked = false;
         SendDashLockParticleMessage(false, _PoisonID);
         playerParticleManager.DashLock(false);
+
+
+    }
+
+    public void ApplyDistortAim(ushort _PoisonID)
+    {
+        if (!IsAimDistorted)
+        {
+            IsAimDistorted = true;
+            playerParticleManager.DistortAim(true);
+            StartCoroutine(DistortAim(_PoisonID));
+            SendDistortAimParticleMessage(true, _PoisonID);
+        }
+
+    }
+
+    void SendDistortAimParticleMessage(bool _value, ushort _PoisonID)
+    {
+        ParticleEffectMessageModel newMessage = new ParticleEffectMessageModel()
+        {
+            NetworkID = (ushort)player.ID,
+            ParticleID = _PoisonID,
+            DistortAim = _value
+        };
+
+        using (Message message = Message.Create(NetworkTags.ParticleEffectTag, newMessage))
+            foreach (IClient c in ServerManager.Instance.gameServer.Server.ClientManager.GetAllClients())
+                c.SendMessage(message, SendMode.Reliable);
+    }
+
+    IEnumerator DistortAim(ushort _PoisonID)
+    {
+        Debug.Log("AIM DISTORTED");
+        yield return new WaitForSeconds(PlayerBaseStats.Instance.DistortAimDuration);
+        Debug.Log("AIM NORMAL");
+        IsAimDistorted = false;
+        SendDistortAimParticleMessage(false, _PoisonID);
+        playerParticleManager.DistortAim(false);
 
 
     }

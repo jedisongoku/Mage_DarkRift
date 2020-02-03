@@ -18,6 +18,7 @@ public class ParticleEffectMessageModel : IDarkRiftSerializable
     public bool Poison { get; set; }
     public bool DashLock { get; set; }
     public bool WintersChill { get; set; }
+    public bool DistortAim { get; set; }
 
 
     public void Deserialize(DeserializeEvent e)
@@ -38,6 +39,7 @@ public class ParticleEffectMessageModel : IDarkRiftSerializable
         Poison = e.Reader.ReadBoolean();
         DashLock = e.Reader.ReadBoolean();
         WintersChill = e.Reader.ReadBoolean();
+        DistortAim = e.Reader.ReadBoolean();
     }
 
     public void Serialize(SerializeEvent e)
@@ -58,6 +60,7 @@ public class ParticleEffectMessageModel : IDarkRiftSerializable
         e.Writer.Write(Poison);
         e.Writer.Write(DashLock);
         e.Writer.Write(WintersChill);
+        e.Writer.Write(DistortAim);
     }
 }
 

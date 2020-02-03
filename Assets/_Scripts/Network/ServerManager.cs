@@ -151,7 +151,7 @@ public class ServerManager : MonoBehaviour
             {
                 bool respawn = reader.ReadBoolean();
 
-                serverPlayersInScene[e.Client].GetComponent<Player>().RespawnPlayer();
+                serverPlayersInScene[e.Client].GetComponent<Player>().ReadyForRespawn();
 
             }
         }
@@ -192,6 +192,7 @@ public class ServerManager : MonoBehaviour
                 float x = reader.ReadSingle();
                 float y = reader.ReadSingle();
                 float z = reader.ReadSingle();
+                float distort = reader.ReadSingle();
 
                 ServerPlayer player = players[e.Client];
 
@@ -201,11 +202,14 @@ public class ServerManager : MonoBehaviour
                     writer.Write(x);
                     writer.Write(y);
                     writer.Write(z);
+                    writer.Write(distort);
                     writer.Write(serverPlayersInScene[e.Client].GetComponent<PlayerCombatManager>().MultiShot);
+                    
+                    
                     message.Serialize(writer);
                 }
 
-                serverPlayersInScene[e.Client].GetComponent<PlayerCombatManager>().PrimarySkillMessageReceived(x, y, z, false);
+                serverPlayersInScene[e.Client].GetComponent<PlayerCombatManager>().PrimarySkillMessageReceived(x, y, z, distort, false);
 
                 //foreach (IClient c in gameServer.Server.ClientManager.GetAllClients().Where(x => x != e.Client))
                 //c.SendMessage(message, e.SendMode);

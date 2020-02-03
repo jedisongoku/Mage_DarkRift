@@ -15,6 +15,7 @@ public class PlayerParticleManager : MonoBehaviour
     [SerializeField] GameObject rage;
     [SerializeField] GameObject poison;
     [SerializeField] GameObject dashLock;
+    [SerializeField] GameObject distortAim;
 
     // Start is called before the first frame update
 
@@ -84,6 +85,15 @@ public class PlayerParticleManager : MonoBehaviour
     public void WintersChill(bool _value)
     {
         chill.SetActive(_value);
+    }
+
+    public void DistortAim(bool _value)
+    {
+        if (GetComponent<Player>().IsControllable)
+        {
+            GetComponent<PlayerCombatManager>().IsAimDistorted = _value;
+        }
+        distortAim.SetActive(_value);
     }
 
 

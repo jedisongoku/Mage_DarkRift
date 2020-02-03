@@ -137,6 +137,7 @@ public class ClientManager : MonoBehaviour
                     if (particleID == PoisonShopManager.Poison_ID) networkPlayers[id].GetComponent<PlayerParticleManager>().Poison(newMessage.Poison);
                     if (particleID == PoisonShopManager.WintersChill_ID) networkPlayers[id].GetComponent<PlayerParticleManager>().WintersChill(newMessage.WintersChill);
                     if (particleID == PoisonShopManager.DashLock_ID) networkPlayers[id].GetComponent<PlayerParticleManager>().DashLock(newMessage.DashLock);
+                    if (particleID == PoisonShopManager.DistortAim_ID) networkPlayers[id].GetComponent<PlayerParticleManager>().DistortAim(newMessage.DistortAim);
 
                 }
             }
@@ -287,12 +288,13 @@ public class ClientManager : MonoBehaviour
                 float x = reader.ReadSingle();
                 float y = reader.ReadSingle();
                 float z = reader.ReadSingle();
+                float distort = reader.ReadSingle();
                 bool multishot = reader.ReadBoolean();
                 Debug.Log("Multishot " + multishot);
 
 
                 if (networkPlayers.ContainsKey(id))
-                    networkPlayers[id].GetComponent<PlayerCombatManager>().PrimarySkillMessageReceived(x, y, z, multishot);
+                    networkPlayers[id].GetComponent<PlayerCombatManager>().PrimarySkillMessageReceived(x, y, z, distort, multishot);
             }
         }
     }

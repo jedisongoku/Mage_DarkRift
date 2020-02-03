@@ -9877,6 +9877,8 @@ MonoBehaviour:
   wintersChillSlowRate: 0.5
   wintersChillDuration: 20
   dashLockDuration: 20
+  distortAimDuration: 20
+  respawnTime: 6
 --- !u!114 &206528785
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -137631,6 +137633,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 384184943727170128, guid: 45baef02ca427bf4ea234fde2c244b34,
+        type: 3}
+      propertyPath: poisonTime
+      value: 60
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 45baef02ca427bf4ea234fde2c244b34, type: 3}

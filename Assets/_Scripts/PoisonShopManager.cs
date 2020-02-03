@@ -7,10 +7,10 @@ using System.Linq;
 
 public class PoisonShopManager : MonoBehaviour
 {
-    public static readonly ushort TBD_ID = 101;
+    public static readonly ushort DashLock_ID = 101;
     public static readonly ushort Poison_ID = 102;
     public static readonly ushort WintersChill_ID = 103;
-    public static readonly ushort DashLock_ID = 104;
+    public static readonly ushort DistortAim_ID = 104;
 
     public static PoisonShopManager Instance;
     [Header("Shop Attributes")]
@@ -86,7 +86,7 @@ public class PoisonShopManager : MonoBehaviour
             isTimerOn = false;
             while(PoisonID == previousPoisonID)
             {
-                PoisonID = Random.Range(0, captureAreas.Length);
+                PoisonID = Random.Range(2, captureAreas.Length);
             }
             previousPoisonID = PoisonID;
             EnablePoisonArea(PoisonID);
@@ -326,6 +326,12 @@ public class PoisonShopManager : MonoBehaviour
     void DashLock()
     {
         foreach (IClient player in ServerManager.Instance.serverPlayersInScene.Keys.Where(x => x != Player))
-            ServerManager.Instance.serverPlayersInScene[player].GetComponent<PlayerCombatManager>().ApplyDashLock(Player, DashLock_ID);
+            ServerManager.Instance.serverPlayersInScene[player].GetComponent<PlayerCombatManager>().ApplyDashLock(DashLock_ID);
+    }
+
+    void DistortAim()
+    {
+        foreach (IClient player in ServerManager.Instance.serverPlayersInScene.Keys.Where(x => x != Player))
+            ServerManager.Instance.serverPlayersInScene[player].GetComponent<PlayerCombatManager>().ApplyDistortAim(DistortAim_ID);
     }
 }

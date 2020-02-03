@@ -197,11 +197,11 @@ public class PlayerHealthManager : MonoBehaviour
         playerParticleManager.DisableParticles();
         GetComponent<CapsuleCollider>().enabled = false;
         playerUI.SetActive(false);
-        if(player.IsControllable)
-        {
-            HUDManager.Instance.OnPlayerDeath();
-        }
-        
+
+        if(player.IsControllable) HUDManager.Instance.OnPlayerDeath();
+
+        if(player.IsControllable || player.IsServer) player.StartRespawnTimer();
+
     }
 
     public void RespawnPlayer()
@@ -386,6 +386,7 @@ public class PlayerHealthManager : MonoBehaviour
     {
         if (!IsPoisoned)
         {
+            poisonDurationTick = 0;
             IsPoisoned = true;
             playerParticleManager.Poison(true);
             StartCoroutine(Poison(_damageOrigin, _particleID));

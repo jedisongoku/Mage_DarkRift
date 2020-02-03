@@ -24,6 +24,7 @@ public class HUDManager : MonoBehaviour
     [Header("Game Panel")]
     public GameObject gamePanel;
     public GameObject respawnButton;
+    public Text respawnTimerText;
     public GameObject runeSelection;
     public Image primarySkillCooldownImage;
     public Image secondarySkillCooldownImage;
@@ -61,7 +62,7 @@ public class HUDManager : MonoBehaviour
     {
 
         ActivatePanels(loadingPanel.name);
-        Invoke("EnableGameHUD", 2f);
+        Invoke("EnableGameHUD", 0.5f);
     }
 
     void EnableGameHUD()
@@ -101,12 +102,24 @@ public class HUDManager : MonoBehaviour
     public void OnPlayerDeath()
     {
         respawnButton.SetActive(true);
+        respawnTimerText.gameObject.SetActive(true);
     }
     public void OnRespawnButtonClicked()
     {
-        OnGameLevelLoaded();
+        //OnGameLevelLoaded();
         respawnButton.SetActive(false);
         ClientManager.Instance.localPlayer.GetComponent<Player>().SendRespawnMessage();
+    }
+
+    public void LoadingOnRespawn()
+    {
+        OnGameLevelLoaded();
+    }
+
+    public void SetRespawnTimer(int _timer)
+    {
+        respawnTimerText.text = "Respawn in " + _timer;
+        if (_timer <= 0) respawnTimerText.gameObject.SetActive(false);
     }
 
     public void RefreshScoreboard()
