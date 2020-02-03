@@ -86,7 +86,7 @@ public class PoisonShopManager : MonoBehaviour
             isTimerOn = false;
             while(PoisonID == previousPoisonID)
             {
-                PoisonID = Random.Range(2, captureAreas.Length);
+                PoisonID = Random.Range(0, captureAreas.Length);
             }
             previousPoisonID = PoisonID;
             EnablePoisonArea(PoisonID);
