@@ -43,7 +43,7 @@ public class PlayerMovementManager : MonoBehaviour
 
     public void RespawnPlayer()
     {
-        SetPlayerBaseStats();
+        if (!player.HasExtraLife) SetPlayerBaseStats();
     }
 
     void SetPlayerBaseStats()

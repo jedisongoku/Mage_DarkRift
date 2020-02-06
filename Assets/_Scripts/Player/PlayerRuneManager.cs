@@ -15,6 +15,8 @@ public class PlayerRuneManager : MonoBehaviour
     public static readonly ushort HpBoost_ID = 10;
     public static readonly ushort ShieldGuard_ID = 11;
     public static readonly ushort StrongHeart_ID = 12;
+    public static readonly ushort Life_ID = 13;
+    public static readonly ushort FlameCircle_ID = 14;
 
     private Dictionary<ushort, Rune> runeCatalog = new Dictionary<ushort, Rune>();
 
@@ -54,13 +56,14 @@ public class PlayerRuneManager : MonoBehaviour
             //Survivability Runes
             runeCatalog.Add(9, new Rune(9, "Bloodthirst", "Bloodthirst", "Restores HP when you kill an enemy", 1, 1));
             runeCatalog.Add(10, new Rune(10, "HP Boost", "HpBoost", "Max HP increased", 1, 1));
-            //runeCatalog.Add(new Rune("Invincible", "Invincible", "Become invincible once in a while", 1, 1));
-            //runeCatalog.Add(new Rune("Life", "Life", "Get +1 life to continue adventure", 1, 1));
+            //runeCatalog.Add(new Rune("Invincible", "Invincible", "Become invincible once in a while", 1, 1));    
             runeCatalog.Add(11, new Rune(11, "Shield Guard", "ShieldGuard", "A shield circles around you reducing damage taken", 1, 1));
             runeCatalog.Add(12, new Rune(12, "Strong Heart", "StrongHeart", "You are healed for more HP than before", 1, 1));
+            runeCatalog.Add(13, new Rune(13, "Life", "Life", "Get +1 life to continue adventure", 1, 1));
+            runeCatalog.Add(14, new Rune(14, "Flame Circle", "FlameCircle", "Summon 2 flame bolts to spin around you", 1, 1));
             /*
             //Offensive Runes
-            runeCatalog.Add(new Rune("Flame Circle", "FlameCircle", "Summon 2 lightning bolts to spin around you", 1, 1));
+            
             runeCatalog.Add(new Rune("Flame Master", "FlameMaster", "Summon a bolt to attack enemies", 1, 1));
             runeCatalog.Add(new Rune("Frozen", "Frozen", "Create an area around player slowing down enemies entering the area", 1, 1));
             runeCatalog.Add(new Rune("Immune", "Immune", "You become poisonous, transferring plague to others who touches you", 1, 1));
@@ -271,11 +274,11 @@ public class PlayerRuneManager : MonoBehaviour
     }
     void Life()
     {
-
+        player.HasExtraLife = true;
     }
     void FlameCircle()
     {
-        
+        player.SendFlameCircleParticleMessage(true, FlameCircle_ID);
     }
     void FlameMaster()
     {

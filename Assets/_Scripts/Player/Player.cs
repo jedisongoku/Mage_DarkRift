@@ -19,6 +19,8 @@ public class Player : MonoBehaviour
     public string Nickname { get; set; }
     public byte Skin { get; set; }
 
+    
+
     [SerializeField] PlayerCombatManager playerCombatManager;
     [SerializeField] PlayerHealthManager playerHealthManager;
     [SerializeField] PlayerMovementManager playerMovementManager;
@@ -31,9 +33,11 @@ public class Player : MonoBehaviour
 
     private bool isDead = false;
     private bool isServer = false;
+    private bool hasExtraLife = false;
     private int respawnTimerTick;
     private bool IsReadyForRespawn { get; set; }
     private bool CanRespawn { get; set; }
+    
     private CinemachineVirtualCamera cinemachineCamera;
 
 
@@ -192,5 +196,49 @@ public class Player : MonoBehaviour
     void ReFollowCamera()
     {
         cinemachineCamera.Follow = transform;
+    }
+
+    public bool HasExtraLife
+    {
+        get
+        {
+            return hasExtraLife;
+        }
+        set
+        {
+            hasExtraLife = value;
+            SendLifeParticleMessage(value, PlayerRuneManager.Life_ID);
+
+        }
+    }
+
+    //Show it to the player that they have extra life - Enemies don't have to know this
+    void SendLifeParticleMessage(bool _value, ushort _runeID)
+    {
+        ParticleEffectMessageModel newMessage = new ParticleEffectMessageModel()
+        {
+            NetworkID = (ushort)ID,
+            ParticleID = _runeID,
+            Life = _value
+        };
+
+        using (Message message = Message.Create(NetworkTags.ParticleEffectTag, newMessage))
+            ServerClient.SendMessage(message, SendMode.Reliable);
+
+    }
+
+    public void SendFlameCircleParticleMessage(bool _value, ushort _runeID)
+    {
+        ParticleEffectMessageModel newMessage = new ParticleEffectMessageModel()
+        {
+            NetworkID = (ushort)ID,
+            ParticleID = _runeID,
+            FlameCircle = _value
+        };
+
+        using (Message message = Message.Create(NetworkTags.ParticleEffectTag, newMessage))
+            foreach (IClient c in ServerManager.Instance.gameServer.Server.ClientManager.GetAllClients())
+                c.SendMessage(message, SendMode.Reliable);
+
     }
 }

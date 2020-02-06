@@ -55,7 +55,7 @@ public class PlayerCombatManager : MonoBehaviour
 
     public void RespawnPlayer()
     {
-        SetPlayerBaseStats();
+        if (!player.HasExtraLife) SetPlayerBaseStats();
     }
     void SetPlayerBaseStats()
     {
@@ -205,6 +205,11 @@ public class PlayerCombatManager : MonoBehaviour
         if (Chill) ServerManager.Instance.serverPlayersInScene[_enemyClient].GetComponent<PlayerMovementManager>().ApplyChill(PlayerBaseStats.Instance.ChillDuration, PlayerRuneManager.Chill_ID);
         if (Frostbite) ServerManager.Instance.serverPlayersInScene[_enemyClient].GetComponent<PlayerHealthManager>().ApplyFrostbite(player.ServerClient, PlayerRuneManager.Frostbite_ID);
         //playerHealthManager.TakeDamage(damageToApply, _enemyClient);
+    }
+
+    public void ApplyFlameCircleDamage(IClient _enemyClient)
+    {
+        ServerManager.Instance.serverPlayersInScene[_enemyClient].GetComponent<PlayerHealthManager>().TakeDamage(PlayerBaseStats.Instance.FlameCircleDamage, player.ServerClient);
     }
 
     public void UpdateCooldownMessage()

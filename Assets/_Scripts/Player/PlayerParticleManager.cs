@@ -13,6 +13,7 @@ public class PlayerParticleManager : MonoBehaviour
     [SerializeField] GameObject dashTrail;
     [SerializeField] GameObject chill;
     [SerializeField] GameObject rage;
+    [SerializeField] GameObject flameCircle;
     [SerializeField] GameObject poison;
     [SerializeField] GameObject dashLock;
     [SerializeField] GameObject distortAim;
@@ -27,8 +28,11 @@ public class PlayerParticleManager : MonoBehaviour
         StrongHeart(false);
         Rage(false);
         ShieldGuard(false);
+        FlameCircle(false);
         Poison(false);
         DashLock(false);
+        DistortAim(false);
+        WintersChill(false);
     }
 
     public void Frostbite(bool _value)
@@ -64,6 +68,11 @@ public class PlayerParticleManager : MonoBehaviour
     public void StrongHeart(bool _value)
     {
         strongHeart.SetActive(_value);
+    }
+
+    public void FlameCircle(bool _value)
+    {
+        flameCircle.SetActive(_value);
     }
 
     public void Poison(bool _value)

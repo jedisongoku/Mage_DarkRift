@@ -28,6 +28,7 @@ public class PlayerBaseStats : MonoBehaviour
     [SerializeField] private float rageStartRate;
     [SerializeField] private float rageDamageRate;
     [SerializeField] private float strongHeartRate;
+    [SerializeField] private int flameCircleDamage;
 
     [Header("Poison Shop")]
     [SerializeField] private float poisonPickupTime;
@@ -213,6 +214,14 @@ public class PlayerBaseStats : MonoBehaviour
         get
         {
             return rageStartRate;
+        }
+    }
+
+    public int FlameCircleDamage
+    {
+        get
+        {
+            return flameCircleDamage;
         }
     }
 

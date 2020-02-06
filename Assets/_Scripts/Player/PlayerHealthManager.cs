@@ -54,14 +54,24 @@ public class PlayerHealthManager : MonoBehaviour
 
     void SetPlayerBaseStats()
     {
-        playerMaxHealth = PlayerBaseStats.Instance.Health;
-        HealthGenerationRate = PlayerBaseStats.Instance.HealthGenerationRate;
+        if(!player.HasExtraLife)
+        {
+            playerMaxHealth = PlayerBaseStats.Instance.Health;
+            HealthGenerationRate = PlayerBaseStats.Instance.HealthGenerationRate;
+
+            Bloodthirst = false;
+            ShieldGuard = false;
+            Rage = false;
+            IsFrostbited = false;
+            IsPoisoned = false;
+        }
+        else
+        {
+            player.HasExtraLife = false;
+        }
+        
+
         playerhealth = playerMaxHealth;
-        Bloodthirst = false;
-        ShieldGuard = false;
-        Rage = false;
-        IsFrostbited = false;
-        IsPoisoned = false;
 
         Invoke("UpdateHealth", 0.25f);
     }
@@ -207,6 +217,7 @@ public class PlayerHealthManager : MonoBehaviour
     public void RespawnPlayer()
     {
         SetPlayerBaseStats();
+
         GetComponent<CapsuleCollider>().enabled = true;
         playerUI.SetActive(true);
     }
