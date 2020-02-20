@@ -9,7 +9,11 @@ public class PrimarySkillSpawnLocation : MonoBehaviour
 
     private void Start()
     {
-        transform.root.GetComponent<PlayerCombatManager>().primarySkillSpawnLocation = primarySkillSpawnLocation;
+        if(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != "MainMenu3D" )
+        {
+            transform.root.GetComponent<PlayerCombatManager>().primarySkillSpawnLocation = primarySkillSpawnLocation;
+        }
+        
     }
 
 
