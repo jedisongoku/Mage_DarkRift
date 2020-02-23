@@ -54,7 +54,7 @@ public class HUDManager : MonoBehaviour
 
     public void PlayGame()
     {
-        SceneManager.LoadScene("PoisonShop");
+        SceneManager.LoadScene("PS_FFA");
         OnGameLevelLoaded();
     }
 

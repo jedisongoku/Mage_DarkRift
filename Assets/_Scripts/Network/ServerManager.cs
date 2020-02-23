@@ -29,7 +29,7 @@ public class ServerManager : MonoBehaviour
         gameServer.Server.ClientManager.ClientConnected += ClientConnected;
         gameServer.Server.ClientManager.ClientDisconnected += ClientDisconnected;
 
-        SceneManager.LoadScene("PoisonShop");
+        SceneManager.LoadScene("PS_FFA");
         DontDestroyOnLoad(this);
     }
 
@@ -72,7 +72,11 @@ public class ServerManager : MonoBehaviour
         //Add playerObject to the list
         serverPlayersInScene.Add(e.Client, playerObject);
         ScoreManager.Instance.AddPlayer(e.Client.ID, new ScorePlayer(e.Client.ID, playerServer.Nickname, 0), true);
-        PoisonShopManager.Instance.SendPoisonShopMessageOnClientConnected(e.Client);
+
+        //ONLY ENABLE THIS POISON SHOP
+        //PoisonShopManager.Instance.SendPoisonShopMessageOnClientConnected(e.Client);
+
+
         //ScoreManager.Instance.AddPlayer(e.Client);
 
         //Add the new client to the list
