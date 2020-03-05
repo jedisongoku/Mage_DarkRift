@@ -10,6 +10,7 @@ public class MenuSkinController : MonoBehaviour
     void Start()
     {
         Instantiate(skin, transform);
+        
         GetComponent<Animator>().Rebind();
     }
 
