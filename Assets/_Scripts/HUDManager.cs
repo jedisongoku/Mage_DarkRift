@@ -25,14 +25,12 @@ public class HUDManager : MonoBehaviour
     public GameObject gamePanel;
     public GameObject respawnButton;
     public Text respawnTimerText;
-    public Text fpsText;
     public GameObject runeSelection;
     public Image primarySkillCooldownImage;
     public Image secondarySkillCooldownImage;
     public Button secondarySkillButton;
     public GameObject[] scoreboardList;
     public GameObject[] runeSelectionList;
-    public VariableJoystick joystick;
 
     [Header("Poison Shop")]
     public Text nextPoisonTimerText;
@@ -51,12 +49,12 @@ public class HUDManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        fpsText.text = "FPS:" + Mathf.RoundToInt(1.0f / Time.deltaTime);
+        
     }
 
     public void PlayGame()
     {
-        SceneManager.LoadScene("PoisonShop");
+        SceneManager.LoadScene("PoisonIsland");
         OnGameLevelLoaded();
     }
 

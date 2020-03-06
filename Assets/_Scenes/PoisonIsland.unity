@@ -26624,6 +26624,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1063005216}
     m_Modifications:
+    - target: {fileID: 141742, guid: db38dd702357a5a44908b0a007d6007b, type: 3}
+      propertyPath: m_Name
+      value: Bridge (1)
+      objectReference: {fileID: 0}
     - target: {fileID: 446502, guid: db38dd702357a5a44908b0a007d6007b, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -26667,10 +26671,6 @@ PrefabInstance:
     - target: {fileID: 446502, guid: db38dd702357a5a44908b0a007d6007b, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 141742, guid: db38dd702357a5a44908b0a007d6007b, type: 3}
-      propertyPath: m_Name
-      value: Bridge (1)
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: db38dd702357a5a44908b0a007d6007b, type: 3}
@@ -31579,7 +31579,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 250
-  field of view: 6
+  field of view: 8
   orthographic: 0
   orthographic size: 8
   m_Depth: -1
@@ -32602,29 +32602,13 @@ PrefabInstance:
       propertyPath: m_LocalScale.z
       value: 0.75
       objectReference: {fileID: 0}
-    - target: {fileID: 102674, guid: 665105fb6901cb649a86ab879d9cc1c2, type: 3}
-      propertyPath: m_StaticEditorFlags
-      value: 4294967295
-      objectReference: {fileID: 0}
     - target: {fileID: 173708, guid: 665105fb6901cb649a86ab879d9cc1c2, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 4294967295
       objectReference: {fileID: 0}
-    - target: {fileID: 19809350, guid: 665105fb6901cb649a86ab879d9cc1c2, type: 3}
-      propertyPath: InitialModule.startSizeY.minMaxState
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 19809350, guid: 665105fb6901cb649a86ab879d9cc1c2, type: 3}
-      propertyPath: InitialModule.startSizeZ.minMaxState
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 19809350, guid: 665105fb6901cb649a86ab879d9cc1c2, type: 3}
-      propertyPath: InitialModule.startRotationX.minMaxState
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 19809350, guid: 665105fb6901cb649a86ab879d9cc1c2, type: 3}
-      propertyPath: InitialModule.startRotationY.minMaxState
-      value: 3
+    - target: {fileID: 102674, guid: 665105fb6901cb649a86ab879d9cc1c2, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 4294967295
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 665105fb6901cb649a86ab879d9cc1c2, type: 3}
@@ -100454,7 +100438,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1424323382
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -110934,7 +110918,7 @@ MonoBehaviour:
   m_LookAt: {fileID: 0}
   m_Follow: {fileID: 0}
   m_Lens:
-    FieldOfView: 6
+    FieldOfView: 8
     OrthographicSize: 8
     NearClipPlane: 0.3
     FarClipPlane: 250
@@ -112533,7 +112517,7 @@ PrefabInstance:
     - target: {fileID: 2181979606945651863, guid: 0e95bc6a8d48c8b4aa94301f880c8f10,
         type: 3}
       propertyPath: m_Intensity
-      value: 1.49
+      value: 0.82
       objectReference: {fileID: 0}
     - target: {fileID: 2181979606945651863, guid: 0e95bc6a8d48c8b4aa94301f880c8f10,
         type: 3}
@@ -113662,6 +113646,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1063005216}
     m_Modifications:
+    - target: {fileID: 141742, guid: db38dd702357a5a44908b0a007d6007b, type: 3}
+      propertyPath: m_Name
+      value: Bridge (2)
+      objectReference: {fileID: 0}
     - target: {fileID: 446502, guid: db38dd702357a5a44908b0a007d6007b, type: 3}
       propertyPath: m_LocalPosition.x
       value: 9.25
@@ -113705,10 +113693,6 @@ PrefabInstance:
     - target: {fileID: 446502, guid: db38dd702357a5a44908b0a007d6007b, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 141742, guid: db38dd702357a5a44908b0a007d6007b, type: 3}
-      propertyPath: m_Name
-      value: Bridge (2)
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: db38dd702357a5a44908b0a007d6007b, type: 3}
@@ -118832,6 +118816,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1063005216}
     m_Modifications:
+    - target: {fileID: 141742, guid: db38dd702357a5a44908b0a007d6007b, type: 3}
+      propertyPath: m_Name
+      value: Bridge
+      objectReference: {fileID: 0}
     - target: {fileID: 446502, guid: db38dd702357a5a44908b0a007d6007b, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -118875,10 +118863,6 @@ PrefabInstance:
     - target: {fileID: 446502, guid: db38dd702357a5a44908b0a007d6007b, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 141742, guid: db38dd702357a5a44908b0a007d6007b, type: 3}
-      propertyPath: m_Name
-      value: Bridge
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: db38dd702357a5a44908b0a007d6007b, type: 3}
@@ -127811,6 +127795,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1063005216}
     m_Modifications:
+    - target: {fileID: 141742, guid: db38dd702357a5a44908b0a007d6007b, type: 3}
+      propertyPath: m_Name
+      value: Bridge (3)
+      objectReference: {fileID: 0}
     - target: {fileID: 446502, guid: db38dd702357a5a44908b0a007d6007b, type: 3}
       propertyPath: m_LocalPosition.x
       value: -9.25
@@ -127854,10 +127842,6 @@ PrefabInstance:
     - target: {fileID: 446502, guid: db38dd702357a5a44908b0a007d6007b, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 141742, guid: db38dd702357a5a44908b0a007d6007b, type: 3}
-      propertyPath: m_Name
-      value: Bridge (3)
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: db38dd702357a5a44908b0a007d6007b, type: 3}
@@ -134662,7 +134646,7 @@ ParticleSystem:
         m_RotationOrder: 4
     startRotationX:
       serializedVersion: 2
-      minMaxState: 3
+      minMaxState: 0
       scalar: 0
       minScalar: 0
       maxCurve:
@@ -134715,7 +134699,7 @@ ParticleSystem:
         m_RotationOrder: 4
     startRotationY:
       serializedVersion: 2
-      minMaxState: 3
+      minMaxState: 0
       scalar: 0
       minScalar: 0
       maxCurve:
@@ -143552,13 +143536,13 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 113144, guid: dc74b7b486c8c1c46aac22969fbbb8a4, type: 3}
-      propertyPath: m_Layer
-      value: 11
-      objectReference: {fileID: 0}
     - target: {fileID: 284424068, guid: dc74b7b486c8c1c46aac22969fbbb8a4, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 4294967295
+      objectReference: {fileID: 0}
+    - target: {fileID: 113144, guid: dc74b7b486c8c1c46aac22969fbbb8a4, type: 3}
+      propertyPath: m_Layer
+      value: 11
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: dc74b7b486c8c1c46aac22969fbbb8a4, type: 3}
