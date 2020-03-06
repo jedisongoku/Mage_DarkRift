@@ -9,7 +9,7 @@ public class PrimarySkillSpawnLocation : MonoBehaviour
 
     private void Start()
     {
-        if(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "PoisonIsland" )
+        if(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "PoisonShop" )
         {
             transform.root.GetComponent<PlayerCombatManager>().primarySkillSpawnLocation = primarySkillSpawnLocation;
         }

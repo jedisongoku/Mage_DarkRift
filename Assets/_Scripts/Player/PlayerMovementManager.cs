@@ -12,6 +12,7 @@ public class PlayerMovementManager : MonoBehaviour
     private PlayerParticleManager playerParticleManager;
     private Animator m_Animator;
     private Rigidbody m_Rigidbody;
+    private VariableJoystick joystick;
 
     private Quaternion m_Rotation;
     private Vector3 m_NetworkPosition = Vector3.zero;
@@ -37,6 +38,7 @@ public class PlayerMovementManager : MonoBehaviour
         m_Animator = GetComponent<Animator>();
         m_Rigidbody = GetComponent<Rigidbody>();
         m_NetworkPosition = m_Rigidbody.position;
+        joystick = HUDManager.Instance.joystick;
 
         SetPlayerBaseStats(); 
     }
@@ -72,8 +74,17 @@ public class PlayerMovementManager : MonoBehaviour
 
             if (player.IsControllable)
             {
-                horizontal = (float)System.Math.Round(Input.GetAxis("Horizontal"), 1);
-                vertical = (float)System.Math.Round(Input.GetAxis("Vertical"), 1);
+                if(Application.isMobilePlatform)
+                {
+                    horizontal = (float)System.Math.Round(joystick.Horizontal, 1);
+                    vertical = (float)System.Math.Round(joystick.Vertical, 1);
+                }
+                else
+                {
+                    horizontal = (float)System.Math.Round(Input.GetAxis("Horizontal"), 1);
+                    vertical = (float)System.Math.Round(Input.GetAxis("Vertical"), 1);
+                }
+                
                 SendMovementMessage();
             }
 
