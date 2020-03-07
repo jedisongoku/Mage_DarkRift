@@ -54,7 +54,7 @@ public class HUDManager : MonoBehaviour
 
     public void PlayGame()
     {
-        SceneManager.LoadScene("PS_FFA");
+        SceneManager.LoadScene("ShowdownDark");
         OnGameLevelLoaded();
     }
 

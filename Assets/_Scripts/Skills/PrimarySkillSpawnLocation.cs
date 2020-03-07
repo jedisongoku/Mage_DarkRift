@@ -9,7 +9,7 @@ public class PrimarySkillSpawnLocation : MonoBehaviour
 
     private void Start()
     {
-        if(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "PS_FFA" )
+        if(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "ShowdownDark")
         {
             transform.root.GetComponent<PlayerCombatManager>().primarySkillSpawnLocation = primarySkillSpawnLocation;
         }

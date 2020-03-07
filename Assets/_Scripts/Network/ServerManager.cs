@@ -29,7 +29,7 @@ public class ServerManager : MonoBehaviour
         gameServer.Server.ClientManager.ClientConnected += ClientConnected;
         gameServer.Server.ClientManager.ClientDisconnected += ClientDisconnected;
 
-        SceneManager.LoadScene("PS_FFA");
+        SceneManager.LoadScene("ShowdownDark");
         DontDestroyOnLoad(this);
     }
 
