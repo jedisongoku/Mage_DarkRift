@@ -95,6 +95,7 @@ public class HUDManager : MonoBehaviour
 
     public void SelectRune(int index)
     {
+        Debug.LogWarning("SELECT RUNE");
         ClientManager.Instance.localPlayer.GetComponent<PlayerRuneManager>().SendSelectRuneMessage((ushort)index);
         runeSelection.SetActive(false);
     }

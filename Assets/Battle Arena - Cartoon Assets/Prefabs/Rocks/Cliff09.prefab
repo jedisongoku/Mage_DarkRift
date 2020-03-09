@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 33215174070219742}
   - component: {fileID: 23504548749285158}
   - component: {fileID: -5080331734157450949}
+  - component: {fileID: -8957132353656301469}
   m_Layer: 11
   m_Name: Cliff09
   m_TagString: Untagged
@@ -93,3 +94,19 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 14
   m_Mesh: {fileID: 4300000, guid: d6d07fde186eb374484034054afef4ec, type: 3}
+--- !u!54 &-8957132353656301469
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1385843485981894}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 126
+  m_CollisionDetection: 0
