@@ -31,6 +31,7 @@ public class HUDManager : MonoBehaviour
     public Button secondarySkillButton;
     public GameObject[] scoreboardList;
     public GameObject[] runeSelectionList;
+    public VariableJoystick joystick;
 
     [Header("Poison Shop")]
     public Text nextPoisonTimerText;

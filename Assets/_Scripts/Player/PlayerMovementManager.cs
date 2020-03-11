@@ -34,7 +34,7 @@ public class PlayerMovementManager : MonoBehaviour
     {
         player = GetComponent<Player>();
         playerParticleManager = GetComponent<PlayerParticleManager>();
-        m_Animator = GetComponent<Animator>();
+        m_Animator  = GetComponent<Animator>();
         m_Rigidbody = GetComponent<Rigidbody>();
         m_NetworkPosition = m_Rigidbody.position;
 
@@ -72,8 +72,17 @@ public class PlayerMovementManager : MonoBehaviour
 
             if (player.IsControllable)
             {
-                horizontal = (float)System.Math.Round(Input.GetAxis("Horizontal"), 1);
-                vertical = (float)System.Math.Round(Input.GetAxis("Vertical"), 1);
+                if(Application.isMobilePlatform)
+                {
+                    horizontal = (float)System.Math.Round(HUDManager.Instance.joystick.Horizontal, 1);
+                    vertical = (float)System.Math.Round(HUDManager.Instance.joystick.Vertical, 1);
+                }
+                else
+                {
+                    horizontal = (float)System.Math.Round(Input.GetAxis("Horizontal"), 1);
+                    vertical = (float)System.Math.Round(Input.GetAxis("Vertical"), 1);
+                }
+                
                 SendMovementMessage();
             }
 
