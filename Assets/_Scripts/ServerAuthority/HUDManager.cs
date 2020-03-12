@@ -4,6 +4,8 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using System.Linq;
+using Photon.Pun;
+using Photon.Realtime;
 
 public class HUDManager : MonoBehaviour
 {
@@ -11,12 +13,19 @@ public class HUDManager : MonoBehaviour
 
     List<ScorePlayer> scoreboardPlayers = new List<ScorePlayer>();
 
+    [Header("LaunchPanel")]
+    [SerializeField] public GameObject launchPanel;
+    [SerializeField] private Text launchLoadingText;
+    [SerializeField] private Image launchLoadingBar;
+
     [Header("Menu Panel")]
-    [SerializeField]
-    public GameObject menuPanel;
+    [SerializeField] public GameObject menuPanel;
+    [SerializeField] private Text playerName;
+
 
     [Header("Waiting Area Panel")]
     public GameObject waitingAreaPanel;
+    public Text roomStatusText;
 
     [Header("Loading Panel")]
     public GameObject loadingPanel;
@@ -33,25 +42,119 @@ public class HUDManager : MonoBehaviour
     public GameObject[] runeSelectionList;
     public VariableJoystick joystick;
 
-    [Header("Poison Shop")]
-    public Text nextPoisonTimerText;
-    public Image posionPickupProgress;
+    public bool isWaiting { get; private set; }
 
 
 
     // Start is called before the first frame update
     void Start()
     {
-        Application.targetFrameRate = 200;
+        Application.targetFrameRate = 60;
         Instance = this;
         DontDestroyOnLoad(this);
+        StartCoroutine(Applaunch());
     }
 
-    // Update is called once per frame
     void Update()
     {
+        //Debug.Log(PhotonNetwork.NetworkClientState);
+    }
+
+
+    IEnumerator Applaunch()
+    {
+        switch(PhotonNetwork.NetworkClientState)
+        {
+            case ClientState.ConnectingToNameServer:
+                //launchLoadingBar.fillAmount += 0.01f;
+                break;
+            case ClientState.ConnectedToNameServer:
+                launchLoadingBar.fillAmount += 0.01f;
+                break;
+            case ClientState.ConnectingToMasterServer:
+                //launchLoadingBar.fillAmount += 0.01f;
+                break;
+            case ClientState.Authenticating:
+                launchLoadingBar.fillAmount += 0.01f;
+                break;
+            case ClientState.ConnectedToMasterServer:
+                launchLoadingBar.fillAmount += 0.01f;
+                break;
+            case ClientState.JoiningLobby:
+                //launchLoadingBar.fillAmount += 0.01f;
+                break;
+            case ClientState.JoinedLobby:
+                launchLoadingBar.fillAmount += 0.01f;
+                break;
+            default:
+                break;
+        }
+
+        yield return new WaitForSeconds(0);
+
+        if(launchLoadingBar.fillAmount < 1)
+        {
+            launchLoadingBar.fillAmount += Time.deltaTime / 10;
+            StartCoroutine(Applaunch());
+        }
+        else
+        {
+            ActivatePanels(menuPanel.name);
+            UpdateMenuPanel();
+        }
         
     }
+
+    void UpdateMenuPanel()
+    {
+        UpdatePlayerName();
+    }
+
+    void UpdatePlayerName()
+    {
+        playerName.text = PersistData.instance.GameData.PlayerName;
+    }
+
+    public void OnPlayGameButtonClicked()
+    {
+
+        ExitGames.Client.Photon.Hashtable roomPropterties = new ExitGames.Client.Photon.Hashtable();
+        Debug.Log("GAME MODE " + PersistData.instance.GameData.GameMode);
+        roomPropterties.Add("Level", PersistData.instance.GameData.GameMode);
+        PhotonNetwork.JoinRandomRoom(roomPropterties, 0);
+        ActivatePanels(waitingAreaPanel.name);
+
+        isWaiting = true;
+    }
+
+    public void OnExitButtonClicked()
+    {
+        PhotonNetwork.LeaveRoom();
+        ActivatePanels(menuPanel.name);
+    }
+
+    void UpdateWaitingRoomState()
+    {
+        Debug.Log("UpdateRoomStatus");
+        if(isWaiting)
+        {
+            roomStatusText.text = "Players found " + PhotonNetwork.CurrentRoom.PlayerCount + "/" + PhotonNetwork.CurrentRoom.MaxPlayers;
+
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     public void PlayGame()
     {
@@ -72,6 +175,7 @@ public class HUDManager : MonoBehaviour
     }
     void ActivatePanels(string panelToBeActivated)
     {
+        launchPanel.SetActive(panelToBeActivated.Equals(launchPanel.name));
         menuPanel.SetActive(panelToBeActivated.Equals(menuPanel.name));
         waitingAreaPanel.SetActive(panelToBeActivated.Equals(waitingAreaPanel.name));
         loadingPanel.SetActive(panelToBeActivated.Equals(loadingPanel.name));
@@ -149,39 +253,6 @@ public class HUDManager : MonoBehaviour
         }
     }
 
-    public void EnablePoisonPickupProgress()
-    {
-        posionPickupProgress.transform.parent.gameObject.SetActive(true);
-    }
-
-    public void SetPoisonPickupProgress(float _amount)
-    {
-        posionPickupProgress.fillAmount = _amount;
-    }
-
-    public void DisablePoisonPickupProgress()
-    {
-        SetPoisonPickupProgress(0);
-        posionPickupProgress.transform.parent.gameObject.SetActive(false);
-    }
-
-    public void EnablePoisonTimer()
-    {
-        nextPoisonTimerText.gameObject.SetActive(true);
-    }
-
-    //timer that counts for the next poison
-    public void UpdatePoisonTimer(int _timer)
-    {
-        nextPoisonTimerText.text = "Next Poison in " + _timer;
-    }
-
-    //disable the timer when time runs out
-    public void DisablePoisonTimer()
-    {
-        nextPoisonTimerText.gameObject.SetActive(false);
-    }
-
     public float SetPrimarySkillCooldownUI
     {
         set
@@ -197,6 +268,8 @@ public class HUDManager : MonoBehaviour
             secondarySkillCooldownImage.fillAmount = value;
         }
     }
+
+    
 
     public void DisableDash(bool _value)
     {

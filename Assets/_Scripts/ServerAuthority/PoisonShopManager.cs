@@ -66,8 +66,8 @@ public class PoisonShopManager : MonoBehaviour
         }
         else
         {
-            HUDManager.Instance.EnablePoisonTimer();
-            HUDManager.Instance.DisablePoisonPickupProgress();
+            //HUDManager.Instance.EnablePoisonTimer();
+            //HUDManager.Instance.DisablePoisonPickupProgress();
             StartCoroutine(PoisonTimerClient());
         }
 
@@ -136,7 +136,7 @@ public class PoisonShopManager : MonoBehaviour
 
     IEnumerator PoisonTimerClient()
     {
-        HUDManager.Instance.UpdatePoisonTimer(PoisonTimer);
+        //HUDManager.Instance.UpdatePoisonTimer(PoisonTimer);
 
         yield return new WaitForSeconds(1f);
         PoisonTimer -= 1;
@@ -151,7 +151,7 @@ public class PoisonShopManager : MonoBehaviour
     {
         if(!IsServer)
         {
-            HUDManager.Instance.DisablePoisonTimer();
+            //HUDManager.Instance.DisablePoisonTimer();
         }
         for (int i = 0; i < captureAreas.Length; i++)
         {
@@ -245,7 +245,7 @@ public class PoisonShopManager : MonoBehaviour
         //poisonPickupTimer = 0f;
         if (other.GetComponent<Player>().IsControllable)
         {
-            HUDManager.Instance.EnablePoisonPickupProgress();
+            //HUDManager.Instance.EnablePoisonPickupProgress();
         }
 
     }
@@ -257,7 +257,7 @@ public class PoisonShopManager : MonoBehaviour
             poisonPickupTimer += Time.deltaTime;
             if (other.GetComponent<Player>().IsControllable)
             {
-                HUDManager.Instance.SetPoisonPickupProgress(poisonPickupTimer / PlayerBaseStats.Instance.PoisonPickupTime);
+                //HUDManager.Instance.SetPoisonPickupProgress(poisonPickupTimer / PlayerBaseStats.Instance.PoisonPickupTime);
             }
 
             if (poisonPickupTimer >= PlayerBaseStats.Instance.PoisonPickupTime)
@@ -273,7 +273,7 @@ public class PoisonShopManager : MonoBehaviour
                 
                 if (other.GetComponent<Player>().IsControllable)
                 {
-                    HUDManager.Instance.DisablePoisonPickupProgress();
+                   // HUDManager.Instance.DisablePoisonPickupProgress();
 
                 }
 
@@ -299,7 +299,7 @@ public class PoisonShopManager : MonoBehaviour
         if (other.GetComponent<Player>().IsControllable)
         {
             ResetPickupTimer();
-            HUDManager.Instance.DisablePoisonPickupProgress();
+            //HUDManager.Instance.DisablePoisonPickupProgress();
         }
 
         if (players.Count == 0) ResetPickupTimer();
