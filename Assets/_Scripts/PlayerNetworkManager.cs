@@ -25,9 +25,6 @@ public class PlayerNetworkManager : MonoBehaviourPun
             photonView.RPC("SelectSkin", RpcTarget.AllBuffered, Random.Range(0, playerSkins.Length));
 
         }
-
-
-
     }
 
     void SetPlayerUI()

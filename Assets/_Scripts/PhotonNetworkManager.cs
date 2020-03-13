@@ -66,15 +66,21 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
         roomOptions.CustomRoomPropertiesForLobby = lobbyProperties;
         string roomName = PersistData.instance.GameData.GameMode + Random.Range(1000, 10000);
         roomOptions.CustomRoomProperties = roomPropterties;
-        roomOptions.MaxPlayers = 2;
+        roomOptions.MaxPlayers = 8;
 
         PhotonNetwork.CreateRoom(roomName, roomOptions);
+
+        
     }
 
 
     public override void OnCreatedRoom()
     {
         Debug.Log(PhotonNetwork.CurrentRoom.Name + " is created.");
+        if (PhotonNetwork.IsMasterClient)
+        {
+            PhotonNetwork.LoadLevel(PersistData.instance.GameData.GameMode);
+        }
     }
 
     public override void OnCreateRoomFailed(short returnCode, string message)
@@ -88,14 +94,14 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
         {
             OnPlayerEnteredRoomEvent();
         }
-
+        /*
         if (PhotonNetwork.CurrentRoom.PlayerCount == PhotonNetwork.CurrentRoom.MaxPlayers && PhotonNetwork.IsMasterClient)
         {
             
             //ActivatePanels(loadingPanel.name);
             //Invoke("ActivateGamePanel", 2f);
             PhotonNetwork.LoadLevel(PersistData.instance.GameData.GameMode);
-        }
+        }*/
     }
 
 

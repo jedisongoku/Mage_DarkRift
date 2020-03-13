@@ -162,8 +162,9 @@ public class HUDManager : MonoBehaviourPunCallbacks
         ExitGames.Client.Photon.Hashtable roomPropterties = new ExitGames.Client.Photon.Hashtable();
         roomPropterties.Add("Level", gameMode);
         PhotonNetwork.JoinRandomRoom(roomPropterties, 0);
-        ActivatePanels(waitingAreaPanel.name);
-        
+        ActivatePanels(loadingPanel.name);
+        StartCoroutine(GameSceneLoading());
+
         isWaiting = true;
     }
 
@@ -180,14 +181,14 @@ public class HUDManager : MonoBehaviourPunCallbacks
 
     public void OnGameLevelLoaded()
     {
-        ActivatePanels(loadingPanel.name);
-        loadingBar.fillAmount = 0;
-        StartCoroutine(GameSceneLoading());
+        //ActivatePanels(loadingPanel.name);
+        loadingBar.fillAmount = 0.75f;
+        //StartCoroutine(GameSceneLoading());
     }
 
     IEnumerator GameSceneLoading()
     {
-        loadingBar.fillAmount += Time.deltaTime;
+        loadingBar.fillAmount += Time.deltaTime / 5;
         loadingText.text = Mathf.RoundToInt(loadingBar.fillAmount * 100) + "%";
 
         yield return new WaitForSeconds(0);

@@ -81,8 +81,9 @@ public class PlayerCombatManager : MonoBehaviourPunCallbacks
                 
 
             }
-            if(Input.GetButtonDown("Jump"))
+            if(Input.GetButtonDown("Dash"))
             {
+                Debug.Log("DASHING");
                 SecondarySkill();
             }
         }     
@@ -111,7 +112,7 @@ public class PlayerCombatManager : MonoBehaviourPunCallbacks
     [PunRPC]
     void UseSecondarySkill()
     {
-        m_Animator.SetTrigger("isDashing");
+        m_Animator.SetTrigger("Dashing");
         dashTrail.SetActive(false);
         dashTrail.SetActive(true);
     }
@@ -129,7 +130,7 @@ public class PlayerCombatManager : MonoBehaviourPunCallbacks
     }
     IEnumerator PrimarySkill(float _delayTime)
     {
-        m_Animator.SetTrigger("isAttacking");
+        m_Animator.SetTrigger("Attacking");
         Vector3 heading = mousePosition - primarySkillSpawnLocation.transform.position;
         Vector3 direction = heading / heading.magnitude;
         yield return new WaitForSeconds(_delayTime);
