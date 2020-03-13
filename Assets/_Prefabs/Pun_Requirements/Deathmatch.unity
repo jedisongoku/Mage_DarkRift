@@ -11994,7 +11994,8 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 6384579960115422987, guid: 0d0b26f2fec9f3342913c3f9631e3674, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 0d0b26f2fec9f3342913c3f9631e3674, type: 3}
 --- !u!1001 &827263978
 PrefabInstance:
@@ -22210,6 +22211,20 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 04c7ad8985c25da47a19dd051f56a026, type: 3}
+--- !u!1 &1468071645 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5820977239175451675, guid: 04c7ad8985c25da47a19dd051f56a026,
+    type: 3}
+  m_PrefabInstance: {fileID: 1468071644}
+  m_PrefabAsset: {fileID: 0}
+--- !u!81 &1468071646
+AudioListener:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1468071645}
+  m_Enabled: 1
 --- !u!1001 &1474159308
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -31004,6 +31019,114 @@ PrefabInstance:
       objectReference: {fileID: 1021347104}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 28c3e56d8fbebd44fa1bde6b2d3ae3db, type: 3}
+--- !u!1 &1934221254 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5922120530725392695, guid: 28c3e56d8fbebd44fa1bde6b2d3ae3db,
+    type: 3}
+  m_PrefabInstance: {fileID: 1934221253}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1934221255
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1934221254}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54f899a593b71434fadd7094d4499f5a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1934221256
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1934221254}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: efe0d00db01bf374daf4cdd24ec13edc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  walkSpeed: 0.5
+  health: 100
+  healthGenerationRate: 0.01
+  primarySkillDamage: 30
+  primarySkillCooldown: 1
+  secondarySkillCooldown: 5
+  bloodthirstHealAmount: 30
+  hpBoostAmount: 50
+  shieldGuardDamageReductionRate: 0.2
+  flameDamageRate: 0.2
+  flameDuration: 8
+  chillSlowRate: 0.15
+  chillDuration: 2.5
+  multishotDelayTime: 0.2
+  rageStartRate: 0.3
+  rageDamageRate: 0.1
+  poisonPickupTime: 5
+--- !u!114 &1934221257
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1934221254}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 60d810a62b61c72478b29541ea8a4fa5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  damageBoostMultiplier: 0.15
+  attackSpeedMultiplier: 0.1
+  dashSpeedMultiplier: 0.05
+  strongHeartMultiplier: 0.01
+--- !u!114 &1934221258
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1934221254}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d104a57529606ba478ccc91893835d46, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  primarySkillPrefab: {fileID: 5748836648599582022, guid: 0d0d2261a632b9c449d657a744e9ec26,
+    type: 3}
+  primarySkillExplosionPrefab: {fileID: 6498234039612364963, guid: b0ea6bdf206ace34092b52d9a28e3782,
+    type: 3}
+  primarySkillFrostNovaPrefab: {fileID: 3517897760195353392, guid: 47c2f4ed8d1db6142a46c695fc867cc2,
+    type: 3}
+  primarySkillPrefabPooledAmount: 2
+  primarySkillExplosionPrefabPooledAmount: 2
+  primarySkillFrostNovaPrefabPooledAmount: 1
+--- !u!114 &1934221259
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1934221254}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb9c9b6a37596144ebc7876c31659a32, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerPrefab: {fileID: 8507488124019187166, guid: 66dc3037cdfd08440bc9ad5e6c227f98,
+    type: 3}
+  poisonShopManager: {fileID: 0}
+  spawnLocations:
+  - {fileID: 1021347111}
+  - {fileID: 1021347110}
+  - {fileID: 1021347109}
+  - {fileID: 1021347108}
+  - {fileID: 1021347107}
+  - {fileID: 1021347106}
+  - {fileID: 1021347105}
+  - {fileID: 1021347104}
 --- !u!1001 &1950982487
 PrefabInstance:
   m_ObjectHideFlags: 0

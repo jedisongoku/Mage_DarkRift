@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4602536725895655198}
   - component: {fileID: 4602536725895655199}
-  - component: {fileID: 4602536725895655196}
+  - component: {fileID: 8910190326104934157}
   m_Layer: 13
   m_Name: CharacterLocation
   m_TagString: Untagged
@@ -27,7 +27,7 @@ Transform:
   m_GameObject: {fileID: 4602536725895655197}
   m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 270, y: 270, z: 270}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -51,7 +51,7 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
---- !u!114 &4602536725895655196
+--- !u!114 &8910190326104934157
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -60,7 +60,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 4602536725895655197}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 709b6fcf8a04b1349b8bc5e1ed020fbc, type: 3}
+  m_Script: {fileID: 11500000, guid: f4194976cd24659498f6c3d5a37084de, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   skin: {fileID: 143614, guid: 4b728669bf32313468bfc207d1160c49, type: 3}
