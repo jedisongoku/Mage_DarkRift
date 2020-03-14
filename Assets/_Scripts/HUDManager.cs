@@ -31,7 +31,9 @@ public class HUDManager : MonoBehaviourPunCallbacks
     [SerializeField] private Image loadingBar;
 
     [Header("Game Panel")]
-    [SerializeField] private VariableJoystick joystick;
+    [SerializeField] private VariableJoystick movementJoystick;
+    [SerializeField] private VariableJoystick aimJoystick;
+    [SerializeField] private GameObject playerUI;
     public GameObject[] scoreboardItems;
     public GameObject gamePanel;
     public GameObject exitGameButton;
@@ -44,11 +46,7 @@ public class HUDManager : MonoBehaviourPunCallbacks
     public GameObject runeSelection;
     public Button[] runeOptions;
     public Text fps;
-    public Text poisonTimerText;
-    public GameObject pickupTimerPanel;
-    public Image pickupTimerImage;
 
-    private bool isWaiting = false;
     private string gameMode = "Deathmatch";
 
 
@@ -56,30 +54,40 @@ public class HUDManager : MonoBehaviourPunCallbacks
     // Start is called before the first frame update
     void Start()
     {
+        Application.targetFrameRate = 60;
+
         DontDestroyOnLoad(this);
         Instance = this;
         //ActivatePanels(menuPanel.name);
         if (Application.isMobilePlatform)
         {
-            joystick.gameObject.SetActive(true);
+            movementJoystick.gameObject.SetActive(true);
         }
         else
         {
-            joystick.gameObject.SetActive(true);
+            movementJoystick.gameObject.SetActive(true);
         }
         StartCoroutine(Applaunch());
     }
 
-    void OnEnable()
+    void Update()
     {
-        PhotonNetworkManager.OnJoinedRoomEvent += UpdateRoomWaitingState;
-        PhotonNetworkManager.OnPlayerEnteredRoomEvent += UpdateRoomWaitingState;
+        fps.text = "fps: " + 1 / Time.deltaTime + " PING: " + PhotonNetwork.GetPing();
+        
     }
 
-    void OnDisable()
+    IEnumerator PlayerUIFollow()
     {
-        PhotonNetworkManager.OnJoinedRoomEvent -= UpdateRoomWaitingState;
-        PhotonNetworkManager.OnPlayerEnteredRoomEvent -= UpdateRoomWaitingState;
+        //playerUI.transform.position = Camera.main.WorldToScreenPoint(GameManager.Instance.GetCurrentPlayer.transform.position);
+        var targetPosition = Camera.main.WorldToScreenPoint(GameManager.Instance.GetCurrentPlayer.transform.position) + new Vector3(0, 125, 0);
+        //playerUI.transform.position = targetPosition;
+        playerUI.transform.position = Vector2.Lerp(playerUI.transform.position, targetPosition, Time.deltaTime * 15);
+        //playerUI.transform.position += new Vector3(0, 10, 0);
+
+        yield return new WaitForSeconds(0);
+
+
+        StartCoroutine(PlayerUIFollow());
     }
 
     IEnumerator Applaunch()
@@ -124,17 +132,24 @@ public class HUDManager : MonoBehaviourPunCallbacks
 
     #region Public Calls
 
-    public VariableJoystick Joystick
+    public VariableJoystick MovementJoystick
     {
         get
         {
-            return joystick;
+            return movementJoystick;
+        }
+    }
+    public VariableJoystick AimJoystick
+    {
+        get
+        {
+            return aimJoystick;
         }
     }
 
     public void PrimarySkill()
     {
-        GameManager.Instance.GetCurrentPlayer.GetComponent<PlayerCombatManager>().PrimarySkill();
+        //GameManager.Instance.GetCurrentPlayer.GetComponent<PlayerCombatManager>().PrimarySkill();
     }
 
     public void SecondarySkill()
@@ -165,7 +180,6 @@ public class HUDManager : MonoBehaviourPunCallbacks
         ActivatePanels(loadingPanel.name);
         StartCoroutine(GameSceneLoading());
 
-        isWaiting = true;
     }
 
     public void OnPlayerDeath()
@@ -199,6 +213,7 @@ public class HUDManager : MonoBehaviourPunCallbacks
         else
         {
             GameManager.Instance.InitializePlayer();
+            StartCoroutine(PlayerUIFollow());
             ActivatePanels(gamePanel.name);
             ScoreManager.Instance.StartScoreboard();
         }
@@ -208,17 +223,6 @@ public class HUDManager : MonoBehaviourPunCallbacks
     {
         PhotonNetwork.LeaveRoom();
         ActivatePanels(menuPanel.name);
-    }
-
-    void UpdateRoomWaitingState()
-    {
-        if(isWaiting)
-        {
-            roomStatusText.text = "Players found " + PhotonNetwork.CurrentRoom.PlayerCount + "/" + PhotonNetwork.CurrentRoom.MaxPlayers;
-
-        }
-        
-        //When a new player joins the room, show the room status
     }
 
     public GameObject[] ScoreboardItems

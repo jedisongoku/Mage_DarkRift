@@ -8,6 +8,7 @@ public class PlayerCombatManager : MonoBehaviourPunCallbacks
 {
     [SerializeField] private PlayerMovementController playerMovementController;
     [SerializeField] private PlayerHealthManager playerHealthManager;
+    private VariableJoystick aimJoystick;
   
     Animator m_Animator;
     bool isDead = false;
@@ -31,6 +32,9 @@ public class PlayerCombatManager : MonoBehaviourPunCallbacks
     [SerializeField] private GameObject runeActivatedBlue;
     [SerializeField] private GameObject runeActivatedRed;
     [SerializeField] private GameObject dashTrail;
+    [SerializeField] private LineRenderer aimAssist;
+
+    private Vector3 aimLocation;
 
 
     [Header("Runes")]
@@ -51,6 +55,7 @@ public class PlayerCombatManager : MonoBehaviourPunCallbacks
         if (photonView.IsMine)
         {
             //playerMovementController.enabled = true;
+            aimJoystick = HUDManager.Instance.AimJoystick;
             GameObject.Find("VirtualCamera").GetComponent<CinemachineVirtualCamera>().Follow = this.transform;
             playerBaseRenderer.material = playerBaseColor;
 
@@ -74,13 +79,83 @@ public class PlayerCombatManager : MonoBehaviourPunCallbacks
             //HUDManager.Instance.SetPrimarySkillCooldownUI = 1 - primarySkillCooldownTimer / primarySkillCooldown;
             //HUDManager.Instance.SetSecondarySkillCooldownUI = 1 - secondarySkillCooldownTimer / secondarySkillCooldown;
 
-            if (Input.GetButtonDown("Fire1"))
+            //TOUCH 0
+            if(Input.touchCount > 0)
             {
-                //Get Player Fire Direction
-                PrimarySkill();
                 
+                if (Input.GetTouch(0).phase == TouchPhase.Moved || Input.GetTouch(0).phase == TouchPhase.Stationary)
+                {
+                    if (Input.GetTouch(0).position.x < Screen.width / 2)
+                    {
+                        //Left side of the screen 
+                    }
+                    else
+                    {
+                        //Right side of the screen
+                        var aimDistance = new Vector3(aimJoystick.Horizontal, 0, aimJoystick.Vertical);
+                        aimAssist.SetPosition(0, transform.position);
+                        aimAssist.SetPosition(1, transform.position + aimDistance * 10);
+                        aimLocation = transform.position + aimDistance * 10;
+                    }
 
+                }
+                else if (Input.GetTouch(0).phase == TouchPhase.Ended)
+                {
+                    if (Input.GetTouch(0).position.x < Screen.width / 2)
+                    {
+                        //Left side of the screen 
+                    }
+                    else
+                    {
+                        //Right side of the screen
+                        if((aimAssist.GetPosition(0) - aimAssist.GetPosition(1)).magnitude > 1)
+                        {
+                            PrimarySkill(aimLocation);
+                        }
+                        
+                        aimAssist.SetPosition(1, aimAssist.GetPosition(0));
+                        
+                    }
+
+                }
             }
+            
+            //TOUCH 1
+            if(Input.touchCount > 1)
+            {
+                if (Input.GetTouch(1).phase == TouchPhase.Moved || Input.GetTouch(1).phase == TouchPhase.Stationary)
+                {
+                    if (Input.GetTouch(1).position.x < Screen.width / 2)
+                    {
+                        //Left side of the screen 
+                    }
+                    else
+                    {
+                        //Right side of the screen
+                        var aimDistance = new Vector3(aimJoystick.Horizontal, 0, aimJoystick.Vertical).normalized;
+                        aimAssist.SetPosition(0, transform.position);
+                        aimAssist.SetPosition(1, transform.position + aimDistance * 10);
+                        aimLocation = transform.position + aimDistance * 10;
+                    }
+
+                }
+                else if (Input.GetTouch(1).phase == TouchPhase.Ended)
+                {
+                    if (Input.GetTouch(1).position.x < Screen.width / 2)
+                    {
+                        //Left side of the screen 
+                    }
+                    else
+                    {
+                        //Right side of the screen
+                        aimAssist.SetPosition(1, aimAssist.GetPosition(0));
+                        //Get Player Fire Direction
+                        PrimarySkill(aimLocation);
+                    }
+
+                }
+            }
+           
             if(Input.GetButtonDown("Dash"))
             {
                 Debug.Log("DASHING");
@@ -89,13 +164,13 @@ public class PlayerCombatManager : MonoBehaviourPunCallbacks
         }     
     }
 
-    public void PrimarySkill()
+    public void PrimarySkill(Vector3 _aimLocation)
     {
         if (primarySkillCooldownTimer >= primarySkillCooldown)
         {
-            playerMovementController.SetFireDirection();
+            playerMovementController.SetFireDirection(_aimLocation);
             primarySkillCooldownTimer = 0f;
-            photonView.RPC("UsePrimarySkill", RpcTarget.AllViaServer, playerMovementController.MousePosition, primarySkillSpawnLocation.transform.position, isMultiShot, playerHealthManager.Rage);
+            photonView.RPC("UsePrimarySkill", RpcTarget.AllViaServer, _aimLocation, primarySkillSpawnLocation.transform.position, isMultiShot, playerHealthManager.Rage);
         }
     }
 

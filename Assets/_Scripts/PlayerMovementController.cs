@@ -47,7 +47,7 @@ public class PlayerMovementController : MonoBehaviourPun, IPunObservable
     void Start()
     {
         SetPlayerBaseStats();
-        joystick = HUDManager.Instance.Joystick;
+        joystick = HUDManager.Instance.MovementJoystick;
     }
 
     void OnDisable()
@@ -97,10 +97,11 @@ public class PlayerMovementController : MonoBehaviourPun, IPunObservable
 
     }
 
-    public void SetFireDirection()
+    public void SetFireDirection(Vector3 _aimLocation)
     {
         if (photonView.IsMine)
         {
+            
             float enter = 0f;
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             if (plane.Raycast(ray, out enter))
@@ -109,10 +110,12 @@ public class PlayerMovementController : MonoBehaviourPun, IPunObservable
                 //Debug.DrawLine(transform.position, mousePosition, Color.gray);
 
             }
+            Debug.Log("Mouseposition " + mousePosition);
+            Debug.Log("aimlocation " + _aimLocation);
 
-            Vector3 desiredForward = Vector3.RotateTowards(transform.forward, mousePosition, turnSpeed * Time.deltaTime, 0f);
+            Vector3 desiredForward = Vector3.RotateTowards(transform.forward, _aimLocation, turnSpeed * Time.deltaTime, 0f);
             m_Rotation = Quaternion.LookRotation(desiredForward);
-            transform.LookAt(mousePosition);
+            transform.LookAt(_aimLocation);
 
         }
 

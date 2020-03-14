@@ -21,7 +21,7 @@ public class VariableJoystick : Joystick
             background.gameObject.SetActive(true);
         }
         else
-            background.gameObject.SetActive(false);
+            background.gameObject.SetActive(true);
     }
 
     protected override void Start()
@@ -43,8 +43,9 @@ public class VariableJoystick : Joystick
 
     public override void OnPointerUp(PointerEventData eventData)
     {
-        if(joystickType != JoystickType.Fixed)
-            background.gameObject.SetActive(false);
+        if (joystickType != JoystickType.Fixed)
+            background.anchoredPosition = fixedPosition;
+            //background.gameObject.SetActive(false);
 
         base.OnPointerUp(eventData);
     }
