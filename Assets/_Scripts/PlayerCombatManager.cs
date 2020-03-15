@@ -210,6 +210,8 @@ public class PlayerCombatManager : MonoBehaviourPunCallbacks
         obj.transform.position = primarySkillSpawnLocation.transform.position;
         obj.transform.rotation = Quaternion.identity;
         obj.SetActive(true);
+
+        //Where stats applied to the particle object
         obj.GetComponent<PrimarySkillController>().SetParticleMoveDirection = new Vector3(direction.x, 0, direction.z);
         obj.GetComponent<PrimarySkillController>().PlayerOrigin = photonView.ViewID;
         obj.GetComponent<PrimarySkillController>().DamageDone = primarySkillDamage;
@@ -343,8 +345,8 @@ public class PlayerCombatManager : MonoBehaviourPunCallbacks
                     playerUI.SetActive(false);
                 }
 
-                m_Animator.SetTrigger("isDead");
-                
+                m_Animator.SetTrigger("Dead");
+                Debug.Log("DEAD");
                 DisablePlayer();
             }
         }

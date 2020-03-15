@@ -132,7 +132,8 @@ public class PlayerMovementController : MonoBehaviourPun, IPunObservable
             }
 
             m_Rigidbody.position = Vector3.MoveTowards(m_Rigidbody.position, networkPosition, Time.fixedDeltaTime);
-            movement = Vector2.Lerp(movement, newMovement, Time.fixedDeltaTime * turnSpeed);
+            //movement = Vector2.Lerp(movement, newMovement, Time.fixedDeltaTime * turnSpeed);
+            movement = newMovement;
         }
         else
         {

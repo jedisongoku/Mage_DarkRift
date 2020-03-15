@@ -248,7 +248,7 @@ public class PlayerHealthManager : MonoBehaviourPun
             }
         }
         healthBar.GetComponent<Image>().fillAmount = playerhealth / playerMaxHealth;
-        healthText.text = Mathf.CeilToInt(playerhealth) + "/" + playerMaxHealth;
+        healthText.text = Mathf.CeilToInt(playerhealth).ToString();
         if((playerhealth / playerMaxHealth <= PlayerBaseStats.Instance.RageStartRate) && isRage)
         {
             rageParticle.SetActive(true);
