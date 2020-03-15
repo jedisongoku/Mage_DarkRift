@@ -22,6 +22,7 @@ public class PlayerHealthManager : MonoBehaviourPun
     private int bloodthirstHealAmount;
     private int hpBoostAmount;
     private GameObject playerModel;
+    private GameObject playerUI;
 
     [Header("Runes")]
     [SerializeField] private GameObject frostbiteParticle;
@@ -50,7 +51,18 @@ public class PlayerHealthManager : MonoBehaviourPun
         if (photonView.IsMine)
         {
             StartCoroutine(HealhtRegeneration());
-        }
+        }/*
+        foreach(var item in HUDManager.Instance.playerUIList)
+        {
+            if (!item.activeInHierarchy)
+            {
+                playerUI = item;
+                item.SetActive(true);
+                StartCoroutine(PlayerUIFollow());
+                break;
+            }
+            
+        }*/
         SetPlayerBaseStats();
     }
 
@@ -71,9 +83,20 @@ public class PlayerHealthManager : MonoBehaviourPun
         shieldGuardParticle.SetActive(false);
         frostbiteParticle.SetActive(false);
 
+    }
+
+    IEnumerator PlayerUIFollow()
+    {
+        //playerUI.transform.position = Camera.main.WorldToScreenPoint(GameManager.Instance.GetCurrentPlayer.transform.position);
+        var targetPosition = Camera.main.WorldToScreenPoint(transform.position) + new Vector3(0, 130, 0);
+        //playerUI.transform.position = targetPosition;
+        playerUI.transform.position = Vector2.Lerp(playerUI.transform.position, targetPosition, Time.deltaTime * 15);
+        //playerUI.transform.position += new Vector3(0, 10, 0);
+
+        yield return new WaitForSeconds(0);
 
 
-
+        StartCoroutine(PlayerUIFollow());
     }
 
     IEnumerator HealhtRegeneration()

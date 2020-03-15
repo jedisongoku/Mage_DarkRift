@@ -33,7 +33,7 @@ public class HUDManager : MonoBehaviourPunCallbacks
     [Header("Game Panel")]
     [SerializeField] private VariableJoystick movementJoystick;
     [SerializeField] private VariableJoystick aimJoystick;
-    [SerializeField] private GameObject playerUI;
+    [SerializeField] public GameObject[] playerUIList;
     public GameObject[] scoreboardItems;
     public GameObject gamePanel;
     public GameObject exitGameButton;
@@ -76,19 +76,7 @@ public class HUDManager : MonoBehaviourPunCallbacks
         
     }
 
-    IEnumerator PlayerUIFollow()
-    {
-        //playerUI.transform.position = Camera.main.WorldToScreenPoint(GameManager.Instance.GetCurrentPlayer.transform.position);
-        var targetPosition = Camera.main.WorldToScreenPoint(GameManager.Instance.GetCurrentPlayer.transform.position) + new Vector3(0, 125, 0);
-        //playerUI.transform.position = targetPosition;
-        playerUI.transform.position = Vector2.Lerp(playerUI.transform.position, targetPosition, Time.deltaTime * 15);
-        //playerUI.transform.position += new Vector3(0, 10, 0);
-
-        yield return new WaitForSeconds(0);
-
-
-        StartCoroutine(PlayerUIFollow());
-    }
+    
 
     IEnumerator Applaunch()
     {
@@ -213,7 +201,6 @@ public class HUDManager : MonoBehaviourPunCallbacks
         else
         {
             GameManager.Instance.InitializePlayer();
-            StartCoroutine(PlayerUIFollow());
             ActivatePanels(gamePanel.name);
             ScoreManager.Instance.StartScoreboard();
         }

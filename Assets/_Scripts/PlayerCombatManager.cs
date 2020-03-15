@@ -12,17 +12,19 @@ public class PlayerCombatManager : MonoBehaviourPunCallbacks
   
     Animator m_Animator;
     bool isDead = false;
-    Vector3 mousePosition = Vector3.zero;
+    Vector3 aimLocation = Vector3.zero;
     Vector3 spawnPosition = Vector3.zero;
 
     [Header("Player Skills Stats")]
 
-    [SerializeField] private float primarySkillCooldown = 3f;
-    [SerializeField] private float secondarySkillCooldown = 8f;
+    [SerializeField] private float primarySkillCooldown;
+    [SerializeField] private float secondarySkillCooldown;
+    [SerializeField] private int primarySkillCharge;
     [SerializeField] private GameObject primarySkillSpawnLocation;
     private int primarySkillDamage = 0;
     private float primarySkillCooldownTimer = 3f;
     private float secondarySkillCooldownTimer = 8f;
+    private int primarySkillParticleCount = 5;
 
     [Header("Player")]
     [SerializeField] private GameObject playerModel;
@@ -33,8 +35,6 @@ public class PlayerCombatManager : MonoBehaviourPunCallbacks
     [SerializeField] private GameObject runeActivatedRed;
     [SerializeField] private GameObject dashTrail;
     [SerializeField] private LineRenderer aimAssist;
-
-    private Vector3 aimLocation;
 
 
     [Header("Runes")]
@@ -69,15 +69,10 @@ public class PlayerCombatManager : MonoBehaviourPunCallbacks
     // Update is called once per frame
     void Update()
     {
-        
-
         if(photonView.IsMine && !isDead)
         {
             primarySkillCooldownTimer += Time.deltaTime;
             secondarySkillCooldownTimer += Time.deltaTime;
-
-            //HUDManager.Instance.SetPrimarySkillCooldownUI = 1 - primarySkillCooldownTimer / primarySkillCooldown;
-            //HUDManager.Instance.SetSecondarySkillCooldownUI = 1 - secondarySkillCooldownTimer / secondarySkillCooldown;
 
             //TOUCH 0
             if(Input.touchCount > 0)
@@ -93,8 +88,8 @@ public class PlayerCombatManager : MonoBehaviourPunCallbacks
                     {
                         //Right side of the screen
                         var aimDistance = new Vector3(aimJoystick.Horizontal, 0, aimJoystick.Vertical);
-                        aimAssist.SetPosition(0, transform.position);
-                        aimAssist.SetPosition(1, transform.position + aimDistance * 10);
+                        aimAssist.SetPosition(0, transform.position + Vector3.up);
+                        aimAssist.SetPosition(1, transform.position + Vector3.up + aimDistance * 10);
                         aimLocation = transform.position + aimDistance * 10;
                     }
 
@@ -133,8 +128,8 @@ public class PlayerCombatManager : MonoBehaviourPunCallbacks
                     {
                         //Right side of the screen
                         var aimDistance = new Vector3(aimJoystick.Horizontal, 0, aimJoystick.Vertical).normalized;
-                        aimAssist.SetPosition(0, transform.position);
-                        aimAssist.SetPosition(1, transform.position + aimDistance * 10);
+                        aimAssist.SetPosition(0, transform.position + Vector3.up);
+                        aimAssist.SetPosition(1, transform.position + Vector3.up + aimDistance * 10);
                         aimLocation = transform.position + aimDistance * 10;
                     }
 
@@ -170,7 +165,7 @@ public class PlayerCombatManager : MonoBehaviourPunCallbacks
         {
             playerMovementController.SetFireDirection(_aimLocation);
             primarySkillCooldownTimer = 0f;
-            photonView.RPC("UsePrimarySkill", RpcTarget.AllViaServer, _aimLocation, primarySkillSpawnLocation.transform.position, isMultiShot, playerHealthManager.Rage);
+            photonView.RPC("UsePrimarySkill", RpcTarget.AllViaServer, _aimLocation, primarySkillSpawnLocation.transform.position, playerHealthManager.Rage);
         }
     }
 
@@ -193,22 +188,23 @@ public class PlayerCombatManager : MonoBehaviourPunCallbacks
     }
 
     [PunRPC]
-    void UsePrimarySkill(Vector3 _mousePosition, Vector3 _spawnPosition, bool _isMultishot, bool _isRage)
+    void UsePrimarySkill(Vector3 _aimLocation, Vector3 _spawnPosition, bool _isRage)
     {       
-        playerMovementController.MousePosition = _mousePosition;
+        playerMovementController.AimLocation = _aimLocation;
         playerMovementController.Attack = true;
         spawnPosition = _spawnPosition;
-        mousePosition = _mousePosition;
+        aimLocation = _aimLocation;
         isRage = _isRage;
         StartCoroutine(PrimarySkill(0f));
-        if(_isMultishot) StartCoroutine(PrimarySkill(PlayerBaseStats.Instance.Multishot));
     }
     IEnumerator PrimarySkill(float _delayTime)
     {
         m_Animator.SetTrigger("Attacking");
-        Vector3 heading = mousePosition - primarySkillSpawnLocation.transform.position;
+        Vector3 heading = aimLocation - primarySkillSpawnLocation.transform.position;
         Vector3 direction = heading / heading.magnitude;
+
         yield return new WaitForSeconds(_delayTime);
+
         GameObject obj = ObjectPooler.Instance.GetPrimarySkillPrefab();
         //if (obj == null) StopCoroutine(PrimarySkill());
         obj.transform.position = primarySkillSpawnLocation.transform.position;
@@ -239,6 +235,7 @@ public class PlayerCombatManager : MonoBehaviourPunCallbacks
     {
         primarySkillDamage = PlayerBaseStats.Instance.PrimarySkillDamage;
         primarySkillCooldown = PlayerBaseStats.Instance.PrimarySkillCooldown;
+        primarySkillCharge = PlayerBaseStats.Instance.PrimarySkillCharge;
         secondarySkillCooldown = PlayerBaseStats.Instance.SecondarySkillCooldown;
         isFrostbite = false;
         isPoison = false;

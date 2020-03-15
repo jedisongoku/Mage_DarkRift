@@ -13,7 +13,7 @@ public class PlayerMovementController : MonoBehaviourPun, IPunObservable
     //AudioSource m_AudioSource;
     Vector3 m_Movement;
     
-    Vector3 mousePosition;
+    Vector3 aimLocation;
     Vector3 lookPosition;
     Vector3 attackDirection;
     Quaternion m_Rotation = Quaternion.identity;
@@ -101,36 +101,23 @@ public class PlayerMovementController : MonoBehaviourPun, IPunObservable
     {
         if (photonView.IsMine)
         {
-            
-            float enter = 0f;
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-            if (plane.Raycast(ray, out enter))
-            {
-                mousePosition = ray.GetPoint(enter);
-                //Debug.DrawLine(transform.position, mousePosition, Color.gray);
-
-            }
-            Debug.Log("Mouseposition " + mousePosition);
-            Debug.Log("aimlocation " + _aimLocation);
-
             Vector3 desiredForward = Vector3.RotateTowards(transform.forward, _aimLocation, turnSpeed * Time.deltaTime, 0f);
             m_Rotation = Quaternion.LookRotation(desiredForward);
             transform.LookAt(_aimLocation);
-
         }
 
     }
 
-    public Vector3 MousePosition
+    public Vector3 AimLocation
     {
         get
         {
-            return mousePosition;
+            return aimLocation;
         }
         set
         {
-            mousePosition = value;
-            transform.LookAt(mousePosition);
+            aimLocation = value;
+            transform.LookAt(aimLocation);
         }
     }
 
@@ -170,20 +157,19 @@ public class PlayerMovementController : MonoBehaviourPun, IPunObservable
         }
         m_Movement.Set(movement.x, 0f, movement.y);
         m_Movement.Normalize();
+        Debug.Log("Movement " + m_Movement);
 
         Vector3 desiredForward = Vector3.RotateTowards(transform.forward, m_Movement, turnSpeed * Time.deltaTime, 0f);
         m_Rotation = Quaternion.LookRotation(desiredForward);
-        m_Animator.SetFloat("Horizontal", movement.x);
-        m_Animator.SetFloat("Vertical", movement.y);
-        
-
-
+        int anim_x = movement.x < 0 ? -1 : movement.x > 0 ? 1 : 0;
+        int anim_y = movement.y < 0 ? -1 : movement.y > 0 ? 1 : 0;
+        m_Animator.SetFloat("Horizontal", anim_x);
+        m_Animator.SetFloat("Vertical", anim_y);
 
     }
 
     void OnAnimatorMove()
-    {
-        
+    {    
         m_Rigidbody.MovePosition(m_Rigidbody.position + m_Movement * m_Animator.deltaPosition.magnitude * walkSpeed);
         if (fireTimer > 0.2f)
         {

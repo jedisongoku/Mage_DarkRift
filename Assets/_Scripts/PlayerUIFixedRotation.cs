@@ -4,6 +4,10 @@ using UnityEngine;
 
 public class PlayerUIFixedRotation : MonoBehaviour
 {
+    public int x;
+    public int y;
+    public int z;
+    public int t;
 
     private GameObject parent;
     private Vector3 position = new Vector3(0, 2.5f, 0);
@@ -17,7 +21,7 @@ public class PlayerUIFixedRotation : MonoBehaviour
     void Update()
     {
         transform.SetParent(null);
-        transform.rotation = new Quaternion(0, 0, 0, 0);
+        transform.rotation = new Quaternion(x, y, z, t);
         transform.SetParent(parent.transform);
         transform.localPosition = position;
     }

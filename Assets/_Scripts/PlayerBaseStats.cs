@@ -11,6 +11,7 @@ public class PlayerBaseStats : MonoBehaviour
     [SerializeField] private float healthGenerationRate;
     [SerializeField] private int primarySkillDamage;
     [SerializeField] private float primarySkillCooldown;
+    [SerializeField] private int primarySkillCharge;
     [SerializeField] private float secondarySkillCooldown;
     [SerializeField] private int bloodthirstHealAmount;
     [SerializeField] private int hpBoostAmount;
@@ -51,6 +52,14 @@ public class PlayerBaseStats : MonoBehaviour
         get
         {
             return primarySkillCooldown;
+        }
+    }
+
+    public int PrimarySkillCharge
+    {
+        get
+        {
+            return primarySkillCharge;
         }
     }
 
