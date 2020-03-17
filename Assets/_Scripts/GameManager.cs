@@ -17,16 +17,40 @@ public class GameManager : MonoBehaviour
     private static GameObject currentPlayer;
     private static int currentPlayerViewID;
     private static int playerKillCount = 0;
+    private int respawnCooldown = 6;
+    private bool canRespawn = false;
+
+    public int RespawnCooldown
+    {
+        get
+        {
+            return respawnCooldown;
+        }
+        set
+        {
+            respawnCooldown = value;
+        }
+    }
+
+    public bool CanRespawn
+    {
+        get
+        {
+            return canRespawn;
+        }
+        set
+        {
+            canRespawn = value;
+        }
+    }
 
 
     // Start is called before the first frame update
     void Awake()
     {
-
         Instance = this;
         HUDManager.Instance.OnGameLevelLoaded();
-
-        
+  
     }
 
 

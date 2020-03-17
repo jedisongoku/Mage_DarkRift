@@ -38,7 +38,9 @@ public class HUDManager : MonoBehaviourPunCallbacks
     public GameObject gamePanel;
     public GameObject exitGameButton;
     public GameObject respawnButton;
-    public GameObject poisonShopPanel;
+    public Text respawnCooldownText;
+    public GameObject playerControllerPanel;
+    public GameObject deathPanel;
     public Image primarySkillCooldownImage;
     public Image secondarySkillCooldownImage;
     public GameObject scoreboardContent;
@@ -48,6 +50,9 @@ public class HUDManager : MonoBehaviourPunCallbacks
     public Text fps;
 
     private string gameMode = "Deathmatch";
+    private bool isRespawnRequested = false;
+    
+    
 
 
     #region Unity Mono Calls
@@ -172,19 +177,55 @@ public class HUDManager : MonoBehaviourPunCallbacks
 
     public void OnPlayerDeath()
     {
-        respawnButton.SetActive(true);
+        playerControllerPanel.SetActive(false);
+        deathPanel.SetActive(true);
+        GameManager.Instance.CanRespawn = false;
+        isRespawnRequested = false;
+        respawnCooldownText.gameObject.SetActive(true);
+        StartCoroutine(RespawnCooldown(GameManager.Instance.RespawnCooldown));
+        //respawnButton.SetActive(true);
     }
     public void OnRespawnButtonClicked()
     {
-        OnGameLevelLoaded();
-        respawnButton.SetActive(false);
-        GameManager.Instance.RespawnPlayer();
+        if(GameManager.Instance.CanRespawn)
+        {
+            //OnGameLevelLoaded(); 
+            GameManager.Instance.RespawnPlayer();
+        }
+        isRespawnRequested = true;
+        playerControllerPanel.SetActive(true);
+        deathPanel.SetActive(false);
+
+
+    }
+
+    IEnumerator RespawnCooldown(int _respawnCooldown)
+    {
+        respawnCooldownText.text = "RESPAWN IN " + _respawnCooldown;
+
+        yield return new WaitForSeconds(1f);
+
+        if(_respawnCooldown > 0 )
+        {
+            _respawnCooldown--;
+            StartCoroutine(RespawnCooldown(_respawnCooldown));
+        }
+        else
+        {
+            GameManager.Instance.CanRespawn = true;
+            respawnCooldownText.gameObject.SetActive(false);
+            if (isRespawnRequested)
+                OnRespawnButtonClicked();
+
+        }
     }
 
     public void OnGameLevelLoaded()
     {
         //ActivatePanels(loadingPanel.name);
         loadingBar.fillAmount = 0.75f;
+        deathPanel.SetActive(false);
+        playerControllerPanel.SetActive(true);
         //StartCoroutine(GameSceneLoading());
     }
 
@@ -201,7 +242,7 @@ public class HUDManager : MonoBehaviourPunCallbacks
         else
         {
             GameManager.Instance.InitializePlayer();
-            ActivatePanels(gamePanel.name);
+            Invoke("ActivateGamePanel", 0.5f);
             ScoreManager.Instance.StartScoreboard();
         }
     }
@@ -210,6 +251,7 @@ public class HUDManager : MonoBehaviourPunCallbacks
     {
         PhotonNetwork.LeaveRoom();
         ActivatePanels(menuPanel.name);
+        characterLocation.SetActive(true);
     }
 
     public GameObject[] ScoreboardItems

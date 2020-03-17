@@ -35,6 +35,7 @@ public class PlayerCombatManager : MonoBehaviourPunCallbacks
     [SerializeField] private GameObject runeActivatedRed;
     [SerializeField] private GameObject dashTrail;
     [SerializeField] private LineRenderer aimAssist;
+    public bool canShoot { get; set; }
 
 
     [Header("Runes")]
@@ -69,6 +70,7 @@ public class PlayerCombatManager : MonoBehaviourPunCallbacks
     // Update is called once per frame
     void Update()
     {
+
         if(photonView.IsMine && !isDead)
         {
             primarySkillCooldownTimer += Time.deltaTime;
@@ -103,12 +105,40 @@ public class PlayerCombatManager : MonoBehaviourPunCallbacks
                     else
                     {
                         //Right side of the screen
-                        if((aimAssist.GetPosition(0) - aimAssist.GetPosition(1)).magnitude > 1)
+
+                        if (canShoot)
                         {
-                            PrimarySkill(aimLocation);
+                            canShoot = false;
+                            if ((aimAssist.GetPosition(0) - aimAssist.GetPosition(1)).magnitude > 1)
+                            {
+                                PrimarySkill(aimLocation);
+                            }
+                            else
+                            {
+                                GameObject closestEnemy = null;
+                                float distance = 1000;
+                                foreach (var enemy in PhotonNetwork.PhotonViews)
+                                {
+                                    if (enemy.ViewID != photonView.ViewID)
+                                    {
+                                        if (distance > (enemy.gameObject.transform.position - transform.position).magnitude)
+                                        {
+                                            distance = (enemy.gameObject.transform.position - transform.position).magnitude;
+                                            closestEnemy = enemy.gameObject;
+                                        }
+                                    }
+
+                                }
+                                if (closestEnemy != null)
+                                {
+                                    PrimarySkill(closestEnemy.transform.position + Vector3.up);
+                                }
+                            }
+
+                            aimAssist.SetPosition(1, aimAssist.GetPosition(0));
                         }
                         
-                        aimAssist.SetPosition(1, aimAssist.GetPosition(0));
+                        
                         
                     }
 
@@ -143,14 +173,68 @@ public class PlayerCombatManager : MonoBehaviourPunCallbacks
                     else
                     {
                         //Right side of the screen
+                        if (canShoot)
+                        {
+                            canShoot = false;
+                            if ((aimAssist.GetPosition(0) - aimAssist.GetPosition(1)).magnitude > 1)
+                            {
+                                PrimarySkill(aimLocation);
+                            }
+                            else
+                            {
+                                GameObject closestEnemy = null;
+                                float distance = 1000;
+                                foreach (var enemy in PhotonNetwork.PhotonViews)
+                                {
+                                    if (enemy.ViewID != photonView.ViewID)
+                                    {
+                                        if (distance > (enemy.gameObject.transform.position - transform.position).magnitude)
+                                        {
+                                            distance = (enemy.gameObject.transform.position - transform.position).magnitude;
+                                            closestEnemy = enemy.gameObject;
+                                        }
+                                    }
+
+                                }
+                                if (closestEnemy != null)
+                                {
+                                    PrimarySkill(closestEnemy.transform.position + Vector3.up);
+                                }
+                            }
+
+                            aimAssist.SetPosition(1, aimAssist.GetPosition(0));
+                        }
+                        
+                        /*
                         aimAssist.SetPosition(1, aimAssist.GetPosition(0));
                         //Get Player Fire Direction
-                        PrimarySkill(aimLocation);
+                        PrimarySkill(aimLocation);*/
                     }
 
                 }
             }
            
+            if(Input.GetButtonDown("Fire1"))
+            {
+                GameObject closestEnemy = null;
+                float distance = 1000;
+                foreach (var enemy in PhotonNetwork.PhotonViews)
+                {
+                    if (enemy.ViewID != photonView.ViewID)
+                    {
+                        if (distance > (enemy.gameObject.transform.position - transform.position).magnitude)
+                        {
+                            distance = (enemy.gameObject.transform.position - transform.position).magnitude;
+                            closestEnemy = enemy.gameObject;
+                        }
+                    }
+
+                }
+                if (closestEnemy != null)
+                {
+                    PrimarySkill(closestEnemy.transform.position + Vector3.up);
+                }
+            }
             if(Input.GetButtonDown("Dash"))
             {
                 Debug.Log("DASHING");
@@ -266,6 +350,10 @@ public class PlayerCombatManager : MonoBehaviourPunCallbacks
             playerBaseRenderer.enabled = false;
             Invoke("EnableRespawnedPlayerClients", 1f);
         }
+        else
+        {
+
+        }
         transform.position = GameManager.Instance.SpawnLocation(_spawnLocationIndex);
         m_Animator.SetTrigger("Respawn");
         GetComponent<CapsuleCollider>().enabled = true;
@@ -276,7 +364,7 @@ public class PlayerCombatManager : MonoBehaviourPunCallbacks
         if (photonView.IsMine)
         {
             
-            Invoke("RespawnFollowCamera", 1f);
+            Invoke("RespawnFollowCamera", 0.1f);
             
         }
         

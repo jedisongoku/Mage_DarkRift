@@ -8,7 +8,9 @@ public class VariableJoystick : Joystick
     public float MoveThreshold { get { return moveThreshold; } set { moveThreshold = Mathf.Abs(value); } }
 
     [SerializeField] private float moveThreshold = 1;
+    [SerializeField] private bool test;
     [SerializeField] private JoystickType joystickType = JoystickType.Fixed;
+
 
     private Vector2 fixedPosition = Vector2.zero;
 
@@ -38,6 +40,8 @@ public class VariableJoystick : Joystick
             background.anchoredPosition = ScreenPointToAnchoredPosition(eventData.position);
             background.gameObject.SetActive(true);
         }
+        if(transform.name == "AimStick")
+            GameManager.Instance.GetCurrentPlayer.GetComponent<PlayerCombatManager>().canShoot = true;
         base.OnPointerDown(eventData);
     }
 
@@ -45,7 +49,8 @@ public class VariableJoystick : Joystick
     {
         if (joystickType != JoystickType.Fixed)
             background.anchoredPosition = fixedPosition;
-            //background.gameObject.SetActive(false);
+
+        //background.gameObject.SetActive(false);
 
         base.OnPointerUp(eventData);
     }
@@ -60,5 +65,4 @@ public class VariableJoystick : Joystick
         base.HandleInput(magnitude, normalised, radius, cam);
     }
 }
-
 public enum JoystickType { Fixed, Floating, Dynamic }
