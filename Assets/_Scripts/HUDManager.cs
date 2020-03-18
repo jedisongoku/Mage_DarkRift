@@ -205,9 +205,10 @@ public class HUDManager : MonoBehaviourPunCallbacks
 
         yield return new WaitForSeconds(1f);
 
-        if(_respawnCooldown > 0 )
+        _respawnCooldown--;
+        if (_respawnCooldown > 0 )
         {
-            _respawnCooldown--;
+            
             StartCoroutine(RespawnCooldown(_respawnCooldown));
         }
         else

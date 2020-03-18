@@ -31077,6 +31077,10 @@ MonoBehaviour:
   rageStartRate: 0.3
   rageDamageRate: 0.15
   poisonPickupTime: 5
+  damageBoostMultiplier: 1.5
+  attackSpeedMultiplier: 0.8
+  dashSpeedMultiplier: 0.7
+  strongHeartMultiplier: 2
 --- !u!114 &1934221257
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -31089,10 +31093,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 60d810a62b61c72478b29541ea8a4fa5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damageBoostMultiplier: 0.15
-  attackSpeedMultiplier: 0.1
-  dashSpeedMultiplier: 0.05
-  strongHeartMultiplier: 0.01
 --- !u!114 &1934221258
 MonoBehaviour:
   m_ObjectHideFlags: 0

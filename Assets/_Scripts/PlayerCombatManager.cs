@@ -308,6 +308,11 @@ public class PlayerCombatManager : MonoBehaviourPunCallbacks
 
         //GameObject particle = Instantiate(primarySkillPrefab, primarySkillSpawnLocation.transform.position, Quaternion.identity) as GameObject;
     }
+
+    public void ApplyDamageToEnemy()
+    {
+
+    }
     void DisablePlayer()
     {
         if(photonView.IsMine)
@@ -372,11 +377,7 @@ public class PlayerCombatManager : MonoBehaviourPunCallbacks
 
     }
 
-    [PunRPC]
-    void IncreasePrimarySkillDamage(int _damage)
-    {
-        primarySkillDamage = _damage;
-    }
+    
 
     void RespawnFollowCamera()
     {
@@ -467,10 +468,15 @@ public class PlayerCombatManager : MonoBehaviourPunCallbacks
         }
         set
         {
-            primarySkillDamage = value;
-            photonView.RPC("IncreasePrimarySkillDamage", RpcTarget.All, primarySkillDamage);
+            photonView.RPC("PrimarySkillDamage_RPC", RpcTarget.AllBuffered, primarySkillDamage);
             Debug.Log(value);
         }
+    }
+
+    [PunRPC]
+    void PrimarySkillDamage_RPC(int _damage)
+    {
+        primarySkillDamage = Mathf.RoundToInt(PlayerBaseStats.Instance.PrimarySkillDamage * PlayerBaseStats.Instance.DamageBoostMultiplier);
     }
     public float PrimarySkillCooldown
     {
@@ -507,8 +513,15 @@ public class PlayerCombatManager : MonoBehaviourPunCallbacks
         set
         {
             isFrostbite = value;
+            if(isFrostbite) photonView.RPC("Frostbite_RPC", RpcTarget.OthersBuffered);
             Debug.Log(value);
         }
+    }
+
+    [PunRPC]
+    void Frostbite_RPC()
+    {
+        isFrostbite = true;
     }
 
     public bool Chill
@@ -520,8 +533,15 @@ public class PlayerCombatManager : MonoBehaviourPunCallbacks
         set
         {
             isChill = value;
+            if (isChill) photonView.RPC("Chill_RPC", RpcTarget.OthersBuffered);
             Debug.Log(value);
         }
+    }
+
+    [PunRPC]
+    void Chill_RPC()
+    {
+        isChill = true;
     }
 
     public bool Poison
@@ -559,8 +579,15 @@ public class PlayerCombatManager : MonoBehaviourPunCallbacks
         set
         {
             isRage = value;
+            if (isRage) photonView.RPC("Rage_RPC", RpcTarget.OthersBuffered);
             Debug.Log(value);
         }
+    }
+
+    [PunRPC]
+    void Rage_RPC()
+    {
+        isRage = true;
     }
 
     public bool MultiShot
@@ -572,8 +599,15 @@ public class PlayerCombatManager : MonoBehaviourPunCallbacks
         set
         {
             isMultiShot = value;
+            if (isMultiShot) photonView.RPC("MultiShot_RPC", RpcTarget.OthersBuffered);
             Debug.Log(value);
         }
+    }
+
+    [PunRPC]
+    void MultiShot_RPC()
+    {
+        isMultiShot = true;
     }
 
     public bool FrostNova
@@ -585,8 +619,15 @@ public class PlayerCombatManager : MonoBehaviourPunCallbacks
         set
         {
             isFrostNova = value;
+            if (isFrostNova) photonView.RPC("FrostNova_RPC", RpcTarget.OthersBuffered);
             Debug.Log(value);
         }
+    }
+
+    [PunRPC]
+    void FrostNova_RPC()
+    {
+        isMultiShot = true;
     }
 
     #endregion

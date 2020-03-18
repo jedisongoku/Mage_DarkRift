@@ -24,6 +24,10 @@ public class PlayerBaseStats : MonoBehaviour
     [SerializeField] private float rageStartRate;
     [SerializeField] private float rageDamageRate;
     [SerializeField] private float poisonPickupTime;
+    [SerializeField] private float damageBoostMultiplier;
+    [SerializeField] private float attackSpeedMultiplier;
+    [SerializeField] private float dashSpeedMultiplier;
+    [SerializeField] private float strongHeartMultiplier;
 
 
 
@@ -39,6 +43,37 @@ public class PlayerBaseStats : MonoBehaviour
         }
     }
 
+    public float DamageBoostMultiplier
+    {
+        get
+        {
+            return damageBoostMultiplier;
+        }
+    }
+
+    public float AttackSpeedMultiplier
+    {
+        get
+        {
+            return attackSpeedMultiplier;
+        }
+    }
+
+    public float DashSpeedMultiplier
+    {
+        get
+        {
+            return dashSpeedMultiplier;
+        }
+    }
+
+    public float StrongHeartMultiplier
+    {
+        get
+        {
+            return strongHeartMultiplier;
+        }
+    }
     public int PrimarySkillDamage
     {
         get

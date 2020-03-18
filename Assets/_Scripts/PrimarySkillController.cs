@@ -170,12 +170,17 @@ public class PrimarySkillController : MonoBehaviour
                 if (other.gameObject.GetComponent<PhotonView>().ViewID != playerViewId)
                 {
 
-                    if (isRage) damageDone += damageDone * PlayerBaseStats.Instance.RageDamageRate;
+                    //if (isRage) damageDone += damageDone * PlayerBaseStats.Instance.RageDamageRate;
                     //other.gameObject.GetComponent<PlayerHealthManager>().DamageTaken = damageDone;
+
+                    if (other.gameObject.GetComponent<PlayerHealthManager>().CanTakeDamage()) ApplyDamage(other.gameObject);
+
+                    /*
                     other.gameObject.GetComponent<PlayerHealthManager>().DamageOrigin = playerViewId;
                     other.gameObject.GetComponent<PlayerHealthManager>().TakeDamage(damageDone);
                     if (isFrostbite) other.gameObject.GetComponent<PlayerHealthManager>().StartFrostbite(playerViewId);
-                    if (isChill) other.gameObject.GetComponent<PlayerMovementController>().StartChill(PlayerBaseStats.Instance.ChillDuration);
+                    if (isChill) other.gameObject.GetComponent<PlayerMovementController>().StartChill(PlayerBaseStats.Instance.ChillDuration);*/
+
                     isPlayer = true;
                     Destroy(other.gameObject);
                 }
@@ -185,47 +190,26 @@ public class PrimarySkillController : MonoBehaviour
                 isPlayer = false;
                 Destroy(other.gameObject);
             }
-        }
+        }  
         
-        
+    }
+
+    void ApplyDamage(GameObject _enemy)
+    {
+        _enemy.GetComponent<PlayerHealthManager>().OnPlayerHit(playerViewId, damageDone, isFrostbite, isChill, isFrostNova, isRage);
     }
 
     private void Destroy(GameObject other)
     {
         GameObject obj;
-        if (isFrostNova)
+        if (isFrostNova && !isPlayer)
         {
             obj = ObjectPooler.Instance.GetPrimarySkillFrostNovaPrefab();
-        }
-        else
-        {
-            obj = ObjectPooler.Instance.GetPrimarySkillExplosionPrefab();
-        }
-        
-        if(isPlayer)
-        {
-            if(isFrostNova)
-            {
-                obj.transform.position = other.transform.position + Vector3.up;
-            }
-            else
-            {
-                obj.transform.position = other.transform.position + Vector3.up;
-                obj.transform.rotation = Quaternion.FromToRotation(Vector3.up, impactNormal);
-            }  
-            
-        }
-        else
-        {
             obj.transform.position = transform.position;
-            if(!isFrostNova)
-            {
-                obj.transform.rotation = Quaternion.FromToRotation(Vector3.up, impactNormal);
-            }
-            
+            obj.SetActive(true);
         }
         
-        obj.SetActive(true);
+        
         isHit = true;
         Invoke("DelayDisable", 0.25f);
     }
