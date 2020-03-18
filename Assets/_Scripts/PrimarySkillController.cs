@@ -27,6 +27,9 @@ public class PrimarySkillController : MonoBehaviour
     bool isRage = false;
     bool isFrostNova = false;
 
+    public int PlayerViewID { get; set; }
+    public GameObject DamageOrigin { get; set; }
+
 
     // Start is called before the first frame update
     void OnEnable()
@@ -41,9 +44,6 @@ public class PrimarySkillController : MonoBehaviour
         isBouncy = false;
         isFrostNova = false;
         
-        
-        
-
     }
 
     public bool Frostbite
@@ -93,6 +93,10 @@ public class PrimarySkillController : MonoBehaviour
             return playerViewId;
         }
     }
+
+    
+
+
     //Player sets the direction of where the particle will move
     public Vector3 SetParticleMoveDirection
     {
@@ -167,14 +171,14 @@ public class PrimarySkillController : MonoBehaviour
             Debug.Log("HIT : " + LayerMask.LayerToName(other.gameObject.layer));
             if (other.gameObject.layer == 8 && other.gameObject.GetComponent<PhotonView>() != null)
             {
-                if (other.gameObject.GetComponent<PhotonView>().ViewID != playerViewId)
+                if (other.gameObject.GetComponent<PhotonView>().ViewID != PlayerViewID)
                 {
 
                     //if (isRage) damageDone += damageDone * PlayerBaseStats.Instance.RageDamageRate;
                     //other.gameObject.GetComponent<PlayerHealthManager>().DamageTaken = damageDone;
 
-                    if (other.gameObject.GetComponent<PlayerHealthManager>().CanTakeDamage()) ApplyDamage(other.gameObject);
-
+                    //if (other.gameObject.GetComponent<PlayerHealthManager>().CanTakeDamage()) ApplyDamage(other.gameObject);
+                    if (other.gameObject.GetComponent<PlayerHealthManager>().CanTakeDamage()) DamageOrigin.GetComponent<PlayerCombatManager>().ApplyDamageToEnemy(other.gameObject);
                     /*
                     other.gameObject.GetComponent<PlayerHealthManager>().DamageOrigin = playerViewId;
                     other.gameObject.GetComponent<PlayerHealthManager>().TakeDamage(damageDone);

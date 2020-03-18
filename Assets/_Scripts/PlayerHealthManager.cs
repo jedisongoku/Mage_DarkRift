@@ -259,7 +259,7 @@ public class PlayerHealthManager : MonoBehaviourPun
     {
         healthGenerationTimer = 0;
 
-        if(_damageOrigin != 0 && Mathf.Abs(playerhealth - _health) > 5)
+        if(_damageOrigin != 0)
         {
             EnableExplosionParticle(_FrostNova);
         }
@@ -409,7 +409,7 @@ public class PlayerHealthManager : MonoBehaviourPun
                 {
                     playerhealth += hpBoostAmount;
                 }
-                photonView.RPC("HpBoost_RPC", RpcTarget.OthersBuffered, playerhealth, playerMaxHealth);
+                photonView.RPC("HpBoost_RPC", RpcTarget.AllBuffered, playerhealth, playerMaxHealth);
             }
             Debug.Log(value);
         }
@@ -430,7 +430,7 @@ public class PlayerHealthManager : MonoBehaviourPun
         set
         {
             isStrongHeart = value;
-            if (isStrongHeart) photonView.RPC("StrongHeart_RPC", RpcTarget.All);
+            if (isStrongHeart) photonView.RPC("StrongHeart_RPC", RpcTarget.AllBuffered);
         }
     }
 
@@ -456,7 +456,7 @@ public class PlayerHealthManager : MonoBehaviourPun
         set
         {
             healthGenerationRate = value;
-            if (isStrongHeart) photonView.RPC("StrongHeart_RPC", RpcTarget.All);
+            if (isStrongHeart) photonView.RPC("StrongHeart_RPC", RpcTarget.AllBuffered);
             Debug.Log(value);
         }
     }
@@ -466,7 +466,7 @@ public class PlayerHealthManager : MonoBehaviourPun
         set
         {
             isShieldGuard = value;
-            if(isShieldGuard) photonView.RPC("SetShieldGuard", RpcTarget.All);
+            if(isShieldGuard) photonView.RPC("SetShieldGuard", RpcTarget.AllBuffered);
         }
     }
 }

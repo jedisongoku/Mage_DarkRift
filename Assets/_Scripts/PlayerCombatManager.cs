@@ -295,24 +295,33 @@ public class PlayerCombatManager : MonoBehaviourPunCallbacks
         obj.transform.rotation = Quaternion.identity;
         obj.SetActive(true);
 
+        PrimarySkillController controller = obj.GetComponent<PrimarySkillController>();
         //Where stats applied to the particle object
-        obj.GetComponent<PrimarySkillController>().SetParticleMoveDirection = new Vector3(direction.x, 0, direction.z);
+        controller.SetParticleMoveDirection = new Vector3(direction.x, 0, direction.z);
+        controller.DamageOrigin = this.gameObject;
+        controller.PlayerViewID = photonView.ViewID;
+        controller.Traveling = true;
+
+
+        /*
         obj.GetComponent<PrimarySkillController>().PlayerOrigin = photonView.ViewID;
         obj.GetComponent<PrimarySkillController>().DamageDone = primarySkillDamage;
         if (isFrostbite) obj.GetComponent<PrimarySkillController>().Frostbite = isFrostbite;
         if (isChill) obj.GetComponent<PrimarySkillController>().Chill = isChill;
         if (isRage) obj.GetComponent<PrimarySkillController>().Rage = isRage;
         if (isFrostNova) obj.GetComponent<PrimarySkillController>().FrostNova = isFrostNova;
-        obj.GetComponent<PrimarySkillController>().Traveling = true;
+        obj.GetComponent<PrimarySkillController>().Traveling = true;*/
 
 
         //GameObject particle = Instantiate(primarySkillPrefab, primarySkillSpawnLocation.transform.position, Quaternion.identity) as GameObject;
     }
 
-    public void ApplyDamageToEnemy()
+    public void ApplyDamageToEnemy(GameObject _enemy)
     {
-
+        _enemy.GetComponent<PlayerHealthManager>().OnPlayerHit(photonView.ViewID, primarySkillDamage, Frostbite, Chill, FrostNova, Rage);
     }
+
+
     void DisablePlayer()
     {
         if(photonView.IsMine)
@@ -513,7 +522,7 @@ public class PlayerCombatManager : MonoBehaviourPunCallbacks
         set
         {
             isFrostbite = value;
-            if(isFrostbite) photonView.RPC("Frostbite_RPC", RpcTarget.OthersBuffered);
+            if(isFrostbite) photonView.RPC("Frostbite_RPC", RpcTarget.AllBuffered);
             Debug.Log(value);
         }
     }
@@ -533,7 +542,7 @@ public class PlayerCombatManager : MonoBehaviourPunCallbacks
         set
         {
             isChill = value;
-            if (isChill) photonView.RPC("Chill_RPC", RpcTarget.OthersBuffered);
+            if (isChill) photonView.RPC("Chill_RPC", RpcTarget.AllBuffered);
             Debug.Log(value);
         }
     }
@@ -579,7 +588,7 @@ public class PlayerCombatManager : MonoBehaviourPunCallbacks
         set
         {
             isRage = value;
-            if (isRage) photonView.RPC("Rage_RPC", RpcTarget.OthersBuffered);
+            if (isRage) photonView.RPC("Rage_RPC", RpcTarget.AllBuffered);
             Debug.Log(value);
         }
     }
@@ -599,7 +608,7 @@ public class PlayerCombatManager : MonoBehaviourPunCallbacks
         set
         {
             isMultiShot = value;
-            if (isMultiShot) photonView.RPC("MultiShot_RPC", RpcTarget.OthersBuffered);
+            if (isMultiShot) photonView.RPC("MultiShot_RPC", RpcTarget.AllBuffered);
             Debug.Log(value);
         }
     }
@@ -619,7 +628,7 @@ public class PlayerCombatManager : MonoBehaviourPunCallbacks
         set
         {
             isFrostNova = value;
-            if (isFrostNova) photonView.RPC("FrostNova_RPC", RpcTarget.OthersBuffered);
+            if (isFrostNova) photonView.RPC("FrostNova_RPC", RpcTarget.AllBuffered);
             Debug.Log(value);
         }
     }
