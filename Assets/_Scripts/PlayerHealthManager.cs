@@ -30,13 +30,14 @@ public class PlayerHealthManager : MonoBehaviourPun
     [SerializeField] private GameObject strongHeartParticle;
     [SerializeField] private GameObject shieldGuardParticle;
     [SerializeField] private GameObject rageParticle;
+    bool isFrostbite = false;
     bool isBloodthirst = false;
     bool isHpBoost = false;
     bool isStrongHeart = false;
     bool isShieldGuard = false;
     bool isRage = false;
 
-    int flameDurationTick = 0;
+    int frostbiteDurationTick = 0;
 
 
     private void OnDisable()
@@ -74,6 +75,7 @@ public class PlayerHealthManager : MonoBehaviourPun
         hpBoostAmount = PlayerBaseStats.Instance.HpBoostAmount;
         shieldGuardDamageReductionRate = PlayerBaseStats.Instance.ShieldGuardDamageReductionRate;
         playerhealth = playerMaxHealth;
+        isFrostbite = false;
         isBloodthirst = false;
         isHpBoost = false;
         isStrongHeart = false;
@@ -130,15 +132,19 @@ public class PlayerHealthManager : MonoBehaviourPun
 
     public void StartFrostbite(int _damageOrigin)
     {
-        Debug.Log("Starting Flame...");
-        photonView.RPC("StartFrostbite_RPC", RpcTarget.All, _damageOrigin);
+        if(!isFrostbite)
+        {
+            isFrostbite = true;
+            photonView.RPC("StartFrostbite_RPC", RpcTarget.All, _damageOrigin);
+        }
+        
         
     }
 
     [PunRPC]
     void StartFrostbite_RPC(int _damageOrigin)
     {
-        flameDurationTick = 0;
+        frostbiteDurationTick = 0;
         frostbiteParticle.SetActive(true);
         StartCoroutine(Frostbite(_damageOrigin));
     }
@@ -147,14 +153,14 @@ public class PlayerHealthManager : MonoBehaviourPun
     {
         
         yield return new WaitForSeconds(1f);
-        if(flameDurationTick < PlayerBaseStats.Instance.FlameDuration)
+        if(frostbiteDurationTick < PlayerBaseStats.Instance.FrostbiteDuration)
         {
             if(photonView.IsMine)
             {
-                playerhealth -= (playerMaxHealth * PlayerBaseStats.Instance.FlameDamageRate) / PlayerBaseStats.Instance.FlameDuration;
+                playerhealth -= (playerMaxHealth * PlayerBaseStats.Instance.FrostbiteDamageRate) / PlayerBaseStats.Instance.FrostbiteDuration;
                 photonView.RPC("UpdateHealth", RpcTarget.All, playerhealth, damageOrigin);
             }
-            flameDurationTick++;
+            frostbiteDurationTick++;
             
             if (playerhealth > 0)
             {
@@ -163,7 +169,8 @@ public class PlayerHealthManager : MonoBehaviourPun
         }
         else
         {
-            flameDurationTick = 0;
+            frostbiteDurationTick = 0;
+            isFrostbite = false;
             frostbiteParticle.SetActive(false);
         }
     }
@@ -217,23 +224,50 @@ public class PlayerHealthManager : MonoBehaviourPun
             }
             damageTaken = 0;
 
-            photonView.RPC("UpdateHealth", RpcTarget.All, playerhealth, damageOrigin);
+            photonView.RPC("UpdateHealth", RpcTarget.All, playerhealth, damageOrigin, true);
         }
+    }
+
+    void EnableExplosionParticle()
+    {
+        GameObject obj;
+        if (isFrostNova)
+        {
+            obj = ObjectPooler.Instance.GetPrimarySkillFrostNovaPrefab();
+        }
+        else
+        {
+            obj = ObjectPooler.Instance.GetPrimarySkillExplosionPrefab();
+        }
+        if (isFrostNova)
+        {
+            obj.transform.position = transform.position + Vector3.up;
+        }
+        else
+        {
+            obj.transform.position = transform.position + Vector3.up;
+            obj.transform.rotation = Quaternion.FromToRotation(Vector3.up, Vector3.zero);
+        }
+
     }
 
 
     [PunRPC]
-    void UpdateHealth(float _health, int _damageOrigin)
+    void UpdateHealth(float _health, int _damageOrigin, bool _hasExplosion)
     {
         healthGenerationTimer = 0;
 
-        playerhealth = _health;
-        if(playerhealth <= 0)
+        if(_hasExplosion)
         {
-            StopAllCoroutines();
+
+        }
+
+        playerhealth = _health;
+        if(playerhealth <= 0 && !GetComponent<PlayerCombatManager>().IsDead)
+        {
             GameManager.Instance.KillFeed(_damageOrigin);
-            GetComponent<PlayerCombatManager>().IsDead = true;
-            frostbiteParticle.SetActive(false);
+            OnPlayerDeath();
+
             if (photonView.IsMine)
             {
                 healthBar.transform.parent.gameObject.SetActive(false);
@@ -259,6 +293,19 @@ public class PlayerHealthManager : MonoBehaviourPun
         }
     }
 
+    void OnPlayerDeath()
+    {
+        StopAllCoroutines();
+        
+        GetComponent<PlayerCombatManager>().IsDead = true;
+        GetComponent<PlayerMovementController>().OnPlayerDeath();
+
+        isFrostbite = false;
+        strongHeartParticle.SetActive(false);
+        shieldGuardParticle.SetActive(false);
+        frostbiteParticle.SetActive(false);
+    }
+
     [PunRPC]
     void SetMaxHealth(float _playerHealth, float _maxHealth)
     {
@@ -281,7 +328,7 @@ public class PlayerHealthManager : MonoBehaviourPun
         SetPlayerBaseStats();
         if (photonView.IsMine)
         {
-            photonView.RPC("UpdateHealth", RpcTarget.All, playerMaxHealth, 0);
+            photonView.RPC("UpdateHealth", RpcTarget.All, playerMaxHealth, 0, false);
             StartCoroutine(HealhtRegeneration());
         }
     }

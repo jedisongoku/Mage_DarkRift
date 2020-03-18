@@ -17,22 +17,22 @@ public class PlayerCombatManager : MonoBehaviourPunCallbacks
 
     [Header("Player Skills Stats")]
 
-    [SerializeField] private float primarySkillCooldown;
-    [SerializeField] private float secondarySkillCooldown;
-    [SerializeField] private int primarySkillCharge;
-    [SerializeField] private GameObject primarySkillSpawnLocation;
+    private float primarySkillCooldown;
+    private float secondarySkillCooldown;
+    private int primarySkillCharge;
+    private GameObject primarySkillSpawnLocation;
     private int primarySkillDamage = 0;
     private float primarySkillCooldownTimer = 3f;
     private float secondarySkillCooldownTimer = 8f;
     private int primarySkillParticleCount = 5;
 
     [Header("Player")]
-    [SerializeField] private GameObject playerModel;
+    private GameObject playerModel;
     [SerializeField] private GameObject playerUI;
     [SerializeField] private MeshRenderer playerBaseRenderer;
     [SerializeField] private Material playerBaseColor;
-    [SerializeField] private GameObject runeActivatedBlue;
-    [SerializeField] private GameObject runeActivatedRed;
+    //[SerializeField] private GameObject runeActivatedBlue;
+    //[SerializeField] private GameObject runeActivatedRed;
     [SerializeField] private GameObject dashTrail;
     [SerializeField] private LineRenderer aimAssist;
     public bool canShoot { get; set; }
@@ -75,6 +75,7 @@ public class PlayerCombatManager : MonoBehaviourPunCallbacks
         {
             primarySkillCooldownTimer += Time.deltaTime;
             secondarySkillCooldownTimer += Time.deltaTime;
+            HUDManager.Instance.SetSecondarySkillCooldownUI = secondarySkillCooldownTimer / PlayerBaseStats.Instance.SecondarySkillCooldown;
 
             //TOUCH 0
             if(Input.touchCount > 0)
@@ -333,6 +334,7 @@ public class PlayerCombatManager : MonoBehaviourPunCallbacks
 
     public void RespawnPlayer()
     {
+        GetComponent<PlayerMovementController>().enabled = true;
         SetPlayerBaseStats();
         PlayerRuneManager.Instance.RestartPlayerRunes();
         photonView.RPC("RespawnClients", RpcTarget.All, GameManager.Instance.SpawnLocationIndex);
@@ -393,7 +395,7 @@ public class PlayerCombatManager : MonoBehaviourPunCallbacks
     {
         //photonView.RPC("RuneActivated_RPC", RpcTarget.All);
     }
-
+    /*
     [PunRPC]
     void RuneActivated_RPC()
     {
@@ -408,7 +410,7 @@ public class PlayerCombatManager : MonoBehaviourPunCallbacks
             runeActivatedRed.SetActive(false);
             runeActivatedRed.SetActive(true);
         }
-    }
+    }*/
     public bool IsDead
     {
         get
@@ -426,6 +428,8 @@ public class PlayerCombatManager : MonoBehaviourPunCallbacks
                     HUDManager.Instance.OnPlayerDeath();
                     ScoreManager.Instance.Score = 0;
                     GameObject.Find("VirtualCamera").GetComponent<CinemachineVirtualCamera>().Follow = null;
+                    aimAssist.SetPosition(1, aimAssist.GetPosition(0));
+                    aimJoystick.OnPointerUp(null);
                 }
                 else
                 {

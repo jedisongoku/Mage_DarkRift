@@ -20,20 +20,24 @@ public class PlayerRuneManager : MonoBehaviour
     [SerializeField] private float strongHeartMultiplier = 0;
 
 
-    // Start is called before the first frame update
     void Start()
     {
         Instance = this;
 
+    }
+    public void Initialize()
+    {
+        
+
         if(runeCatalog != null)
         {
             //Primary SKill Runes
-            runeCatalog.Add(new Rune("Damage Boost", "DamageBoost", "Deal Higher Damage", 1,3));
-            runeCatalog.Add(new Rune("Attack Speed Boost", "AttackSpeedBoost", "Primary Skill Cooldown Reduced", 1, 3));
+            runeCatalog.Add(new Rune("Damage Boost", "DamageBoost", "Deal Higher Damage", 1,1));
+            runeCatalog.Add(new Rune("Attack Speed Boost", "AttackSpeedBoost", "Primary Skill Cooldown Reduced", 1, 1));
             runeCatalog.Add(new Rune("Dash Reduced Cooldown", "DashReducedCooldown", "Secondary Skill Cooldown Reduced", 1, 3));
             runeCatalog.Add(new Rune("Frostbite", "Frostbite", "Attacks cause damage over time burn", 1, 1));
             runeCatalog.Add(new Rune("Chill", "Chill", "Attack slow enemies", 1, 1));
-            runeCatalog.Add(new Rune("Multi Shot", "MultiShot", "Fires an additional attack rapidly", 1, 1));
+            //runeCatalog.Add(new Rune("Multi Shot", "MultiShot", "Fires an additional attack rapidly", 1, 1));
             runeCatalog.Add(new Rune("Rage", "Rage", "Attacks deal more damage at low HP", 1, 1));
             runeCatalog.Add(new Rune("Frost Nova", "FrostNova", "Attacks explode on hit, slowing nearby players", 1, 1));
             /*
@@ -64,6 +68,7 @@ public class PlayerRuneManager : MonoBehaviour
         Debug.Log("TEST" + GameManager.Instance);
         if(GameManager.Instance.GetCurrentPlayer != null)
         {
+            Debug.Log("Current Player Setup");
             playerCombatManager = GameManager.Instance.GetCurrentPlayer.GetComponent<PlayerCombatManager>();
             playerHealthManager = GameManager.Instance.GetCurrentPlayer.GetComponent<PlayerHealthManager>();
         }       
@@ -87,7 +92,7 @@ public class PlayerRuneManager : MonoBehaviour
 
     public void SelectRune(int index)
     {
-        playerCombatManager.RuneActivated();
+        //playerCombatManager.RuneActivated();
         Invoke(playerRuneList[index].FunctionName, 0);
         ArrangeListAfterSelection(index);
     }

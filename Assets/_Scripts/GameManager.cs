@@ -73,6 +73,7 @@ public class GameManager : MonoBehaviour
                 currentPlayer = PhotonNetwork.Instantiate(playerPrefab.name, spawnLocations[spawnLocationIndex].transform.position, Quaternion.identity);
 
                 currentPlayerViewID = currentPlayer.GetComponent<PhotonView>().ViewID;
+                PlayerRuneManager.Instance.Initialize();
             }
             else
             {

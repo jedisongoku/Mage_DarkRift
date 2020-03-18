@@ -58,6 +58,7 @@ public class PlayerMovementController : MonoBehaviourPun, IPunObservable
     void SetPlayerBaseStats()
     {
         walkSpeed = PlayerBaseStats.Instance.WalkSpeed;
+        isChill = false;
     }
 
     void Update()
@@ -92,6 +93,7 @@ public class PlayerMovementController : MonoBehaviourPun, IPunObservable
 
         yield return new WaitForSeconds(_duration);
 
+        isChill = false;
         chillParticle.SetActive(false);
         walkSpeed = PlayerBaseStats.Instance.WalkSpeed;
 
@@ -168,11 +170,13 @@ public class PlayerMovementController : MonoBehaviourPun, IPunObservable
         int anim_y = movement.y < 0 ? -1 : movement.y > 0 ? 1 : 0;
         m_Animator.SetFloat("Horizontal", anim_x);
         m_Animator.SetFloat("Vertical", anim_y);
+        
 
     }
 
     void OnAnimatorMove()
-    {    
+    {
+
         m_Rigidbody.MovePosition(m_Rigidbody.position + m_Movement * m_Animator.deltaPosition.magnitude * walkSpeed);
         if (fireTimer > 0.2f)
         {
@@ -206,5 +210,14 @@ public class PlayerMovementController : MonoBehaviourPun, IPunObservable
         {
             attack = value;
         }
+    }
+
+    public void OnPlayerDeath()
+    {
+        StopAllCoroutines();
+        chillParticle.SetActive(false);
+        isChill = false;
+        joystick.OnPointerUp(null);
+        this.enabled = false;
     }
 }
