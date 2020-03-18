@@ -1750,6 +1750,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 957425512539590812}
     m_Modifications:
+    - target: {fileID: 4881728348636154942, guid: 079103404ec27ce40acb9dbdcda48ed7,
+        type: 3}
+      propertyPath: m_Name
+      value: Deathmatch
+      objectReference: {fileID: 0}
     - target: {fileID: 4881728348636154943, guid: 079103404ec27ce40acb9dbdcda48ed7,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -1854,11 +1859,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Pivot.y
       value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 4881728348636154942, guid: 079103404ec27ce40acb9dbdcda48ed7,
-        type: 3}
-      propertyPath: m_Name
-      value: Deathmatch
       objectReference: {fileID: 0}
     - target: {fileID: 4881728348636154939, guid: 079103404ec27ce40acb9dbdcda48ed7,
         type: 3}
@@ -1987,6 +1987,16 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 957425511100049950}
     m_Modifications:
+    - target: {fileID: 1538108089264854329, guid: a5e66c1da1c4d9446876efdb3765b559,
+        type: 3}
+      propertyPath: m_Name
+      value: Progress Bar Basic 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1538108089264854329, guid: a5e66c1da1c4d9446876efdb3765b559,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1538108089264854328, guid: a5e66c1da1c4d9446876efdb3765b559,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -2091,16 +2101,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Pivot.y
       value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 1538108089264854329, guid: a5e66c1da1c4d9446876efdb3765b559,
-        type: 3}
-      propertyPath: m_Name
-      value: Progress Bar Basic 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1538108089264854329, guid: a5e66c1da1c4d9446876efdb3765b559,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1538108087928173010, guid: a5e66c1da1c4d9446876efdb3765b559,
         type: 3}
@@ -2668,11 +2668,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1204234129}
     m_Modifications:
-    - target: {fileID: 5630583242136745646, guid: 2c619cb409572134a9c480e2cfd1d61f,
-        type: 3}
-      propertyPath: m_Name
-      value: PlayerHealthText
-      objectReference: {fileID: 0}
     - target: {fileID: 5630583242345094661, guid: 2c619cb409572134a9c480e2cfd1d61f,
         type: 3}
       propertyPath: m_Name
@@ -2787,6 +2782,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Pivot.y
       value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5630583242136745646, guid: 2c619cb409572134a9c480e2cfd1d61f,
+        type: 3}
+      propertyPath: m_Name
+      value: PlayerHealthText
       objectReference: {fileID: 0}
     - target: {fileID: 5630583240827982407, guid: 2c619cb409572134a9c480e2cfd1d61f,
         type: 3}
@@ -3466,7 +3466,7 @@ RectTransform:
   - {fileID: 1240015530}
   - {fileID: 3669489073436114827}
   m_Father: {fileID: 1583543484116679538}
-  m_RootOrder: 9
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -4247,7 +4247,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &243152622163193024
 RectTransform:
   m_ObjectHideFlags: 0
@@ -4318,7 +4318,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 8232573679886443574}
         m_MethodName: SelectRune
         m_Mode: 3
         m_Arguments:
@@ -7195,10 +7195,10 @@ RectTransform:
   - {fileID: 1368173334}
   - {fileID: 57957763}
   - {fileID: 4403642081336051906}
+  - {fileID: 1939184523}
   - {fileID: 5917658920318916796}
   - {fileID: 4863664785220256154}
   - {fileID: 5270955882492332518}
-  - {fileID: 1939184523}
   m_Father: {fileID: 957425512279445591}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -9107,7 +9107,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1583543484116679538}
-  m_RootOrder: 7
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
@@ -9455,7 +9455,7 @@ RectTransform:
   - {fileID: 6652666130766281478}
   - {fileID: 1850743294191581912}
   m_Father: {fileID: 1583543484116679538}
-  m_RootOrder: 8
+  m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
@@ -9842,7 +9842,7 @@ RectTransform:
   - {fileID: 8000852571547043473}
   - {fileID: 3759768956447909532}
   m_Father: {fileID: 1583543484116679538}
-  m_RootOrder: 6
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
@@ -10567,7 +10567,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 8232573679886443574}
         m_MethodName: SelectRune
         m_Mode: 3
         m_Arguments:
@@ -12379,7 +12379,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 8232573679886443574}
         m_MethodName: SelectRune
         m_Mode: 3
         m_Arguments:
@@ -12677,7 +12677,10 @@ MonoBehaviour:
   scoreboardPlayerPref: {fileID: 4219822862155235002, guid: 06374087b0c3e3e40bee98ae92167f00,
     type: 3}
   runeSelection: {fileID: 1712778658427864063}
-  runeOptions: []
+  runeOptions:
+  - {fileID: 7723722519524183091}
+  - {fileID: 292946661072114702}
+  - {fileID: 6165341442486263912}
   fps: {fileID: 3125668152270085391}
 --- !u!222 &8289522815663372827
 CanvasRenderer:

@@ -26,7 +26,7 @@ public class PersistData : MonoBehaviour
     void Awake()
     {
         GameFilePath = Application.persistentDataPath + "/userData";
-        GameFileName = "/mageTest_01.dat";
+        GameFileName = "/mageTest_02.dat";
 
         // Singelton - There can be only one...
         if (instance == null)

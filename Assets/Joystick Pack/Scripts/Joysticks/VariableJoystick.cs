@@ -41,7 +41,11 @@ public class VariableJoystick : Joystick
             background.gameObject.SetActive(true);
         }
         if(transform.name == "AimStick")
+        {
+            Debug.Log("AIMSTICK");
             GameManager.Instance.GetCurrentPlayer.GetComponent<PlayerCombatManager>().canShoot = true;
+        }
+            
         base.OnPointerDown(eventData);
     }
 

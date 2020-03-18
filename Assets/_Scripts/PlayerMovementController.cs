@@ -36,8 +36,8 @@ public class PlayerMovementController : MonoBehaviourPun, IPunObservable
     {
         m_Animator = GetComponent<Animator>();
         m_Rigidbody = GetComponent<Rigidbody>();
-        PhotonNetwork.SendRate = 30;
-        PhotonNetwork.SerializationRate = 20;
+        //PhotonNetwork.SendRate = 30;
+        //PhotonNetwork.SerializationRate = 20;
         
 
         //m_AudioSource = GetComponent<AudioSource>();
@@ -132,6 +132,7 @@ public class PlayerMovementController : MonoBehaviourPun, IPunObservable
             }
 
             m_Rigidbody.position = Vector3.MoveTowards(m_Rigidbody.position, networkPosition, Time.fixedDeltaTime);
+            //m_Rigidbody.rotation = Quaternion.RotateTowards(m_Rigidbody.rotation, networkRotation, Time.fixedDeltaTime);
             //movement = Vector2.Lerp(movement, newMovement, Time.fixedDeltaTime * turnSpeed);
             movement = newMovement;
         }
@@ -152,6 +153,7 @@ public class PlayerMovementController : MonoBehaviourPun, IPunObservable
             movement = new Vector2(horizontal, vertical);
             
         }
+
         if(movement == Vector2.zero)
         {
             m_Rigidbody.velocity = Vector3.zero;

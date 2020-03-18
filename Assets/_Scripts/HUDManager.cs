@@ -227,6 +227,7 @@ public class HUDManager : MonoBehaviourPunCallbacks
         deathPanel.SetActive(false);
         playerControllerPanel.SetActive(true);
         //StartCoroutine(GameSceneLoading());
+
     }
 
     IEnumerator GameSceneLoading()

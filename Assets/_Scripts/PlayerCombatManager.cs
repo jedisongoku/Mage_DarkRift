@@ -105,7 +105,6 @@ public class PlayerCombatManager : MonoBehaviourPunCallbacks
                     else
                     {
                         //Right side of the screen
-
                         if (canShoot)
                         {
                             canShoot = false;
@@ -116,7 +115,7 @@ public class PlayerCombatManager : MonoBehaviourPunCallbacks
                             else
                             {
                                 GameObject closestEnemy = null;
-                                float distance = 1000;
+                                float distance = 10;
                                 foreach (var enemy in PhotonNetwork.PhotonViews)
                                 {
                                     if (enemy.ViewID != photonView.ViewID)
@@ -131,7 +130,7 @@ public class PlayerCombatManager : MonoBehaviourPunCallbacks
                                 }
                                 if (closestEnemy != null)
                                 {
-                                    PrimarySkill(closestEnemy.transform.position + Vector3.up);
+                                    PrimarySkill(closestEnemy.transform.position);
                                 }
                             }
 
@@ -183,7 +182,7 @@ public class PlayerCombatManager : MonoBehaviourPunCallbacks
                             else
                             {
                                 GameObject closestEnemy = null;
-                                float distance = 1000;
+                                float distance = 10;
                                 foreach (var enemy in PhotonNetwork.PhotonViews)
                                 {
                                     if (enemy.ViewID != photonView.ViewID)
@@ -198,7 +197,7 @@ public class PlayerCombatManager : MonoBehaviourPunCallbacks
                                 }
                                 if (closestEnemy != null)
                                 {
-                                    PrimarySkill(closestEnemy.transform.position + Vector3.up);
+                                    PrimarySkill(closestEnemy.transform.position);
                                 }
                             }
 
@@ -213,8 +212,8 @@ public class PlayerCombatManager : MonoBehaviourPunCallbacks
 
                 }
             }
-           
-            if(Input.GetButtonDown("Fire1"))
+            
+            if(Input.GetButtonDown("Fire1") && !Application.isMobilePlatform)
             {
                 GameObject closestEnemy = null;
                 float distance = 1000;
@@ -232,7 +231,7 @@ public class PlayerCombatManager : MonoBehaviourPunCallbacks
                 }
                 if (closestEnemy != null)
                 {
-                    PrimarySkill(closestEnemy.transform.position + Vector3.up);
+                    PrimarySkill(closestEnemy.transform.position);
                 }
             }
             if(Input.GetButtonDown("Dash"))
