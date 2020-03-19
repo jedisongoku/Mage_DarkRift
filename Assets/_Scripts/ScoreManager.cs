@@ -12,12 +12,18 @@ public class ScoreManager : MonoBehaviour
 
     ExitGames.Client.Photon.Hashtable playerProperties = new ExitGames.Client.Photon.Hashtable();
     private List<ScorePlayer> playersList;
+
+    private List<KillFeed> killFeed;
     private int score;
 
     // Start is called before the first frame update
     void Start()
     {
         Instance = this;
+        killFeed = new List<KillFeed>();
+
+
+
         playersList = new List<ScorePlayer>();
     }
 
@@ -92,6 +98,23 @@ public class ScoreManager : MonoBehaviour
         }
     }
 
+    public void RefreshKillFeed(string _killer, string _killed)
+    {
+        killFeed.Add(new KillFeed(_killer, _killed));
+
+        List<KillFeed> reversedList = killFeed;
+        reversedList.Reverse();
+
+        int count = reversedList.Count <= HUDManager.Instance.killFeed.Length ? reversedList.Count : HUDManager.Instance.killFeed.Length;
+
+        for (int i = 0; i < count; i++)
+        {
+            HUDManager.Instance.killFeed[i].GetComponent<Text>().text = reversedList[i].killer + " killed " + reversedList[i].killed;
+            HUDManager.Instance.killFeed[i].SetActive(true);
+
+        }
+    }
+
     void OnPhotonPlayerPropertiesChanged(object[] playerAndUpdatedProps)
     {
         RefreshScoreboard();
@@ -110,5 +133,17 @@ public class ScorePlayer
     {
         name = _name;
         score = _score;
+    }
+}
+
+public class KillFeed
+{
+    public string killer;
+    public string killed;
+
+    public KillFeed(string _killer, string _killed)
+    {
+        killer = _killer;
+        killed = _killed;
     }
 }

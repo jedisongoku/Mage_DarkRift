@@ -115,11 +115,13 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void KillFeed(int _playerViewID, int _playerLevel)
+    public void KillFeed(int _playerViewID, GameObject _playerkilled)
     {
+        ScoreManager.Instance.RefreshKillFeed(PhotonNetwork.GetPhotonView(_playerViewID).Owner.NickName, _playerkilled.GetComponent<PhotonView>().Owner.NickName);
+
         if(_playerViewID == currentPlayerViewID)
         {
-            DeadPlayerLevel = _playerLevel;
+            DeadPlayerLevel = _playerkilled.GetComponent<PlayerLevelManager>().GetPlayerLevel();
             ScoreManager.Instance.Score = ScoreManager.Instance.Score + 1;
             playerKillCount++;
             Debug.Log("Dead player level " + DeadPlayerLevel);

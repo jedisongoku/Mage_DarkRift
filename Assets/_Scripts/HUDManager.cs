@@ -34,6 +34,7 @@ public class HUDManager : MonoBehaviourPunCallbacks
     [SerializeField] private VariableJoystick movementJoystick;
     [SerializeField] private VariableJoystick aimJoystick;
     [SerializeField] public GameObject[] playerUIList;
+    [SerializeField] public GameObject[] killFeed;
     public GameObject[] scoreboardItems;
     public GameObject gamePanel;
     public GameObject exitGameButton;

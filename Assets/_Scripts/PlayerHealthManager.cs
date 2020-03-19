@@ -267,7 +267,7 @@ public class PlayerHealthManager : MonoBehaviourPun
         playerhealth = _health;
         if(playerhealth <= 0 && !GetComponent<PlayerCombatManager>().IsDead)
         {
-            GameManager.Instance.KillFeed(_damageOrigin, GetComponent<PlayerLevelManager>().GetPlayerLevel());
+            GameManager.Instance.KillFeed(_damageOrigin, this.gameObject);
             OnPlayerDeath();
 
             if (photonView.IsMine)
