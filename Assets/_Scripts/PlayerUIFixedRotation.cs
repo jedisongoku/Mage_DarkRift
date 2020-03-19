@@ -20,9 +20,11 @@ public class PlayerUIFixedRotation : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        /*
         transform.SetParent(null);
         transform.rotation = new Quaternion(x, y, z, t);
         transform.SetParent(parent.transform);
-        transform.localPosition = position;
+        transform.localPosition = position;*/
+        transform.LookAt(transform.position + Camera.main.transform.rotation * Vector3.forward, Camera.main.transform.rotation * Vector3.up);
     }
 }

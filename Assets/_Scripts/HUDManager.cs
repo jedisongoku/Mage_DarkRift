@@ -49,6 +49,11 @@ public class HUDManager : MonoBehaviourPunCallbacks
     public Button[] runeOptions;
     public Text fps;
 
+    [Header("Level")]
+    [SerializeField] private Text levelText;
+    [SerializeField] private Text xpText;
+    [SerializeField] private Image xpProgressBar;
+ 
     private string gameMode = "Deathmatch";
     private bool isRespawnRequested = false;
     
@@ -87,14 +92,19 @@ public class HUDManager : MonoBehaviourPunCallbacks
     {
         switch (PhotonNetwork.NetworkClientState)
         {
+            case ClientState.ConnectingToMasterServer:
+                launchLoadingText.text = "Connecting to server";
+                break;
             case ClientState.ConnectedToMasterServer:
                 launchLoadingBar.fillAmount += 0.01f;
+                launchLoadingText.text = Mathf.RoundToInt(launchLoadingBar.fillAmount * 100) + "%";
                 break;
 
             default:
+                launchLoadingText.text = Mathf.RoundToInt(launchLoadingBar.fillAmount * 100) + "%";
                 break;
         }
-
+        
         yield return new WaitForSeconds(0);
 
         if (launchLoadingBar.fillAmount < 1)
@@ -224,7 +234,7 @@ public class HUDManager : MonoBehaviourPunCallbacks
     public void OnGameLevelLoaded()
     {
         //ActivatePanels(loadingPanel.name);
-        loadingBar.fillAmount = 0.75f;
+        loadingBar.fillAmount = 0.9f;
         deathPanel.SetActive(false);
         playerControllerPanel.SetActive(true);
         //StartCoroutine(GameSceneLoading());
@@ -233,7 +243,7 @@ public class HUDManager : MonoBehaviourPunCallbacks
 
     IEnumerator GameSceneLoading()
     {
-        loadingBar.fillAmount += Time.deltaTime / 5;
+        loadingBar.fillAmount += Time.deltaTime / 2;
         loadingText.text = Mathf.RoundToInt(loadingBar.fillAmount * 100) + "%";
 
         yield return new WaitForSeconds(0);
@@ -304,6 +314,13 @@ public class HUDManager : MonoBehaviourPunCallbacks
             characterLocation.SetActive(true);
         }
 
+    }
+
+    public void UpdatePlayerLevel(int _level, int _currentXP, int _maxXP)
+    {
+        levelText.text = _level.ToString();
+        xpText.text = _currentXP + "/" + _maxXP;
+        xpProgressBar.fillAmount = (float)_currentXP / (float)_maxXP;
     }
     #endregion
 }

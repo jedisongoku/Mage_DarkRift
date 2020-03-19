@@ -22152,7 +22152,7 @@ PrefabInstance:
     - target: {fileID: 5820977239175451669, guid: 04c7ad8985c25da47a19dd051f56a026,
         type: 3}
       propertyPath: field of view
-      value: 6
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 5820977239175451669, guid: 04c7ad8985c25da47a19dd051f56a026,
         type: 3}
@@ -30022,6 +30022,11 @@ PrefabInstance:
       propertyPath: m_Lens.FarClipPlane
       value: 500
       objectReference: {fileID: 0}
+    - target: {fileID: 1297420052725841543, guid: a64779e3dc5e6ea4fb95f4922bfb2491,
+        type: 3}
+      propertyPath: m_Lens.FieldOfView
+      value: 7
+      objectReference: {fileID: 0}
     - target: {fileID: 1297420052725841560, guid: a64779e3dc5e6ea4fb95f4922bfb2491,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -31063,8 +31068,9 @@ MonoBehaviour:
   health: 100
   healthGenerationRate: 0.01
   primarySkillDamage: 15
-  primarySkillCooldown: 1
-  primarySkillCharge: 0
+  primarySkillCooldown: 0.25
+  primarySkillCharge: 3
+  primarySkillRecharge: 2
   secondarySkillCooldown: 5
   bloodthirstHealAmount: 30
   hpBoostAmount: 50

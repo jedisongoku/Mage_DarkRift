@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using Cinemachine;
 using UnityEngine;
+using UnityEngine.UI;
 using Photon.Pun;
+using TMPro;
 
 public class PlayerCombatManager : MonoBehaviourPunCallbacks
 {
@@ -31,11 +33,24 @@ public class PlayerCombatManager : MonoBehaviourPunCallbacks
     [SerializeField] private GameObject playerUI;
     [SerializeField] private MeshRenderer playerBaseRenderer;
     [SerializeField] private Material playerBaseColor;
+    [SerializeField] private GameObject playerHealthBar;
+    [SerializeField] private Sprite enemyHealthBarTexture;
+    [SerializeField] private GameObject primarySkillCharges;
+    [SerializeField] private TextMeshProUGUI playerNameText;
+    [SerializeField] private Color32 enemyNameColor;
+
     //[SerializeField] private GameObject runeActivatedBlue;
     //[SerializeField] private GameObject runeActivatedRed;
     [SerializeField] private GameObject dashTrail;
     [SerializeField] private LineRenderer aimAssist;
     public bool canShoot { get; set; }
+
+    [Header("Primary Skill")]
+    [SerializeField] public GameObject[] primarySkillUICharges;
+    [SerializeField] public Image[] primarySkillUIChargeProgressBars;
+    private float primarSkillchargeTimer_1;
+    private float primarSkillchargeTimer_2;
+    private float primarSkillchargeTimer_3;
 
 
     [Header("Runes")]
@@ -59,9 +74,18 @@ public class PlayerCombatManager : MonoBehaviourPunCallbacks
             aimJoystick = HUDManager.Instance.AimJoystick;
             GameObject.Find("VirtualCamera").GetComponent<CinemachineVirtualCamera>().Follow = this.transform;
             playerBaseRenderer.material = playerBaseColor;
+            
 
 
         }
+        else
+        {
+            primarySkillCharges.SetActive(false);
+            playerHealthBar.GetComponent<RectTransform>().sizeDelta = new Vector2(playerHealthBar.GetComponent<RectTransform>().sizeDelta.x, 0.3f);
+            playerHealthBar.transform.Find("HealthBar").GetComponent<Image>().sprite = enemyHealthBarTexture;
+            playerNameText.color = enemyNameColor;
+        }
+
 
         m_Animator = GetComponent<Animator>();
         SetPlayerBaseStats();
@@ -243,12 +267,62 @@ public class PlayerCombatManager : MonoBehaviourPunCallbacks
         }     
     }
 
+    IEnumerator PrimarySkillChargerReady(int _chargeID)
+    {
+        primarySkillUICharges[_chargeID - 1].SetActive(false);
+        if(_chargeID == PlayerBaseStats.Instance.PrimarySkillCharge)
+        {
+            primarSkillchargeTimer_1 = 0;
+        }
+        else
+        {
+            primarySkillUIChargeProgressBars[_chargeID].fillAmount = 0;
+        }
+
+        primarySkillUIChargeProgressBars[_chargeID - 1].fillAmount = primarSkillchargeTimer_1 / PlayerBaseStats.Instance.PrimarySkillRecharge;
+
+        yield return new WaitForSeconds(0.5f);
+
+        StartCoroutine(PrimarySkillCharger(_chargeID));
+    }
+
+    IEnumerator PrimarySkillCharger(int _chargeID)
+    {
+        primarSkillchargeTimer_1 += Time.deltaTime;
+
+        primarySkillUIChargeProgressBars[_chargeID - 1].fillAmount = primarSkillchargeTimer_1 / PlayerBaseStats.Instance.PrimarySkillRecharge;
+
+        yield return new WaitForSeconds(0);
+        if(primarSkillchargeTimer_1 < PlayerBaseStats.Instance.PrimarySkillRecharge)
+        {
+            StartCoroutine(PrimarySkillCharger(_chargeID));
+        }
+        else
+        {
+            primarySkillUICharges[_chargeID - 1].SetActive(true);
+            primarySkillCharge++;
+            if(primarySkillCharge < PlayerBaseStats.Instance.PrimarySkillCharge)
+            {
+                primarySkillUIChargeProgressBars[_chargeID].fillAmount = 0;
+                primarSkillchargeTimer_1 = 0;
+                StartCoroutine(PrimarySkillCharger(_chargeID + 1));
+            }
+        }
+    }
+
+
+
+
+
     public void PrimarySkill(Vector3 _aimLocation)
     {
-        if (primarySkillCooldownTimer >= primarySkillCooldown)
+        if (primarySkillCooldownTimer >= primarySkillCooldown && primarySkillCharge > 0)
         {
             playerMovementController.SetFireDirection(_aimLocation);
             primarySkillCooldownTimer = 0f;
+            StopAllCoroutines();
+            StartCoroutine(PrimarySkillChargerReady(primarySkillCharge));
+            primarySkillCharge--;
             photonView.RPC("UsePrimarySkill", RpcTarget.AllViaServer, _aimLocation, primarySkillSpawnLocation.transform.position, playerHealthManager.Rage);
         }
     }

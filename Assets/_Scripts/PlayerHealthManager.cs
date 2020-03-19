@@ -267,7 +267,7 @@ public class PlayerHealthManager : MonoBehaviourPun
         playerhealth = _health;
         if(playerhealth <= 0 && !GetComponent<PlayerCombatManager>().IsDead)
         {
-            GameManager.Instance.KillFeed(_damageOrigin);
+            GameManager.Instance.KillFeed(_damageOrigin, GetComponent<PlayerLevelManager>().GetPlayerLevel());
             OnPlayerDeath();
 
             if (photonView.IsMine)
@@ -294,6 +294,7 @@ public class PlayerHealthManager : MonoBehaviourPun
             rageParticle.SetActive(false);
         }
     }
+
 
     void OnPlayerDeath()
     {

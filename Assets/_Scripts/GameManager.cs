@@ -20,6 +20,8 @@ public class GameManager : MonoBehaviour
     private int respawnCooldown = 6;
     private bool canRespawn = false;
 
+    public int DeadPlayerLevel { get; set; }
+
     public int RespawnCooldown
     {
         get
@@ -113,13 +115,15 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void KillFeed(int playerViewID)
+    public void KillFeed(int _playerViewID, int _playerLevel)
     {
-        if(playerViewID == currentPlayerViewID)
+        if(_playerViewID == currentPlayerViewID)
         {
+            DeadPlayerLevel = _playerLevel;
             ScoreManager.Instance.Score = ScoreManager.Instance.Score + 1;
             playerKillCount++;
-            HUDManager.Instance.DisplayRunes();
+            Debug.Log("Dead player level " + DeadPlayerLevel);
+            //HUDManager.Instance.DisplayRunes();
 
             if(OnPlayerKill != null)
             {
