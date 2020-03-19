@@ -511,6 +511,7 @@ public class PlayerCombatManager : MonoBehaviourPunCallbacks
                 {
                     HUDManager.Instance.OnPlayerDeath();
                     ScoreManager.Instance.Score = 0;
+                    GetComponent<PlayerLevelManager>().ResetOnDeath();
                     GameObject.Find("VirtualCamera").GetComponent<CinemachineVirtualCamera>().Follow = null;
                     aimAssist.SetPosition(1, aimAssist.GetPosition(0));
                     aimJoystick.OnPointerUp(null);
@@ -519,7 +520,7 @@ public class PlayerCombatManager : MonoBehaviourPunCallbacks
                 {
                     playerUI.SetActive(false);
                 }
-
+                
                 m_Animator.SetTrigger("Dead");
                 Debug.Log("DEAD");
                 DisablePlayer();

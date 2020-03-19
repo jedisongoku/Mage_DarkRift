@@ -31052,6 +31052,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 54f899a593b71434fadd7094d4499f5a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  killFeedPrefab: {fileID: 363110811150405181, guid: 0cbab976d2f46f346a893922881bcab3,
+    type: 3}
+  killFeedPrefabPooledAmount: 5
 --- !u!114 &1934221256
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -31067,7 +31070,7 @@ MonoBehaviour:
   walkSpeed: 0.65
   health: 100
   healthGenerationRate: 0.01
-  primarySkillDamage: 15
+  primarySkillDamage: 30
   primarySkillCooldown: 0.25
   primarySkillCharge: 3
   primarySkillRecharge: 2

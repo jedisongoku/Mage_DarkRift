@@ -25,13 +25,23 @@ public class PlayerLevelManager : MonoBehaviourPunCallbacks
     }
     void OnEnable()
     {
-        GameManager.OnPlayerKill += RewardXP;
+        if(photonView.IsMine)
+        {
+            Debug.Log("LEVEL MANAGER ENABLE");
+            GameManager.OnPlayerKill += RewardXP;
+        }
+        
     }
 
     // Update is called once per frame
     void OnDisable()
     {
-        GameManager.OnPlayerKill -= RewardXP;
+        if(photonView.IsMine)
+        {
+            Debug.Log("LEVEL MANAGER DISABLE");
+            GameManager.OnPlayerKill -= RewardXP;
+        }
+        
     }
 
     public int GetPlayerLevel()
@@ -46,8 +56,9 @@ public class PlayerLevelManager : MonoBehaviourPunCallbacks
 
     public void AddXP(int _xp)
     {
+        Debug.Log("xp earned :" + _xp + "current level "  + currentLevel);
         currentXP += _xp;
-        if(currentXP > firstLevelXP * Mathf.Pow(levelCoefficient, currentLevel))
+        if(currentXP >= Mathf.FloorToInt(firstLevelXP * Mathf.Pow(levelCoefficient, currentLevel)))
         {
             currentXP -= NextLevelInXP();
             currentLevel++;
@@ -62,7 +73,7 @@ public class PlayerLevelManager : MonoBehaviourPunCallbacks
     void RewardXP()
     {
         Debug.Log("REWARDS XP");
-        AddXP(killXP * Mathf.FloorToInt(Mathf.Pow(killXPCoefficient, GameManager.Instance.DeadPlayerLevel)));
+        AddXP(Mathf.FloorToInt(killXP * Mathf.Pow(killXPCoefficient, GameManager.Instance.DeadPlayerLevel)));
     }
 
     [PunRPC]
@@ -70,5 +81,14 @@ public class PlayerLevelManager : MonoBehaviourPunCallbacks
     {
         currentLevel = _level;
         levelText.text = _level.ToString();
+    }
+
+    public void ResetOnDeath()
+    {
+        currentXP = 0;
+        currentLevel = 1;
+        HUDManager.Instance.UpdatePlayerLevel(currentLevel, currentXP, NextLevelInXP());
+        photonView.RPC("UpdateLevel", RpcTarget.Others, currentLevel);    
+
     }
 }

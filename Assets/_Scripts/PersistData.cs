@@ -101,7 +101,7 @@ public class PersistData : MonoBehaviour
     {
         GameData = new GameDataModel
         {
-            PlayerName = "Mage#" + UnityEngine.Random.Range(1000, 10000),
+            PlayerName = "Mage" + UnityEngine.Random.Range(10000, 100000),
             CoinBalance = 0,
             GemBalance = 0,
             EnergyBalance = 50,

@@ -162,7 +162,7 @@ public class PlayerMovementController : MonoBehaviourPun, IPunObservable
         }
         m_Movement.Set(movement.x, 0f, movement.y);
         m_Movement.Normalize();
-        Debug.Log("Movement " + m_Movement);
+        //Debug.Log("Movement " + m_Movement);
 
         Vector3 desiredForward = Vector3.RotateTowards(transform.forward, m_Movement, turnSpeed * Time.deltaTime, 0f);
         m_Rotation = Quaternion.LookRotation(desiredForward);

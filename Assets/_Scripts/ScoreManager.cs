@@ -10,10 +10,18 @@ public class ScoreManager : MonoBehaviour
 {
     public static ScoreManager Instance;
 
+    [SerializeField] private GameObject killFeedPrefab;
+    [SerializeField] private int killFeedPrefabPooledAmount = 5;
+    
+    List<GameObject> killFeedPrefabList;
+    GameObject killFeedParent;
+    
+
     ExitGames.Client.Photon.Hashtable playerProperties = new ExitGames.Client.Photon.Hashtable();
     private List<ScorePlayer> playersList;
 
     private List<KillFeed> killFeed;
+    private static int killFeedLineNumber;
     private int score;
 
     // Start is called before the first frame update
@@ -21,10 +29,33 @@ public class ScoreManager : MonoBehaviour
     {
         Instance = this;
         killFeed = new List<KillFeed>();
-
-
-
         playersList = new List<ScorePlayer>();
+        killFeedLineNumber = 0;
+
+        killFeedPrefabList = new List<GameObject>();
+
+        killFeedParent = HUDManager.Instance.scoreboardContent;
+
+        for (int i = 0; i < killFeedPrefabPooledAmount; i++)
+        {
+            GameObject obj = (GameObject)Instantiate(killFeedPrefab);
+            obj.transform.SetParent(killFeedParent.transform);
+            obj.SetActive(false);
+            killFeedPrefabList.Add(obj);
+        }
+    }
+
+    public GameObject GetKillFeedPrefab()
+    {
+        for (int i = 0; i < killFeedPrefabList.Count; i++)
+        {
+            if (!killFeedPrefabList[i].activeInHierarchy)
+            {
+                return killFeedPrefabList[i];
+            }
+        }
+
+        return null;
     }
 
     public void StartScoreboard()
@@ -102,17 +133,28 @@ public class ScoreManager : MonoBehaviour
     {
         killFeed.Add(new KillFeed(_killer, _killed));
 
+        GameObject feed = GetKillFeedPrefab();
+        feed.GetComponent<Text>().text = _killer + " killed " + _killed;
+        feed.transform.SetParent(killFeedParent.transform);
+        feed.SetActive(true);
+
+        /*
         List<KillFeed> reversedList = killFeed;
         reversedList.Reverse();
 
-        int count = reversedList.Count <= HUDManager.Instance.killFeed.Length ? reversedList.Count : HUDManager.Instance.killFeed.Length;
+        //int count = reversedList.Count <= HUDManager.Instance.killFeed.Length ? reversedList.Count : HUDManager.Instance.killFeed.Length;
+
+        killFeedLineNumber = reversedList.Count - killFeedLineNumber;
+        int count = killFeedLineNumber > HUDManager.Instance.killFeed.Length ? HUDManager.Instance.killFeed.Length : killFeedLineNumber;
 
         for (int i = 0; i < count; i++)
         {
+            
             HUDManager.Instance.killFeed[i].GetComponent<Text>().text = reversedList[i].killer + " killed " + reversedList[i].killed;
+            HUDManager.Instance.killFeed[i].SetActive(false);
             HUDManager.Instance.killFeed[i].SetActive(true);
 
-        }
+        }*/
     }
 
     void OnPhotonPlayerPropertiesChanged(object[] playerAndUpdatedProps)
