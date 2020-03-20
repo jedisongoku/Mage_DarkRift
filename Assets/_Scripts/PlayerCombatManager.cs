@@ -57,7 +57,8 @@ public class PlayerCombatManager : MonoBehaviourPunCallbacks
     private Shader standardShader;
     private Shader transparentShader;
     private bool isTransparent { get; set; }
-    private bool isInBush { get; set; }
+    private bool isInvisible { get; set; }
+    public bool canBeSeen { get; set; }
     private int bushCount { get; set; }
 
 
@@ -728,59 +729,127 @@ public class PlayerCombatManager : MonoBehaviourPunCallbacks
     [PunRPC]
     void FrostNova_RPC()
     {
-        isMultiShot = true;
+        isFrostNova = true;
     }
 
     private void OnTriggerEnter(Collider other)
     {
         bushCount++;
-        if (other.gameObject.layer == 15 && !isTransparent)
+        if(photonView.IsMine)
         {
-            playerBase.gameObject.SetActive(false);
-            isTransparent = true;
-            foreach(var render in playerModel.GetComponent<MeshRenderersInModel>().MeshRenderers)
+            if (other.gameObject.layer == 15 && !isTransparent)
             {
+                playerBase.gameObject.SetActive(false);
+                isTransparent = true;
+                foreach (var render in playerModel.GetComponent<MeshRenderersInModel>().MeshRenderers)
+                {
+                    render.material.shader = transparentShader;
+                }
+                foreach (var render in playerModel.GetComponent<MeshRenderersInModel>().SkinnedMeshRenderers)
+                {
+                    render.material.shader = transparentShader;
+                }
+                Debug.Log("Trigger Enter");
+            }
+        }
+        else
+        {
+            if (other.gameObject.layer == 15 && !isInvisible && !canBeSeen)
+            {
+                playerBase.gameObject.SetActive(false);
+                isInvisible = true;
+                foreach (var render in playerModel.GetComponent<MeshRenderersInModel>().MeshRenderers)
+                {
+                    render.enabled = false;
+                    
+                }
+                foreach (var render in playerModel.GetComponent<MeshRenderersInModel>().SkinnedMeshRenderers)
+                {
+                    render.enabled = false;
+                }
+                playerUI.SetActive(false);
+                Debug.Log("Trigger Enter");
+            }
+        }
+        
+    }
+
+    private void OnTriggerStay(Collider other)
+    {
+        if(!photonView.IsMine && canBeSeen && isInvisible)
+        {
+            foreach (var render in playerModel.GetComponent<MeshRenderersInModel>().MeshRenderers)
+            {
+                render.enabled = true;
                 render.material.shader = transparentShader;
             }
             foreach (var render in playerModel.GetComponent<MeshRenderersInModel>().SkinnedMeshRenderers)
             {
+                render.enabled = true;
                 render.material.shader = transparentShader;
             }
-            Debug.Log("Trigger Enter");
+            playerUI.SetActive(true);
+        }
+        else if(!photonView.IsMine && !canBeSeen && isInvisible)
+        {
+            foreach (var render in playerModel.GetComponent<MeshRenderersInModel>().MeshRenderers)
+            {
+                render.enabled = false;
+            }
+            foreach (var render in playerModel.GetComponent<MeshRenderersInModel>().SkinnedMeshRenderers)
+            {
+                render.enabled = false;
+            }
+            playerUI.SetActive(false);
         }
     }
 
     private void OnTriggerExit(Collider other)
     {
         bushCount--;
-        if (other.gameObject.layer == 15 && !isInBush && bushCount == 0)
+        if(photonView.IsMine)
         {
-            playerBase.gameObject.SetActive(true);
-            isTransparent = false;
-            foreach (var render in playerModel.GetComponent<MeshRenderersInModel>().MeshRenderers)
+            if (other.gameObject.layer == 15 && isTransparent && bushCount == 0)
             {
-                render.material.shader = standardShader;
+                playerBase.gameObject.SetActive(true);
+                isTransparent = false;
+                foreach (var render in playerModel.GetComponent<MeshRenderersInModel>().MeshRenderers)
+                {
+                    render.material.shader = standardShader;
+                }
+                foreach (var render in playerModel.GetComponent<MeshRenderersInModel>().SkinnedMeshRenderers)
+                {
+                    render.material.shader = standardShader;
+                }
+                Debug.Log("Trigger Exit");
+                
             }
-            foreach (var render in playerModel.GetComponent<MeshRenderersInModel>().SkinnedMeshRenderers)
-            {
-                render.material.shader = standardShader;
-            }
-            Debug.Log("Trigger Exit");
         }
-        
+        else
+        {
+            if (other.gameObject.layer == 15 && isInvisible && bushCount == 0)
+            {
+                playerBase.gameObject.SetActive(true);
+                isInvisible = false;
+                canBeSeen = false;
+                foreach (var render in playerModel.GetComponent<MeshRenderersInModel>().MeshRenderers)
+                {
+                    render.enabled = true;
+                    render.material.shader = standardShader;
+                }
+                foreach (var render in playerModel.GetComponent<MeshRenderersInModel>().SkinnedMeshRenderers)
+                {
+                    render.enabled = true;
+                    render.material.shader = standardShader;
+                }
+                Debug.Log("Trigger Enter");
+                playerUI.SetActive(true);
+            }
+        }
+
+
     }
 
-    public void BushEntered()
-    {
-        
-        Debug.Log("Enter Bush");
-    }
-
-    public void BushExited()
-    {
-
-        Debug.Log("Exit Bush");
-    }
 
     #endregion
 
