@@ -273,6 +273,7 @@ public class PlayerHealthManager : MonoBehaviourPun
             if (photonView.IsMine)
             {
                 healthBar.transform.parent.gameObject.SetActive(false);
+                
             }
             
         }
@@ -307,6 +308,7 @@ public class PlayerHealthManager : MonoBehaviourPun
         strongHeartParticle.SetActive(false);
         shieldGuardParticle.SetActive(false);
         frostbiteParticle.SetActive(false);
+        rageParticle.SetActive(false);
     }
 
     

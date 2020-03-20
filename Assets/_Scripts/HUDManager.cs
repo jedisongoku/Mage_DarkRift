@@ -18,7 +18,7 @@ public class HUDManager : MonoBehaviourPunCallbacks
     [Header("Menu Panel")]
     [SerializeField] public GameObject menuPanel;
     [SerializeField] private Text playerName;
-    [SerializeField] private GameObject characterLocation;
+    [SerializeField] public GameObject characterLocation;
 
 
     [Header("Waiting Area Panel")]
@@ -65,10 +65,18 @@ public class HUDManager : MonoBehaviourPunCallbacks
     // Start is called before the first frame update
     void Start()
     {
-        Application.targetFrameRate = 60;
+        if (Instance == null)
+        {
+            DontDestroyOnLoad(gameObject);
+            Instance = this;
+        }
+        else if (Instance != this)
+        {
+            Destroy(gameObject);
+        }
 
-        DontDestroyOnLoad(this);
-        Instance = this;
+        Application.targetFrameRate = 60;
+        
         //ActivatePanels(menuPanel.name);
         if (Application.isMobilePlatform)
         {
@@ -78,6 +86,8 @@ public class HUDManager : MonoBehaviourPunCallbacks
         {
             movementJoystick.gameObject.SetActive(true);
         }
+
+        
         StartCoroutine(Applaunch());
     }
 
@@ -181,6 +191,7 @@ public class HUDManager : MonoBehaviourPunCallbacks
         ExitGames.Client.Photon.Hashtable roomPropterties = new ExitGames.Client.Photon.Hashtable();
         roomPropterties.Add("Level", gameMode);
         PhotonNetwork.JoinRandomRoom(roomPropterties, 0);
+        loadingBar.fillAmount = 0;
         ActivatePanels(loadingPanel.name);
         StartCoroutine(GameSceneLoading());
 
@@ -256,15 +267,38 @@ public class HUDManager : MonoBehaviourPunCallbacks
         {
             GameManager.Instance.InitializePlayer();
             Invoke("ActivateGamePanel", 0.5f);
-            ScoreManager.Instance.StartScoreboard();
         }
     }
 
     public void OnExitButtonClicked()
     {
         PhotonNetwork.LeaveRoom();
-        ActivatePanels(menuPanel.name);
-        characterLocation.SetActive(true);
+        loadingBar.fillAmount = 0;
+        ActivatePanels(loadingPanel.name);
+        StartCoroutine(LobbySceneLoading());
+        //characterLocation.SetActive(true);
+        //Invoke("SetCanvasCamera", 1);
+    }
+
+    IEnumerator LobbySceneLoading()
+    {
+        loadingBar.fillAmount += Time.deltaTime * 2;
+        loadingText.text = Mathf.RoundToInt(loadingBar.fillAmount * 100) + "%";
+
+        yield return new WaitForSeconds(0);
+        if (loadingBar.fillAmount < 1)
+        {
+            StartCoroutine(LobbySceneLoading());
+        }
+        else
+        {
+            ActivatePanels(menuPanel.name);
+        }
+    }
+
+    void SetCanvasCamera()
+    {
+        GetComponent<Canvas>().worldCamera = Camera.main;
     }
 
     public GameObject[] ScoreboardItems

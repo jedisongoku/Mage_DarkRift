@@ -7,6 +7,8 @@ using Photon.Realtime;
 
 public class PhotonNetworkManager : MonoBehaviourPunCallbacks
 {
+    public static PhotonNetworkManager Instance;
+
     public delegate void PhotonEvents();
     public static event PhotonEvents OnJoinedRoomEvent;
     public static event PhotonEvents OnPlayerEnteredRoomEvent;
@@ -15,6 +17,16 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
     // Start is called before the first frame update
     void Start()
     {
+        if (Instance == null)
+        {
+            DontDestroyOnLoad(gameObject);
+            Instance = this;
+        }
+        else if (Instance != this)
+        {
+            Destroy(gameObject);
+        }
+
         if (PersistData.instance.GameData.PlayerName != null)
         {
             PhotonNetwork.LocalPlayer.NickName = PersistData.instance.GameData.PlayerName;
@@ -25,6 +37,7 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
             Debug.Log("Player Nickname is invalid!");
         }
         PhotonNetwork.AutomaticallySyncScene = true;
+        SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
     #endregion
@@ -105,16 +118,16 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
         }*/
     }
 
-
-    public override void OnPlayerLeftRoom(Player otherPlayer)
-    {
-
-    }
-
     public override void OnLeftRoom()
     {
         Debug.Log("Left Room");
         SceneManager.LoadScene(0);
+    }
+
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        HUDManager.Instance.GetComponent<Canvas>().worldCamera = Camera.main;
+        HUDManager.Instance.characterLocation.SetActive(true);
     }
 
     #endregion

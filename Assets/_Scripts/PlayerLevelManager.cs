@@ -16,6 +16,7 @@ public class PlayerLevelManager : MonoBehaviourPunCallbacks
 
     [SerializeField] private GameObject levelStar;
     [SerializeField] private TextMeshProUGUI levelText;
+    [SerializeField] private GameObject levelUpParticle;
 
     // Start is called before the first frame update
 
@@ -62,8 +63,10 @@ public class PlayerLevelManager : MonoBehaviourPunCallbacks
         {
             currentXP -= NextLevelInXP();
             currentLevel++;
+            levelUpParticle.SetActive(false);
+            levelUpParticle.SetActive(true);
             HUDManager.Instance.DisplayRunes();
-            photonView.RPC("UpdateLevel", RpcTarget.OthersBuffered, currentLevel);
+            photonView.RPC("UpdateLevel", RpcTarget.Others, currentLevel);
             
         }
 
@@ -79,6 +82,12 @@ public class PlayerLevelManager : MonoBehaviourPunCallbacks
     [PunRPC]
     void UpdateLevel(int _level)
     {
+        if(_level > currentLevel)
+        {
+            Debug.Log(":LEVEL UP PARTICLE");
+            levelUpParticle.SetActive(false);
+            levelUpParticle.SetActive(true);
+        }
         currentLevel = _level;
         levelText.text = _level.ToString();
     }

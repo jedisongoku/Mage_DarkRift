@@ -13,10 +13,4 @@ public class MenuSkinController : MonoBehaviour
         
         GetComponent<Animator>().Rebind();
     }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }

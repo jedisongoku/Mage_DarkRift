@@ -31,8 +31,7 @@ public class PlayerCombatManager : MonoBehaviourPunCallbacks
     [Header("Player")]
     private GameObject playerModel;
     [SerializeField] private GameObject playerUI;
-    [SerializeField] private MeshRenderer playerBaseRenderer;
-    [SerializeField] private Material playerBaseColor;
+    [SerializeField] private ParticleSystem playerBase;
     [SerializeField] private GameObject playerHealthBar;
     [SerializeField] private Sprite enemyHealthBarTexture;
     [SerializeField] private GameObject primarySkillCharges;
@@ -73,7 +72,7 @@ public class PlayerCombatManager : MonoBehaviourPunCallbacks
             //playerMovementController.enabled = true;
             aimJoystick = HUDManager.Instance.AimJoystick;
             GameObject.Find("VirtualCamera").GetComponent<CinemachineVirtualCamera>().Follow = this.transform;
-            playerBaseRenderer.material = playerBaseColor;
+            
             
 
 
@@ -84,6 +83,7 @@ public class PlayerCombatManager : MonoBehaviourPunCallbacks
             playerHealthBar.GetComponent<RectTransform>().sizeDelta = new Vector2(playerHealthBar.GetComponent<RectTransform>().sizeDelta.x, 0.3f);
             playerHealthBar.transform.Find("HealthBar").GetComponent<Image>().sprite = enemyHealthBarTexture;
             playerNameText.color = enemyNameColor;
+            playerBase.startColor = enemyNameColor;
         }
 
 
@@ -423,6 +423,7 @@ public class PlayerCombatManager : MonoBehaviourPunCallbacks
     public void RespawnPlayer()
     {
         GetComponent<PlayerMovementController>().enabled = true;
+        primarySkillCharges.SetActive(true);
         SetPlayerBaseStats();
         PlayerRuneManager.Instance.RestartPlayerRunes();
         photonView.RPC("RespawnClients", RpcTarget.All, GameManager.Instance.SpawnLocationIndex);
@@ -436,7 +437,7 @@ public class PlayerCombatManager : MonoBehaviourPunCallbacks
         {
             playerUI.SetActive(false);
             playerModel.SetActive(false);
-            playerBaseRenderer.enabled = false;
+            playerBase.gameObject.SetActive(false);
             Invoke("EnableRespawnedPlayerClients", 1f);
         }
         else
@@ -470,7 +471,7 @@ public class PlayerCombatManager : MonoBehaviourPunCallbacks
     {
         playerUI.SetActive(true);
         playerModel.SetActive(true);
-        playerBaseRenderer.enabled = true;
+        playerBase.gameObject.SetActive(true);
     }
     #endregion
     #region Public Methods
@@ -506,11 +507,12 @@ public class PlayerCombatManager : MonoBehaviourPunCallbacks
             isDead = value;
             if(IsDead)
             {
-                ScoreManager.Instance.UpdateScore();
+                //ScoreManager.Instance.UpdateScore();
                 if (photonView.IsMine)
                 {
+                    primarySkillCharges.SetActive(false);
                     HUDManager.Instance.OnPlayerDeath();
-                    ScoreManager.Instance.Score = 0;
+                    //ScoreManager.Instance.Score = 0;
                     GetComponent<PlayerLevelManager>().ResetOnDeath();
                     GameObject.Find("VirtualCamera").GetComponent<CinemachineVirtualCamera>().Follow = null;
                     aimAssist.SetPosition(1, aimAssist.GetPosition(0));
@@ -713,6 +715,23 @@ public class PlayerCombatManager : MonoBehaviourPunCallbacks
     {
         isMultiShot = true;
     }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.layer == 15)
+        {
+            Debug.Log("Trigger Enter");
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.gameObject.layer == 15)
+        {
+            Debug.Log("Trigger Exit");
+        }
+    }
+
 
     #endregion
 

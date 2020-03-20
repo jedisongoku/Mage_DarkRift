@@ -122,10 +122,7 @@ public class GameManager : MonoBehaviour
         if(_playerViewID == currentPlayerViewID)
         {
             DeadPlayerLevel = _playerkilled.GetComponent<PlayerLevelManager>().GetPlayerLevel();
-            ScoreManager.Instance.Score = ScoreManager.Instance.Score + 1;
-            playerKillCount++;
             Debug.Log("Dead player level " + DeadPlayerLevel);
-            //HUDManager.Instance.DisplayRunes();
 
             if(OnPlayerKill != null)
             {
