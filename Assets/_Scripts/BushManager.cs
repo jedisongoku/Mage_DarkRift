@@ -21,7 +21,7 @@ public class BushManager : MonoBehaviour
         if (other.gameObject.layer == 8 )
         {
 
-            //other.GetComponent<PlayerCombatManager>().EnableBushCover();
+            other.GetComponent<PlayerCombatManager>().BushEntered();
         }
     }
 
@@ -29,7 +29,7 @@ public class BushManager : MonoBehaviour
     {
         if (other.gameObject.layer == 8)
         {
-            //other.GetComponent<PlayerCombatManager>().DisableBushCover();
+            other.GetComponent<PlayerCombatManager>().BushExited();
         }
     }
 }

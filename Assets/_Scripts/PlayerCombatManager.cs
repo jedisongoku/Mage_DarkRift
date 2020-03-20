@@ -51,6 +51,15 @@ public class PlayerCombatManager : MonoBehaviourPunCallbacks
     private float primarSkillchargeTimer_2;
     private float primarSkillchargeTimer_3;
 
+    [Header("Bush Materials")]
+    [SerializeField] private SkinnedMeshRenderer[] playerMeshRenderers;
+    private Shader toonLitShader;
+    private Shader standardShader;
+    private Shader transparentShader;
+    private bool isTransparent { get; set; }
+    private bool isInBush { get; set; }
+    private int bushCount { get; set; }
+
 
     [Header("Runes")]
     bool isFrostbite = false;
@@ -67,6 +76,10 @@ public class PlayerCombatManager : MonoBehaviourPunCallbacks
     // Start is called before the first frame update
     void Start()
     {
+        toonLitShader = Shader.Find("Toon/Lit");
+        standardShader = Shader.Find("Standard");
+        transparentShader = Shader.Find("Particles/Priority Additive");
+
         if (photonView.IsMine)
         {
             //playerMovementController.enabled = true;
@@ -543,6 +556,8 @@ public class PlayerCombatManager : MonoBehaviourPunCallbacks
         set
         {
             playerModel = value;
+            //playerMeshRenderers = playerModel.GetComponentsInChildren<SkinnedMeshRenderer>();
+            //Debug.Log("Player has " + playerMeshRenderers.Length + " renderers");
         }
     }
 
@@ -718,20 +733,54 @@ public class PlayerCombatManager : MonoBehaviourPunCallbacks
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.layer == 15)
+        bushCount++;
+        if (other.gameObject.layer == 15 && !isTransparent)
         {
+            playerBase.gameObject.SetActive(false);
+            isTransparent = true;
+            foreach(var render in playerModel.GetComponent<MeshRenderersInModel>().MeshRenderers)
+            {
+                render.material.shader = transparentShader;
+            }
+            foreach (var render in playerModel.GetComponent<MeshRenderersInModel>().SkinnedMeshRenderers)
+            {
+                render.material.shader = transparentShader;
+            }
             Debug.Log("Trigger Enter");
         }
     }
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.gameObject.layer == 15)
+        bushCount--;
+        if (other.gameObject.layer == 15 && !isInBush && bushCount == 0)
         {
+            playerBase.gameObject.SetActive(true);
+            isTransparent = false;
+            foreach (var render in playerModel.GetComponent<MeshRenderersInModel>().MeshRenderers)
+            {
+                render.material.shader = standardShader;
+            }
+            foreach (var render in playerModel.GetComponent<MeshRenderersInModel>().SkinnedMeshRenderers)
+            {
+                render.material.shader = standardShader;
+            }
             Debug.Log("Trigger Exit");
         }
+        
     }
 
+    public void BushEntered()
+    {
+        
+        Debug.Log("Enter Bush");
+    }
+
+    public void BushExited()
+    {
+
+        Debug.Log("Exit Bush");
+    }
 
     #endregion
 

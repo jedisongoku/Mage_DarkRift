@@ -5288,6 +5288,7 @@ GameObject:
   m_Component:
   - component: {fileID: 411544}
   - component: {fileID: 2673015695408615284}
+  - component: {fileID: 7128942658455416359}
   m_Layer: 13
   m_Name: Wizard Male 04
   m_TagString: Untagged
@@ -5336,6 +5337,25 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   primarySkillSpawnLocation: {fileID: 149652}
+--- !u!114 &7128942658455416359
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 135428}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 81e16b41bffe25849b5aed435cdcd19f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  skinnedRMeshenderers:
+  - {fileID: 13714486}
+  - {fileID: 13792626}
+  Meshrenderers:
+  - {fileID: 2377308}
+  - {fileID: 2384478}
+  - {fileID: 2385550}
 --- !u!1 &136924
 GameObject:
   m_ObjectHideFlags: 0
