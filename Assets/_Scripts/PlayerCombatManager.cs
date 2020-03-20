@@ -32,6 +32,7 @@ public class PlayerCombatManager : MonoBehaviourPunCallbacks
     private GameObject playerModel;
     [SerializeField] private GameObject playerUI;
     [SerializeField] private ParticleSystem playerBase;
+    [SerializeField] private GameObject playerShadow;
     [SerializeField] private GameObject playerHealthBar;
     [SerializeField] private Sprite enemyHealthBarTexture;
     [SerializeField] private GameObject primarySkillCharges;
@@ -486,6 +487,7 @@ public class PlayerCombatManager : MonoBehaviourPunCallbacks
         playerUI.SetActive(true);
         playerModel.SetActive(true);
         playerBase.gameObject.SetActive(true);
+        BushManager.OnPlayerDeath();
     }
     #endregion
     #region Public Methods
@@ -526,6 +528,7 @@ public class PlayerCombatManager : MonoBehaviourPunCallbacks
                 {
                     primarySkillCharges.SetActive(false);
                     HUDManager.Instance.OnPlayerDeath();
+                    
                     //ScoreManager.Instance.Score = 0;
                     GetComponent<PlayerLevelManager>().ResetOnDeath();
                     GameObject.Find("VirtualCamera").GetComponent<CinemachineVirtualCamera>().Follow = null;
@@ -536,7 +539,7 @@ public class PlayerCombatManager : MonoBehaviourPunCallbacks
                 {
                     playerUI.SetActive(false);
                 }
-                
+                TurnOnNormalShader();
                 m_Animator.SetTrigger("Dead");
                 Debug.Log("DEAD");
                 DisablePlayer();
@@ -732,12 +735,41 @@ public class PlayerCombatManager : MonoBehaviourPunCallbacks
         isFrostNova = true;
     }
 
+    void TurnOnNormalShader()
+    {
+        playerBase.gameObject.SetActive(true);
+        playerUI.SetActive(true);
+        isInvisible = false;
+        isTransparent = false;
+        canBeSeen = false;
+        bushCount = 0;
+        foreach (var render in playerModel.GetComponent<MeshRenderersInModel>().MeshRenderers)
+        {
+            render.enabled = true;
+            render.material.shader = standardShader;
+        }
+        foreach (var render in playerModel.GetComponent<MeshRenderersInModel>().SkinnedMeshRenderers)
+        {
+            render.enabled = true;
+            render.material.shader = standardShader;
+        }
+    }
+
+    void SwitchPlayerElements(bool value)
+    {
+        playerUI.SetActive(value);
+        playerShadow.SetActive(value);
+        playerBase.gameObject.SetActive(value);
+
+
+    }
+
     private void OnTriggerEnter(Collider other)
     {
-        bushCount++;
-        if(photonView.IsMine)
+        if(photonView.IsMine && other.gameObject.layer == 15)
         {
-            if (other.gameObject.layer == 15 && !isTransparent)
+            bushCount++;
+            if (!isTransparent)
             {
                 playerBase.gameObject.SetActive(false);
                 isTransparent = true;
@@ -749,29 +781,27 @@ public class PlayerCombatManager : MonoBehaviourPunCallbacks
                 {
                     render.material.shader = transparentShader;
                 }
-                Debug.Log("Trigger Enter");
             }
         }
-        else
+        else if (other.gameObject.layer == 15)
         {
-            if (other.gameObject.layer == 15 && !isInvisible && !canBeSeen)
+            bushCount++;
+            if (!isInvisible && !canBeSeen)
             {
-                playerBase.gameObject.SetActive(false);
                 isInvisible = true;
                 foreach (var render in playerModel.GetComponent<MeshRenderersInModel>().MeshRenderers)
                 {
-                    render.enabled = false;
+                    render.gameObject.SetActive(false);
                     
                 }
                 foreach (var render in playerModel.GetComponent<MeshRenderersInModel>().SkinnedMeshRenderers)
                 {
-                    render.enabled = false;
+                    render.gameObject.SetActive(false);
                 }
-                playerUI.SetActive(false);
-                Debug.Log("Trigger Enter");
+                SwitchPlayerElements(false);
             }
         }
-        
+
     }
 
     private void OnTriggerStay(Collider other)
@@ -780,12 +810,12 @@ public class PlayerCombatManager : MonoBehaviourPunCallbacks
         {
             foreach (var render in playerModel.GetComponent<MeshRenderersInModel>().MeshRenderers)
             {
-                render.enabled = true;
+                render.gameObject.SetActive(true);
                 render.material.shader = transparentShader;
             }
             foreach (var render in playerModel.GetComponent<MeshRenderersInModel>().SkinnedMeshRenderers)
             {
-                render.enabled = true;
+                render.gameObject.SetActive(true);
                 render.material.shader = transparentShader;
             }
             playerUI.SetActive(true);
@@ -794,11 +824,11 @@ public class PlayerCombatManager : MonoBehaviourPunCallbacks
         {
             foreach (var render in playerModel.GetComponent<MeshRenderersInModel>().MeshRenderers)
             {
-                render.enabled = false;
+                render.gameObject.SetActive(false);
             }
             foreach (var render in playerModel.GetComponent<MeshRenderersInModel>().SkinnedMeshRenderers)
             {
-                render.enabled = false;
+                render.gameObject.SetActive(false);
             }
             playerUI.SetActive(false);
         }
@@ -806,12 +836,14 @@ public class PlayerCombatManager : MonoBehaviourPunCallbacks
 
     private void OnTriggerExit(Collider other)
     {
-        bushCount--;
-        if(photonView.IsMine)
+        
+        if(photonView.IsMine && other.gameObject.layer == 15)
         {
-            if (other.gameObject.layer == 15 && isTransparent && bushCount == 0)
+            bushCount--;
+            if (isTransparent && bushCount == 0)
             {
                 playerBase.gameObject.SetActive(true);
+                
                 isTransparent = false;
                 foreach (var render in playerModel.GetComponent<MeshRenderersInModel>().MeshRenderers)
                 {
@@ -821,29 +853,28 @@ public class PlayerCombatManager : MonoBehaviourPunCallbacks
                 {
                     render.material.shader = standardShader;
                 }
-                Debug.Log("Trigger Exit");
                 
             }
         }
-        else
+        else if(other.gameObject.layer == 15)
         {
-            if (other.gameObject.layer == 15 && isInvisible && bushCount == 0)
+            bushCount--;
+            if (isInvisible && bushCount == 0)
             {
-                playerBase.gameObject.SetActive(true);
-                isInvisible = false;
-                canBeSeen = false;
                 foreach (var render in playerModel.GetComponent<MeshRenderersInModel>().MeshRenderers)
                 {
-                    render.enabled = true;
+                    render.gameObject.SetActive(true);
                     render.material.shader = standardShader;
                 }
                 foreach (var render in playerModel.GetComponent<MeshRenderersInModel>().SkinnedMeshRenderers)
                 {
-                    render.enabled = true;
+                    render.gameObject.SetActive(true);
                     render.material.shader = standardShader;
                 }
-                Debug.Log("Trigger Enter");
-                playerUI.SetActive(true);
+                isInvisible = false;
+                canBeSeen = false;
+                SwitchPlayerElements(true);
+                
             }
         }
 

@@ -9,6 +9,10 @@ public class BushManager : MonoBehaviour
 
     public int bushGroupId = 0;
 
+    public static void OnPlayerDeath()
+    {
+        players = new Dictionary<int, Dictionary<int, int>>();
+    }
 
     private void OnTriggerEnter(Collider other)
     {
@@ -19,6 +23,7 @@ public class BushManager : MonoBehaviour
                 var temp = new Dictionary<int, int>();
                 temp.Add(other.gameObject.GetComponent<PhotonView>().ViewID, 0);
                 players.Add(bushGroupId, temp);
+                Debug.Log("Bush registered to dictionary");
             }
             else
             {
@@ -30,6 +35,7 @@ public class BushManager : MonoBehaviour
                 {
                     players[bushGroupId][other.gameObject.GetComponent<PhotonView>().ViewID]++;
                 }
+                Debug.Log("Player Registered to bush");
             }
         }
     }
@@ -61,6 +67,7 @@ public class BushManager : MonoBehaviour
                 {
                     players[bushGroupId][other.gameObject.GetComponent<PhotonView>().ViewID]--;
                 }
+                Debug.Log("Player unRegistered to bush");
             }
             
             //other.GetComponent<PlayerCombatManager>().BushExited();

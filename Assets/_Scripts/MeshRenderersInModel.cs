@@ -5,7 +5,7 @@ using UnityEngine;
 public class MeshRenderersInModel : MonoBehaviour
 {
     [SerializeField] private SkinnedMeshRenderer[] skinnedRMeshenderers;
-    [SerializeField] private MeshRenderer[] Meshrenderers;
+    [SerializeField] private MeshRenderer[] meshrenderers;
     // Start is called before the first frame update
     public SkinnedMeshRenderer[] SkinnedMeshRenderers
     {
@@ -19,7 +19,8 @@ public class MeshRenderersInModel : MonoBehaviour
     {
         get
         {
-            return Meshrenderers;
+            return meshrenderers;
         }
     }
+
 }
