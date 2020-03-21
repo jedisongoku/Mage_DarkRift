@@ -13,4 +13,5 @@ public class CartController : MonoBehaviourPunCallbacks
     {
         instance = this;
     }
+
 }

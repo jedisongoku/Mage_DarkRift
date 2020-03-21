@@ -64,7 +64,6 @@ public class PlayerHealthManager : MonoBehaviourPun
 
     void SetPlayerBaseStats()
     {
-        Debug.Log("BASE STATS INITIALISE");
         playerMaxHealth = PlayerBaseStats.Instance.Health;
         healthGenerationRate = PlayerBaseStats.Instance.HealthGenerationRate;
         bloodthirstHealAmount = PlayerBaseStats.Instance.BloodthirstHealAmount;
@@ -201,7 +200,6 @@ public class PlayerHealthManager : MonoBehaviourPun
     public void OnPlayerHit(int _playerViewId, float _damageDone, bool _isFrostbite, bool _isChill, bool _isFrostNova, bool _isRage)
     {
         DamageOrigin = _playerViewId;
-        Debug.Log("Frosbite: " + _isFrostbite + "  Chill: " + _isChill);
         if (_isRage) _damageDone += _damageDone * PlayerBaseStats.Instance.RageDamageRate;  
         if (_isFrostbite) StartFrostbite(DamageOrigin);
         if (_isChill) GetComponent<PlayerMovementController>().StartChill(PlayerBaseStats.Instance.ChillDuration);
@@ -212,7 +210,6 @@ public class PlayerHealthManager : MonoBehaviourPun
 
     public void TakeDamage(float _damage, bool _isFrostNova)
     {
-        Debug.Log("Taking Damage " + _damage);
         if (isShieldGuard)
         {
             _damage -= _damage * shieldGuardDamageReductionRate;

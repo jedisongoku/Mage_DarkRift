@@ -43,7 +43,6 @@ public class PlayerNetworkManager : MonoBehaviourPunCallbacks
 
     public override void OnPlayerEnteredRoom(Player newPlayer)
     {
-        Debug.Log("On Player Enter Room");
         photonView.RPC("SelectSkin", newPlayer, Random.Range(0, playerSkins.Length));
         photonView.RPC("StartCartAnimation", newPlayer, CartController.instance.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsName("Forward"), 
             CartController.instance.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).normalizedTime, CartController.instance.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).length,
@@ -56,7 +55,6 @@ public class PlayerNetworkManager : MonoBehaviourPunCallbacks
     void StartCartAnimation(bool _animationState, float _time, float _length, int _timeStamp)
     {
         float lag = Mathf.Abs((float)(PhotonNetwork.ServerTimestamp - _timeStamp)) / 1000;
-        Debug.Log("LAG " + lag + " Normalized Time " + _time);
         _time += lag / _length;
         if(_animationState) CartController.instance.GetComponent<Animator>().Play("Forward", 0, _time);
         else CartController.instance.GetComponent<Animator>().Play("Backward", 0, _time);

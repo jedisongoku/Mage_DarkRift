@@ -15,10 +15,9 @@ public class ScoreManager : MonoBehaviour
     
     List<GameObject> killFeedPrefabList;
     GameObject killFeedParent;
-    
 
     ExitGames.Client.Photon.Hashtable playerProperties = new ExitGames.Client.Photon.Hashtable();
-    private List<ScorePlayer> playersList;
+    private List<ScorePlayer> playersList;    
 
     private List<KillFeed> killFeed;
     private int score;
@@ -36,10 +35,18 @@ public class ScoreManager : MonoBehaviour
 
         for (int i = 0; i < killFeedPrefabPooledAmount; i++)
         {
-            GameObject obj = (GameObject)Instantiate(killFeedPrefab);
-            obj.transform.SetParent(killFeedParent.transform);
+            GameObject obj = Instantiate(killFeedPrefab, killFeedParent.transform);
+            //obj.transform.SetParent(killFeedParent.transform);
             obj.SetActive(false);
             killFeedPrefabList.Add(obj);
+        }
+    }
+
+    private void OnDisable()
+    {
+        foreach(var feed in killFeedPrefabList)
+        {
+            Destroy(feed);
         }
     }
 
@@ -64,7 +71,7 @@ public class ScoreManager : MonoBehaviour
 
         GameObject feed = GetKillFeedPrefab();
         feed.GetComponent<Text>().text = _killer + " killed " + _killed;
-        feed.transform.SetParent(killFeedParent.transform);
+        //feed.transform.SetParent(killFeedParent.transform);
         feed.SetActive(true);
     }
 

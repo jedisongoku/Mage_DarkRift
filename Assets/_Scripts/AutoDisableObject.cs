@@ -18,7 +18,7 @@ public class AutoDisableObject : MonoBehaviour
 
     void Disable()
     {
-        gameObject.transform.SetParent(null);
+        //gameObject.transform.SetParent(null);
         this.gameObject.SetActive(false);
     }
 }

@@ -168,7 +168,6 @@ public class PrimarySkillController : MonoBehaviour
     {
         if(isTraveling)
         {
-            Debug.Log("HIT : " + LayerMask.LayerToName(other.gameObject.layer));
             if (other.gameObject.layer == 8 && other.gameObject.GetComponent<PhotonView>() != null)
             {
                 if (other.gameObject.GetComponent<PhotonView>().ViewID != PlayerViewID)

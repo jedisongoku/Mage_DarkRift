@@ -28,7 +28,6 @@ public class PlayerLevelManager : MonoBehaviourPunCallbacks
     {
         if(photonView.IsMine)
         {
-            Debug.Log("LEVEL MANAGER ENABLE");
             GameManager.OnPlayerKill += RewardXP;
         }
         
@@ -39,7 +38,6 @@ public class PlayerLevelManager : MonoBehaviourPunCallbacks
     {
         if(photonView.IsMine)
         {
-            Debug.Log("LEVEL MANAGER DISABLE");
             GameManager.OnPlayerKill -= RewardXP;
         }
         
