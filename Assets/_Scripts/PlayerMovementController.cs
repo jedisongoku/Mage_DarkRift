@@ -36,18 +36,14 @@ public class PlayerMovementController : MonoBehaviourPun, IPunObservable
     {
         m_Animator = GetComponent<Animator>();
         m_Rigidbody = GetComponent<Rigidbody>();
-        //PhotonNetwork.SendRate = 30;
-        //PhotonNetwork.SerializationRate = 20;
-        
-
-        //m_AudioSource = GetComponent<AudioSource>();
-        
-    }
-
-    void Start()
-    {
         SetPlayerBaseStats();
         joystick = HUDManager.Instance.MovementJoystick;
+        //PhotonNetwork.SendRate = 30;
+        //PhotonNetwork.SerializationRate = 20;
+
+
+        //m_AudioSource = GetComponent<AudioSource>();
+
     }
 
     void OnDisable()

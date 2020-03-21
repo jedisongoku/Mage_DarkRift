@@ -53076,8 +53076,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0.081}
-  m_SizeDelta: {x: 0, y: -0.01}
+  m_AnchoredPosition: {x: 0, y: 0.07799998}
+  m_SizeDelta: {x: 0, y: -0.004000034}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2439384867399709488
 CanvasRenderer:
@@ -53094,7 +53094,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7045099330312957854}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
   m_Name: 
@@ -53175,13 +53175,13 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_textInfo:
     textComponent: {fileID: 6793123024248354604}
-    characterCount: 0
+    characterCount: 3
     spriteCount: 0
     spaceCount: 0
-    wordCount: 0
+    wordCount: 1
     linkCount: 0
-    lineCount: 0
-    pageCount: 0
+    lineCount: 1
+    pageCount: 1
     materialCount: 1
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
@@ -63048,7 +63048,7 @@ Transform:
   m_Children:
   - {fileID: 8507488124019185994}
   - {fileID: 8507488124019186343}
-  - {fileID: 5577883137045856481}
+  - {fileID: 38586915384219559}
   - {fileID: 8115129491214733115}
   - {fileID: 5908709907402072547}
   - {fileID: 3339294857317480747}
@@ -63149,7 +63149,7 @@ MonoBehaviour:
   OwnershipTransfer: 0
   ObservedComponents:
   - {fileID: 8771026880716645563}
-  viewIdField: 1
+  viewIdField: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
 --- !u!114 &8473309814350937364
@@ -63183,7 +63183,7 @@ MonoBehaviour:
   playerMovementController: {fileID: 8771026880716645563}
   playerHealthManager: {fileID: 5718202486688299391}
   playerUI: {fileID: 8507488124019187080}
-  playerBase: {fileID: 5577883137065242401}
+  playerBase: {fileID: 38586915384219558}
   playerShadow: {fileID: 8507488124019186751}
   playerHealthBar: {fileID: 8507488124019187675}
   enemyHealthBarTexture: {fileID: 21300000, guid: 7cf005012bc6b674096379b8fc90ef35,
@@ -63192,7 +63192,7 @@ MonoBehaviour:
   playerNameText: {fileID: 8507488124019185499}
   enemyNameColor:
     serializedVersion: 2
-    rgba: 4282974374
+    rgba: 4284219601
   dashTrail: {fileID: 2462653442636217791}
   aimAssist: {fileID: 7755400746975988947}
   primarySkillUICharges:
@@ -63387,8 +63387,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4278231808
-  m_fontColor: {r: 0, g: 0.6415094, b: 0, a: 1}
+    rgba: 4278242304
+  m_fontColor: {r: 0, g: 0.8018868, b: 0, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -63892,13 +63892,13 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9bf782ca50427a74ca204afd91b58035, type: 3}
---- !u!4 &5577883137045856481 stripped
+--- !u!4 &38586915384219559 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5611918005563217732, guid: 9bf782ca50427a74ca204afd91b58035,
     type: 3}
   m_PrefabInstance: {fileID: 38586915384219557}
   m_PrefabAsset: {fileID: 0}
---- !u!198 &5577883137065242401 stripped
+--- !u!198 &38586915384219558 stripped
 ParticleSystem:
   m_CorrespondingSourceObject: {fileID: 5611918005578373252, guid: 9bf782ca50427a74ca204afd91b58035,
     type: 3}

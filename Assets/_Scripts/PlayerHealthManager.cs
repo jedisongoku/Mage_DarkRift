@@ -4,6 +4,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 using Photon.Pun;
+using Photon.Realtime;
 
 public class PlayerHealthManager : MonoBehaviourPun
 {
@@ -44,6 +45,10 @@ public class PlayerHealthManager : MonoBehaviourPun
     {
         GameManager.OnPlayerKill -= BloodthirstHeal;
     }
+    private void Awake()
+    {
+        SetPlayerBaseStats();
+    }
 
     // Start is called before the first frame update
     void Start()
@@ -52,23 +57,14 @@ public class PlayerHealthManager : MonoBehaviourPun
         if (photonView.IsMine)
         {
             StartCoroutine(HealhtRegeneration());
-        }/*
-        foreach(var item in HUDManager.Instance.playerUIList)
-        {
-            if (!item.activeInHierarchy)
-            {
-                playerUI = item;
-                item.SetActive(true);
-                StartCoroutine(PlayerUIFollow());
-                break;
-            }
             
-        }*/
-        SetPlayerBaseStats();
+        }
+        
     }
 
     void SetPlayerBaseStats()
     {
+        Debug.Log("BASE STATS INITIALISE");
         playerMaxHealth = PlayerBaseStats.Instance.Health;
         healthGenerationRate = PlayerBaseStats.Instance.HealthGenerationRate;
         bloodthirstHealAmount = PlayerBaseStats.Instance.BloodthirstHealAmount;
@@ -216,6 +212,7 @@ public class PlayerHealthManager : MonoBehaviourPun
 
     public void TakeDamage(float _damage, bool _isFrostNova)
     {
+        Debug.Log("Taking Damage " + _damage);
         if (isShieldGuard)
         {
             _damage -= _damage * shieldGuardDamageReductionRate;
@@ -229,6 +226,7 @@ public class PlayerHealthManager : MonoBehaviourPun
             playerhealth -= _damage;
         }
         damageTaken = 0;
+
 
         photonView.RPC("UpdateHealth", RpcTarget.All, playerhealth, damageOrigin, _isFrostNova);
     }
@@ -253,6 +251,24 @@ public class PlayerHealthManager : MonoBehaviourPun
 
     }
 
+    public void InformNewUser(Player _newPlayer)
+    {
+        photonView.RPC("InformNewUser_RPC", _newPlayer, playerhealth);
+    }
+    [PunRPC]
+    void InformNewUser_RPC(float _health)
+    {
+        playerhealth = _health;
+        OnPlayerDeath();
+        UpdateHealthBar();
+
+    }
+
+    void UpdateHealthBar()
+    {
+        healthBar.GetComponent<Image>().fillAmount = playerhealth / playerMaxHealth;
+        healthText.text = Mathf.CeilToInt(playerhealth).ToString();
+    }
 
     [PunRPC]
     void UpdateHealth(float _health, int _damageOrigin, bool _FrostNova)
@@ -284,8 +300,9 @@ public class PlayerHealthManager : MonoBehaviourPun
                 healthBar.transform.parent.gameObject.SetActive(true);
             }
         }
-        healthBar.GetComponent<Image>().fillAmount = playerhealth / playerMaxHealth;
-        healthText.text = Mathf.CeilToInt(playerhealth).ToString();
+
+        UpdateHealthBar();
+
         if((playerhealth / playerMaxHealth <= PlayerBaseStats.Instance.RageStartRate) && isRage)
         {
             rageParticle.SetActive(true);
@@ -300,7 +317,10 @@ public class PlayerHealthManager : MonoBehaviourPun
     void OnPlayerDeath()
     {
         StopAllCoroutines();
-        
+        if(photonView.IsMine) PhotonNetwork.CleanRpcBufferIfMine(photonView);
+
+
+
         GetComponent<PlayerCombatManager>().IsDead = true;
         GetComponent<PlayerMovementController>().OnPlayerDeath();
 
@@ -440,6 +460,7 @@ public class PlayerHealthManager : MonoBehaviourPun
     [PunRPC]
     void SetShieldGuard()
     {
+        Debug.Log("This isa buffered message");
         shieldGuardParticle.SetActive(true);
     }
 

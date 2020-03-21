@@ -66,11 +66,12 @@ public class PlayerLevelManager : MonoBehaviourPunCallbacks
             levelUpParticle.SetActive(false);
             levelUpParticle.SetActive(true);
             HUDManager.Instance.DisplayRunes();
-            photonView.RPC("UpdateLevel", RpcTarget.Others, currentLevel);
+            photonView.RPC("UpdateLevel", RpcTarget.OthersBuffered, currentLevel);
             
         }
 
         HUDManager.Instance.UpdatePlayerLevel(currentLevel, currentXP, NextLevelInXP());
+
     }
 
     void RewardXP()
@@ -82,6 +83,7 @@ public class PlayerLevelManager : MonoBehaviourPunCallbacks
     [PunRPC]
     void UpdateLevel(int _level)
     {
+        Debug.Log("Level " + _level);
         if(_level > currentLevel)
         {
             Debug.Log(":LEVEL UP PARTICLE");

@@ -6,7 +6,7 @@ using UnityEngine.UI;
 using Photon.Pun;
 using TMPro;
 
-public class PlayerCombatManager : MonoBehaviourPunCallbacks
+public class PlayerCombatManager : MonoBehaviourPun
 {
     [SerializeField] private PlayerMovementController playerMovementController;
     [SerializeField] private PlayerHealthManager playerHealthManager;
@@ -75,6 +75,11 @@ public class PlayerCombatManager : MonoBehaviourPunCallbacks
 
 
     #region Private Methods
+    private void Awake()
+    {
+        SetPlayerBaseStats();
+        m_Animator = GetComponent<Animator>();
+    }
     // Start is called before the first frame update
     void Start()
     {
@@ -88,7 +93,7 @@ public class PlayerCombatManager : MonoBehaviourPunCallbacks
             aimJoystick = HUDManager.Instance.AimJoystick;
             GameObject.Find("VirtualCamera").GetComponent<CinemachineVirtualCamera>().Follow = this.transform;
             
-            
+
 
 
         }
@@ -102,8 +107,8 @@ public class PlayerCombatManager : MonoBehaviourPunCallbacks
         }
 
 
-        m_Animator = GetComponent<Animator>();
-        SetPlayerBaseStats();
+        
+        
     }
 
     // Update is called once per frame
@@ -439,7 +444,7 @@ public class PlayerCombatManager : MonoBehaviourPunCallbacks
     {
         GetComponent<PlayerMovementController>().enabled = true;
         primarySkillCharges.SetActive(true);
-        SetPlayerBaseStats();
+        
         PlayerRuneManager.Instance.RestartPlayerRunes();
         photonView.RPC("RespawnClients", RpcTarget.All, GameManager.Instance.SpawnLocationIndex);
 
@@ -455,10 +460,7 @@ public class PlayerCombatManager : MonoBehaviourPunCallbacks
             playerBase.gameObject.SetActive(false);
             Invoke("EnableRespawnedPlayerClients", 1f);
         }
-        else
-        {
-
-        }
+        SetPlayerBaseStats();
         transform.position = GameManager.Instance.SpawnLocation(_spawnLocationIndex);
         m_Animator.SetTrigger("Respawn");
         GetComponent<CapsuleCollider>().enabled = true;

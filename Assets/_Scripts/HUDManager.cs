@@ -246,7 +246,7 @@ public class HUDManager : MonoBehaviourPunCallbacks
     public void OnGameLevelLoaded()
     {
         //ActivatePanels(loadingPanel.name);
-        loadingBar.fillAmount = 0.9f;
+        loadingBar.fillAmount = 0.95f;
         deathPanel.SetActive(false);
         playerControllerPanel.SetActive(true);
         //StartCoroutine(GameSceneLoading());
@@ -255,7 +255,10 @@ public class HUDManager : MonoBehaviourPunCallbacks
 
     IEnumerator GameSceneLoading()
     {
-        loadingBar.fillAmount += Time.deltaTime / 2;
+        if(loadingBar.fillAmount < 0.85f || loadingBar.fillAmount >= 0.95f)
+        {
+            loadingBar.fillAmount += Time.deltaTime / 2;
+        }
         loadingText.text = Mathf.RoundToInt(loadingBar.fillAmount * 100) + "%";
 
         yield return new WaitForSeconds(0);
@@ -266,7 +269,7 @@ public class HUDManager : MonoBehaviourPunCallbacks
         else
         {
             GameManager.Instance.InitializePlayer();
-            Invoke("ActivateGamePanel", 0.5f);
+            Invoke("ActivateGamePanel", 0.2f);
         }
     }
 
