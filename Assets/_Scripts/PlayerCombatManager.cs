@@ -740,7 +740,6 @@ public class PlayerCombatManager : MonoBehaviourPun
     void TurnOnNormalShader()
     {
         playerBase.gameObject.SetActive(true);
-        playerUI.SetActive(true);
         isInvisible = false;
         isTransparent = false;
         canBeSeen = false;

@@ -37,7 +37,7 @@ public class ScoreManager : MonoBehaviour
         for (int i = 0; i < killFeedPrefabPooledAmount; i++)
         {
             GameObject obj = (GameObject)Instantiate(killFeedPrefab);
-            obj.transform.SetParent(HUDManager.Instance.transform);
+            obj.transform.SetParent(killFeedParent.transform);
             obj.SetActive(false);
             killFeedPrefabList.Add(obj);
         }
