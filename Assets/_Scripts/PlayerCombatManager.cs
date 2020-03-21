@@ -48,6 +48,7 @@ public class PlayerCombatManager : MonoBehaviourPun
     [Header("Primary Skill")]
     [SerializeField] public GameObject[] primarySkillUICharges;
     [SerializeField] public Image[] primarySkillUIChargeProgressBars;
+    private Vector3 primarySkillSpawnLocationOffset = new Vector3(0.5f, 0.5f, 0);
     private float primarSkillchargeTimer_1;
     private float primarSkillchargeTimer_2;
     private float primarSkillchargeTimer_3;
@@ -71,6 +72,9 @@ public class PlayerCombatManager : MonoBehaviourPun
     bool isRage = false;
     bool isMultiShot = false;
     bool isFrostNova = false;
+
+    bool leftFirstTouch = false;
+    bool rightFirstTouch = false;
 
 
 
@@ -134,10 +138,7 @@ public class PlayerCombatManager : MonoBehaviourPun
                     else
                     {
                         //Right side of the screen
-                        var aimDistance = new Vector3(aimJoystick.Horizontal, 0, aimJoystick.Vertical);
-                        aimAssist.SetPosition(0, transform.position + Vector3.up);
-                        aimAssist.SetPosition(1, transform.position + Vector3.up + aimDistance * 10);
-                        aimLocation = transform.position + aimDistance * 10;
+                        DrawAimLine();
                     }
 
                 }
@@ -159,20 +160,7 @@ public class PlayerCombatManager : MonoBehaviourPun
                             }
                             else
                             {
-                                GameObject closestEnemy = null;
-                                float distance = 10;
-                                foreach (var enemy in PhotonNetwork.PhotonViews)
-                                {
-                                    if (enemy.ViewID != photonView.ViewID)
-                                    {
-                                        if (distance > (enemy.gameObject.transform.position - transform.position).magnitude)
-                                        {
-                                            distance = (enemy.gameObject.transform.position - transform.position).magnitude;
-                                            closestEnemy = enemy.gameObject;
-                                        }
-                                    }
-
-                                }
+                                GameObject closestEnemy = ClosestEnemy();
                                 if (closestEnemy != null)
                                 {
                                     PrimarySkill(closestEnemy.transform.position);
@@ -201,10 +189,7 @@ public class PlayerCombatManager : MonoBehaviourPun
                     else
                     {
                         //Right side of the screen
-                        var aimDistance = new Vector3(aimJoystick.Horizontal, 0, aimJoystick.Vertical).normalized;
-                        aimAssist.SetPosition(0, transform.position + Vector3.up);
-                        aimAssist.SetPosition(1, transform.position + Vector3.up + aimDistance * 10);
-                        aimLocation = transform.position + aimDistance * 10;
+                        DrawAimLine();
                     }
 
                 }
@@ -226,20 +211,7 @@ public class PlayerCombatManager : MonoBehaviourPun
                             }
                             else
                             {
-                                GameObject closestEnemy = null;
-                                float distance = 10;
-                                foreach (var enemy in PhotonNetwork.PhotonViews)
-                                {
-                                    if (enemy.ViewID != photonView.ViewID)
-                                    {
-                                        if (distance > (enemy.gameObject.transform.position - transform.position).magnitude)
-                                        {
-                                            distance = (enemy.gameObject.transform.position - transform.position).magnitude;
-                                            closestEnemy = enemy.gameObject;
-                                        }
-                                    }
-
-                                }
+                                GameObject closestEnemy = ClosestEnemy();
                                 if (closestEnemy != null)
                                 {
                                     PrimarySkill(closestEnemy.transform.position);
@@ -261,7 +233,7 @@ public class PlayerCombatManager : MonoBehaviourPun
             if(Input.GetButtonDown("Fire1") && !Application.isMobilePlatform)
             {
                 GameObject closestEnemy = null;
-                float distance = 1000;
+                float distance = 10;
                 foreach (var enemy in PhotonNetwork.PhotonViews)
                 {
                     if (enemy.ViewID != photonView.ViewID)
@@ -285,6 +257,60 @@ public class PlayerCombatManager : MonoBehaviourPun
                 SecondarySkill();
             }
         }     
+    }
+
+    GameObject ClosestEnemy()
+    {
+        GameObject closestEnemy = null;
+        float distance = 13;
+        foreach (var enemy in PhotonNetwork.PhotonViews)
+        {
+            if (enemy.ViewID != photonView.ViewID && !enemy.GetComponent<PlayerCombatManager>().IsDead && LineOfSight(enemy.gameObject))
+            {
+                if (distance > (enemy.gameObject.transform.position - transform.position).magnitude)
+                {
+                    distance = (enemy.gameObject.transform.position - transform.position).magnitude;
+                    closestEnemy = enemy.gameObject;
+                }
+            }
+
+        }
+        return closestEnemy;
+    }
+
+    void DrawAimLine()
+    {
+
+        var aimDistance = new Vector3(aimJoystick.Horizontal, 0, aimJoystick.Vertical);
+        
+        if(aimDistance.x > 0.1f || aimDistance.x < -0.1f || aimDistance.y > 0.1f || aimDistance.y < -0.1f)
+        {
+            aimDistance = new Vector3(aimJoystick.Horizontal, 0, aimJoystick.Vertical);
+        }
+        aimAssist.SetPosition(0, transform.position + Vector3.up);
+        aimAssist.SetPosition(1, transform.position + Vector3.up + aimDistance * 10);
+        aimLocation = transform.position + aimDistance * 13;
+    }
+
+    bool LineOfSight(GameObject enemy)
+    {
+        RaycastHit hit;
+        var rayDirection = enemy.transform.position - transform.position;
+        if (Physics.Raycast(transform.position + transform.up, rayDirection, out hit))
+        {
+            if (hit.transform.gameObject.layer == 8)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        else
+        {
+            return false;
+        }
     }
 
     IEnumerator PrimarySkillChargerReady(int _chargeID)
@@ -343,7 +369,7 @@ public class PlayerCombatManager : MonoBehaviourPun
             StopAllCoroutines();
             StartCoroutine(PrimarySkillChargerReady(primarySkillCharge));
             primarySkillCharge--;
-            photonView.RPC("UsePrimarySkill", RpcTarget.AllViaServer, _aimLocation, primarySkillSpawnLocation.transform.position, playerHealthManager.Rage);
+            photonView.RPC("UsePrimarySkill", RpcTarget.AllViaServer, _aimLocation, transform.position + transform.forward / 2 + transform.up, playerHealthManager.Rage);
         }
     }
 
@@ -378,14 +404,14 @@ public class PlayerCombatManager : MonoBehaviourPun
     IEnumerator PrimarySkill(float _delayTime)
     {
         m_Animator.SetTrigger("Attacking");
-        Vector3 heading = aimLocation - primarySkillSpawnLocation.transform.position;
+        Vector3 heading = aimLocation - transform.position + transform.forward / 2 + transform.up;
         Vector3 direction = heading / heading.magnitude;
 
         yield return new WaitForSeconds(_delayTime);
 
         GameObject obj = ObjectPooler.Instance.GetPrimarySkillPrefab();
         //if (obj == null) StopCoroutine(PrimarySkill());
-        obj.transform.position = primarySkillSpawnLocation.transform.position;
+        obj.transform.position = transform.position + transform.forward / 2 + transform.up;
         obj.transform.rotation = Quaternion.identity;
         obj.SetActive(true);
 

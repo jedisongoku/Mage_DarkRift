@@ -126,8 +126,12 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
 
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        HUDManager.Instance.GetComponent<Canvas>().worldCamera = Camera.main;
-        HUDManager.Instance.characterLocation.SetActive(true);
+        if(scene.buildIndex == 0)
+        {
+            HUDManager.Instance.GetComponent<Canvas>().worldCamera = Camera.main;
+            HUDManager.Instance.characterLocation.SetActive(true);
+        }
+        
     }
 
     #endregion

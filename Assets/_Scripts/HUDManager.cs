@@ -77,17 +77,7 @@ public class HUDManager : MonoBehaviourPunCallbacks
 
         Application.targetFrameRate = 60;
         
-        //ActivatePanels(menuPanel.name);
-        if (Application.isMobilePlatform)
-        {
-            movementJoystick.gameObject.SetActive(true);
-        }
-        else
-        {
-            movementJoystick.gameObject.SetActive(true);
-        }
-
-        
+        //ActivatePanels(menuPanel.name);   
         StartCoroutine(Applaunch());
     }
 
@@ -107,7 +97,7 @@ public class HUDManager : MonoBehaviourPunCallbacks
                 launchLoadingText.text = "Connecting to server";
                 break;
             case ClientState.ConnectedToMasterServer:
-                launchLoadingBar.fillAmount += 0.01f;
+                launchLoadingBar.fillAmount += 0.02f;
                 launchLoadingText.text = Mathf.RoundToInt(launchLoadingBar.fillAmount * 100) + "%";
                 break;
 
