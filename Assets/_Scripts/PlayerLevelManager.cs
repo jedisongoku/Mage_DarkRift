@@ -11,7 +11,7 @@ public class PlayerLevelManager : MonoBehaviourPunCallbacks
     private float levelCoefficient = 1.6f;
     private int currentXP = 0;
     private int currentLevel = 1;
-    private int killXP = 35;
+    private int killXP = 15;
     private float killXPCoefficient = 1.2f;
 
     [SerializeField] private GameObject levelStar;

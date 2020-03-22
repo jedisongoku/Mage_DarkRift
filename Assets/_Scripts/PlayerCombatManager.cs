@@ -85,7 +85,7 @@ public class PlayerCombatManager : MonoBehaviourPun
     {
         toonLitShader = Shader.Find("Toon/Lit");
         standardShader = Shader.Find("Standard");
-        transparentShader = Shader.Find("Particles/Priority Additive");
+        transparentShader = Shader.Find("Legacy Shaders/Particles/Alpha Blended");
 
         if (photonView.IsMine)
         {

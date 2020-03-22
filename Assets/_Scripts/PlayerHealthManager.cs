@@ -17,7 +17,6 @@ public class PlayerHealthManager : MonoBehaviourPun
     private float shieldGuardDamageReductionRate;
 
     private float playerhealth;
-    private float damageTaken;
     private int damageOrigin;
     private float healthGenerationTimer;
     private int bloodthirstHealAmount;
@@ -39,6 +38,8 @@ public class PlayerHealthManager : MonoBehaviourPun
     bool isRage = false;
 
     int frostbiteDurationTick = 0;
+
+    bool CanHeal { get; set; }
 
 
     private void OnDisable()
@@ -79,9 +80,10 @@ public class PlayerHealthManager : MonoBehaviourPun
         strongHeartParticle.SetActive(false);
         shieldGuardParticle.SetActive(false);
         frostbiteParticle.SetActive(false);
+        CanHeal = true;
 
     }
-
+    /*
     IEnumerator PlayerUIFollow()
     {
         //playerUI.transform.position = Camera.main.WorldToScreenPoint(GameManager.Instance.GetCurrentPlayer.transform.position);
@@ -94,20 +96,24 @@ public class PlayerHealthManager : MonoBehaviourPun
 
 
         StartCoroutine(PlayerUIFollow());
-    }
+    }*/
 
     IEnumerator HealhtRegeneration()
     {
         yield return new WaitForSeconds(1f);
         if (playerhealth < playerMaxHealth)
         {
-            playerhealth += playerMaxHealth * healthGenerationRate;
-            if (playerhealth > playerMaxHealth)
+            if(CanHeal)
             {
-                playerhealth = playerMaxHealth;
-            }
+                playerhealth += playerMaxHealth * healthGenerationRate;
+                if (playerhealth > playerMaxHealth)
+                {
+                    playerhealth = playerMaxHealth;
+                }
 
-            photonView.RPC("UpdateHealth", RpcTarget.All, playerhealth, 0, false);
+                photonView.RPC("UpdateHealth", RpcTarget.All, playerhealth, 0, false);
+            }
+            
         }
         StartCoroutine(HealhtRegeneration());
 
@@ -222,10 +228,16 @@ public class PlayerHealthManager : MonoBehaviourPun
         {
             playerhealth -= _damage;
         }
-        damageTaken = 0;
-
-
+        CancelInvoke("DelayedHealthRegenrationStart");
+        CanHeal = false;
+        Invoke("DelayedHealthRegenrationStart", 3f);
+        
         photonView.RPC("UpdateHealth", RpcTarget.All, playerhealth, damageOrigin, _isFrostNova);
+    }
+
+    void DelayedHealthRegenrationStart()
+    {
+        CanHeal = true;
     }
 
     void EnableExplosionParticle(bool _isFrostNova)
@@ -366,17 +378,6 @@ public class PlayerHealthManager : MonoBehaviourPun
             photonView.RPC("SetRage", RpcTarget.AllBuffered, isRage);
         }
 
-    }
-    public float DamageTaken
-    {
-        get
-        {
-            return damageTaken;
-        }
-        set
-        {
-            damageTaken = value;
-        }
     }
 
     public int DamageOrigin
