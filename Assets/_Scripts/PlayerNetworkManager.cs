@@ -22,7 +22,7 @@ public class PlayerNetworkManager : MonoBehaviourPunCallbacks
         SetPlayerUI();
         if(photonView.IsMine)
         {
-            photonView.RPC("SelectSkin", RpcTarget.All, Random.Range(0, playerSkins.Length));
+            photonView.RPC("SelectSkin", RpcTarget.All, Random.Range(0, playerSkins.Length), false);
 
         }
     }
@@ -33,17 +33,21 @@ public class PlayerNetworkManager : MonoBehaviourPunCallbacks
     }
 
     [PunRPC]
-    void SelectSkin(int _skinIndex)
+    void SelectSkin(int _skinIndex, bool _isDead)
     {
         GameObject skin = Instantiate(playerSkins[_skinIndex], playerSkinParent.transform) as GameObject;
         GetComponent<PlayerCombatManager>().PlayerModel = skin;
         GetComponent<PlayerHealthManager>().PlayerModel = skin;
         playerSkinParent.GetComponent<Animator>().Rebind();
+        if(_isDead)
+        {
+            GetComponent<PlayerCombatManager>().DisablePlayer();
+        }
     }
 
     public override void OnPlayerEnteredRoom(Player newPlayer)
     {
-        photonView.RPC("SelectSkin", newPlayer, Random.Range(0, playerSkins.Length));
+        photonView.RPC("SelectSkin", newPlayer, Random.Range(0, playerSkins.Length), GetComponent<PlayerCombatManager>().IsDead);
         photonView.RPC("StartCartAnimation", newPlayer, CartController.instance.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsName("Forward"), 
             CartController.instance.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).normalizedTime, CartController.instance.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).length,
             PhotonNetwork.ServerTimestamp);

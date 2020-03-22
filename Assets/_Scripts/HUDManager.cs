@@ -163,9 +163,16 @@ public class HUDManager : MonoBehaviourPunCallbacks
 
     public void DisplayRunes()
     {
-        for(int i = 0; i < 3; i++)
+        foreach(var listItem in runeOptions)
+        {
+            listItem.gameObject.SetActive(false);
+        }
+
+        for(int i = 0; i < PlayerRuneManager.playerRuneList.Count; i++)
         {
             runeOptions[i].GetComponentInChildren<Text>().text = PlayerRuneManager.playerRuneList[i].DisplayName;
+            runeOptions[i].gameObject.SetActive(true);
+
         }
         runeSelection.SetActive(true);
     }
@@ -349,6 +356,14 @@ public class HUDManager : MonoBehaviourPunCallbacks
         levelText.text = _level.ToString();
         xpText.text = _currentXP + "/" + _maxXP;
         xpProgressBar.fillAmount = (float)_currentXP / (float)_maxXP;
+    }
+
+    public void StartAppLaunch()
+    {
+        Debug.Log("Disconnect on HUD");
+        launchLoadingBar.fillAmount = 0;
+        ActivatePanels(launchPanel.name);
+        StartCoroutine(Applaunch());
     }
     #endregion
 }

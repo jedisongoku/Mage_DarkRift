@@ -11034,7 +11034,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 745719890}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0, y: 0, z: 0}
+  m_LocalPosition: {x: -4, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 8121672846361306652}
@@ -15011,6 +15011,61 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8369458730491682240, guid: 298919da758051b41860f2463f2800cf,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 8369458731380231642, guid: 298919da758051b41860f2463f2800cf,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 25
+      objectReference: {fileID: 0}
+    - target: {fileID: 8369458731380231642, guid: 298919da758051b41860f2463f2800cf,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 8369458731432100318, guid: 298919da758051b41860f2463f2800cf,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 25
+      objectReference: {fileID: 0}
+    - target: {fileID: 8369458730556996876, guid: 298919da758051b41860f2463f2800cf,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 25
+      objectReference: {fileID: 0}
+    - target: {fileID: 8369458730556996876, guid: 298919da758051b41860f2463f2800cf,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -25
+      objectReference: {fileID: 0}
+    - target: {fileID: 8369458729675332783, guid: 298919da758051b41860f2463f2800cf,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -25
+      objectReference: {fileID: 0}
+    - target: {fileID: 8369458730757268898, guid: 298919da758051b41860f2463f2800cf,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -25
+      objectReference: {fileID: 0}
+    - target: {fileID: 8369458730757268898, guid: 298919da758051b41860f2463f2800cf,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -25
+      objectReference: {fileID: 0}
+    - target: {fileID: 8369458729806079342, guid: 298919da758051b41860f2463f2800cf,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -25
+      objectReference: {fileID: 0}
+    - target: {fileID: 8369458730234324446, guid: 298919da758051b41860f2463f2800cf,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -25
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 298919da758051b41860f2463f2800cf, type: 3}
@@ -31237,7 +31292,7 @@ MonoBehaviour:
   rageDamageRate: 0.15
   poisonPickupTime: 5
   damageBoostMultiplier: 1.3
-  attackSpeedMultiplier: 0.8
+  fasterRechargeMultiplier: 0
   dashSpeedMultiplier: 0.6
   strongHeartMultiplier: 3
 --- !u!114 &1934221257

@@ -26,6 +26,7 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
         {
             Destroy(gameObject);
         }
+        PhotonNetwork.UseAlternativeUdpPorts = true;
 
         if (PersistData.instance.GameData.PlayerName != null)
         {
@@ -36,6 +37,7 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
         {
             Debug.Log("Player Nickname is invalid!");
         }
+        PhotonNetwork.KeepAliveInBackground = 0;
         PhotonNetwork.AutomaticallySyncScene = true;
         SceneManager.sceneLoaded += OnSceneLoaded;
     }
@@ -49,6 +51,13 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
     {
         Debug.Log("Connected to Internet");
         
+    }
+
+    public override void OnDisconnected(DisconnectCause cause)
+    {
+        Debug.Log("Disconnected");
+        HUDManager.Instance.StartAppLaunch();
+        SceneManager.LoadScene(0);
     }
 
     //OnConnectedToMaster is called once user connects to Photon Server
@@ -65,6 +74,7 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
         if(OnJoinedRoomEvent != null)
         {
             OnJoinedRoomEvent();
+
         }
     }
 

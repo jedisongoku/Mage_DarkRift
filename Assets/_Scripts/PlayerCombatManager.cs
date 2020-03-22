@@ -438,14 +438,7 @@ public class PlayerCombatManager : MonoBehaviourPun
     }
 
 
-    void DisablePlayer()
-    {
-        if(photonView.IsMine)
-        {
-            playerMovementController.enabled = false;
-        }    
-        GetComponent<CapsuleCollider>().enabled = false;
-    }
+
 
     void SetPlayerBaseStats()
     {
@@ -545,28 +538,36 @@ public class PlayerCombatManager : MonoBehaviourPun
             isDead = value;
             if(IsDead)
             {
-                //ScoreManager.Instance.UpdateScore();
-                if (photonView.IsMine)
-                {
-                    primarySkillCharges.SetActive(false);
-                    HUDManager.Instance.OnPlayerDeath();
-                    
-                    //ScoreManager.Instance.Score = 0;
-                    GetComponent<PlayerLevelManager>().ResetOnDeath();
-                    GameObject.Find("VirtualCamera").GetComponent<CinemachineVirtualCamera>().Follow = null;
-                    aimAssist.SetPosition(1, aimAssist.GetPosition(0));
-                    aimJoystick.OnPointerUp(null);
-                }
-                else
-                {
-                    playerUI.SetActive(false);
-                }
                 TurnOnNormalShader();
-                m_Animator.SetTrigger("Dead");
                 Debug.Log("DEAD");
                 DisablePlayer();
             }
         }
+    }
+
+    public void DisablePlayer()
+    {
+        if (photonView.IsMine)
+        {
+            playerMovementController.enabled = false;
+            primarySkillCharges.SetActive(false);
+            HUDManager.Instance.OnPlayerDeath();
+
+            //ScoreManager.Instance.Score = 0;
+            GetComponent<PlayerLevelManager>().ResetOnDeath();
+            GameObject.Find("VirtualCamera").GetComponent<CinemachineVirtualCamera>().Follow = null;
+            aimAssist.SetPosition(1, aimAssist.GetPosition(0));
+            aimJoystick.OnPointerUp(null);
+        }
+        else
+        {
+
+            playerUI.SetActive(false);
+
+        }
+
+        m_Animator.SetTrigger("Dead");
+        GetComponent<CapsuleCollider>().enabled = false;
     }
 
     public GameObject PrimarySkillSpawnLocation
