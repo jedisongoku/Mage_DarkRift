@@ -27,6 +27,7 @@ public class PlayerCombatManager : MonoBehaviourPun
     private float primarySkillCooldownTimer = 3f;
     private float secondarySkillCooldownTimer = 8f;
     private int primarySkillParticleCount = 5;
+    private float primarySkillRecharge;
 
     [Header("Player")]
     private GameObject playerModel;
@@ -50,8 +51,6 @@ public class PlayerCombatManager : MonoBehaviourPun
     [SerializeField] public Image[] primarySkillUIChargeProgressBars;
     private Vector3 primarySkillSpawnLocationOffset = new Vector3(0.5f, 0.5f, 0);
     private float primarSkillchargeTimer_1;
-    private float primarSkillchargeTimer_2;
-    private float primarSkillchargeTimer_3;
 
     [Header("Bush Materials")]
     [SerializeField] private SkinnedMeshRenderer[] playerMeshRenderers;
@@ -66,11 +65,8 @@ public class PlayerCombatManager : MonoBehaviourPun
 
     [Header("Runes")]
     bool isFrostbite = false;
-    bool isPoison = false;
     bool isChill = false;
-    bool isBouncy = false;
     bool isRage = false;
-    bool isMultiShot = false;
     bool isFrostNova = false;
 
     bool leftFirstTouch = false;
@@ -325,7 +321,7 @@ public class PlayerCombatManager : MonoBehaviourPun
             primarySkillUIChargeProgressBars[_chargeID].fillAmount = 0;
         }
 
-        primarySkillUIChargeProgressBars[_chargeID - 1].fillAmount = primarSkillchargeTimer_1 / PlayerBaseStats.Instance.PrimarySkillRecharge;
+        primarySkillUIChargeProgressBars[_chargeID - 1].fillAmount = primarSkillchargeTimer_1 / primarySkillRecharge;
 
         yield return new WaitForSeconds(0.5f);
 
@@ -336,10 +332,10 @@ public class PlayerCombatManager : MonoBehaviourPun
     {
         primarSkillchargeTimer_1 += Time.deltaTime;
 
-        primarySkillUIChargeProgressBars[_chargeID - 1].fillAmount = primarSkillchargeTimer_1 / PlayerBaseStats.Instance.PrimarySkillRecharge;
+        primarySkillUIChargeProgressBars[_chargeID - 1].fillAmount = primarSkillchargeTimer_1 / primarySkillRecharge;
 
         yield return new WaitForSeconds(0);
-        if(primarSkillchargeTimer_1 < PlayerBaseStats.Instance.PrimarySkillRecharge)
+        if(primarSkillchargeTimer_1 < primarySkillRecharge)
         {
             StartCoroutine(PrimarySkillCharger(_chargeID));
         }
@@ -456,13 +452,11 @@ public class PlayerCombatManager : MonoBehaviourPun
         primarySkillDamage = PlayerBaseStats.Instance.PrimarySkillDamage;
         primarySkillCooldown = PlayerBaseStats.Instance.PrimarySkillCooldown;
         primarySkillCharge = PlayerBaseStats.Instance.PrimarySkillCharge;
+        primarySkillRecharge = PlayerBaseStats.Instance.PrimarySkillRecharge;
         secondarySkillCooldown = PlayerBaseStats.Instance.SecondarySkillCooldown;
         isFrostbite = false;
-        isPoison = false;
         isChill = false;
-        isBouncy = false;
         isRage = false;
-        isMultiShot = false;
         isFrostNova = false;
     }
 
@@ -611,6 +605,19 @@ public class PlayerCombatManager : MonoBehaviourPun
     {
         primarySkillDamage = Mathf.RoundToInt(PlayerBaseStats.Instance.PrimarySkillDamage * PlayerBaseStats.Instance.DamageBoostMultiplier);
     }
+
+    public float PrimarySkillRecharge
+    {
+        get
+        {
+            return primarySkillRecharge;
+        }
+        set
+        {
+            primarySkillRecharge = value;
+            Debug.Log(value);
+        }
+    }
     public float PrimarySkillCooldown
     {
         get
@@ -677,32 +684,6 @@ public class PlayerCombatManager : MonoBehaviourPun
         isChill = true;
     }
 
-    public bool Poison
-    {
-        get
-        {
-            return isPoison;
-        }
-        set
-        {
-            isPoison = value;
-            Debug.Log(value);
-        }
-    }
-
-    public bool Bouncy
-    {
-        get
-        {
-            return isBouncy;
-        }
-        set
-        {
-            isBouncy = value;
-            Debug.Log(value);
-        }
-    }
-
     public bool Rage
     {
         get
@@ -721,26 +702,6 @@ public class PlayerCombatManager : MonoBehaviourPun
     void Rage_RPC()
     {
         isRage = true;
-    }
-
-    public bool MultiShot
-    {
-        get
-        {
-            return isMultiShot;
-        }
-        set
-        {
-            isMultiShot = value;
-            if (isMultiShot) photonView.RPC("MultiShot_RPC", RpcTarget.AllBuffered);
-            Debug.Log(value);
-        }
-    }
-
-    [PunRPC]
-    void MultiShot_RPC()
-    {
-        isMultiShot = true;
     }
 
     public bool FrostNova

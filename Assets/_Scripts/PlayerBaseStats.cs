@@ -26,7 +26,7 @@ public class PlayerBaseStats : MonoBehaviour
     [SerializeField] private float rageDamageRate;
     [SerializeField] private float poisonPickupTime;
     [SerializeField] private float damageBoostMultiplier;
-    [SerializeField] private float attackSpeedMultiplier;
+    [SerializeField] private float fasterRechargeMultiplier;
     [SerializeField] private float dashSpeedMultiplier;
     [SerializeField] private float strongHeartMultiplier;
 
@@ -52,11 +52,11 @@ public class PlayerBaseStats : MonoBehaviour
         }
     }
 
-    public float AttackSpeedMultiplier
+    public float FasterRechargeMultiplier
     {
         get
         {
-            return attackSpeedMultiplier;
+            return fasterRechargeMultiplier;
         }
     }
 
