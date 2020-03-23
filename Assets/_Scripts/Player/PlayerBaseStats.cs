@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerBaseStats : MonoBehaviour
+public class PlayerBaseStats
 {
-    public static PlayerBaseStats Instance;
 
     [SerializeField] private float walkSpeed;
     [SerializeField] private int health;
@@ -30,11 +29,31 @@ public class PlayerBaseStats : MonoBehaviour
     [SerializeField] private float dashSpeedMultiplier;
     [SerializeField] private float strongHeartMultiplier;
 
-
-
-    void Awake()
+    public PlayerBaseStats(float _walkSpeed, int _health, float _healthGenerationRate, int _primarySkillDamage, float _primarySkillCooldown, int _primarySKillCharge, float _primarySkillRecharge, float _secondarySkillCooldown,
+    int _bloodthirstHealAmount, int _hpBoostAmount, float _shieldGuardDamageReductionRate, float _frostbiteDamageRate, int _frostbiteDuration, float _chillSlowRate, float _chillDuration, float _rageStartRate, float _rageDamageRate,
+    float _damageBoostMultiplier, float _fasterRechargeMultiplier, float _dashSpeedMultiplier, float _strongHeartMultiplier)
     {
-        Instance = this;
+        walkSpeed = _walkSpeed;
+        health = _health;
+        healthGenerationRate = _healthGenerationRate;
+        primarySkillDamage = _primarySkillDamage;
+        primarySkillCooldown = _primarySkillCooldown;
+        primarySkillCharge = _primarySKillCharge;
+        primarySkillRecharge = _primarySkillRecharge;
+        secondarySkillCooldown = _secondarySkillCooldown;
+        bloodthirstHealAmount = _bloodthirstHealAmount;
+        hpBoostAmount = _hpBoostAmount;
+        shieldGuardDamageReductionRate = _shieldGuardDamageReductionRate;
+        frostbiteDamageRate = _frostbiteDamageRate;
+        frostbiteDuration = _frostbiteDuration;
+        chillSlowRate = _chillSlowRate;
+        chillDuration = _chillDuration;
+        rageStartRate = _rageStartRate;
+        rageDamageRate = _rageDamageRate;
+        damageBoostMultiplier = _damageBoostMultiplier;
+        fasterRechargeMultiplier = _fasterRechargeMultiplier;
+        dashSpeedMultiplier = _dashSpeedMultiplier;
+        strongHeartMultiplier = _strongHeartMultiplier;
     }
     public int Health
     {
@@ -160,6 +179,10 @@ public class PlayerBaseStats : MonoBehaviour
         get
         {
             return frostbiteDuration;
+        }
+        set
+        {
+            walkSpeed = value;
         }
     }
 

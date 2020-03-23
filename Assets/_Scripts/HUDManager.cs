@@ -14,6 +14,7 @@ public class HUDManager : MonoBehaviourPunCallbacks
     [SerializeField] public GameObject launchPanel;
     [SerializeField] private Text launchLoadingText;
     [SerializeField] private Image launchLoadingBar;
+    public bool isContenDownloaded { get; set; }
 
     [Header("Menu Panel")]
     [SerializeField] public GameObject menuPanel;

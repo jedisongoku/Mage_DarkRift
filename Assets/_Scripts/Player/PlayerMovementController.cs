@@ -53,7 +53,7 @@ public class PlayerMovementController : MonoBehaviourPun, IPunObservable
 
     void SetPlayerBaseStats()
     {
-        walkSpeed = PlayerBaseStats.Instance.WalkSpeed;
+        walkSpeed = PlayFabDataStore.playerBaseStats.WalkSpeed;
         isChill = false;
     }
 
@@ -85,13 +85,13 @@ public class PlayerMovementController : MonoBehaviourPun, IPunObservable
     IEnumerator Chill(float _duration)
     {
         chillParticle.SetActive(true);
-        walkSpeed -= walkSpeed * PlayerBaseStats.Instance.ChillSlowRate; 
+        walkSpeed -= walkSpeed * PlayFabDataStore.playerBaseStats.ChillSlowRate; 
 
         yield return new WaitForSeconds(_duration);
 
         isChill = false;
         chillParticle.SetActive(false);
-        walkSpeed = PlayerBaseStats.Instance.WalkSpeed;
+        walkSpeed = PlayFabDataStore.playerBaseStats.WalkSpeed;
 
     }
 

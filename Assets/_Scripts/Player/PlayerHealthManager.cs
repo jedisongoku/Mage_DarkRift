@@ -65,11 +65,11 @@ public class PlayerHealthManager : MonoBehaviourPun
 
     void SetPlayerBaseStats()
     {
-        playerMaxHealth = PlayerBaseStats.Instance.Health;
-        healthGenerationRate = PlayerBaseStats.Instance.HealthGenerationRate;
-        bloodthirstHealAmount = PlayerBaseStats.Instance.BloodthirstHealAmount;
-        hpBoostAmount = PlayerBaseStats.Instance.HpBoostAmount;
-        shieldGuardDamageReductionRate = PlayerBaseStats.Instance.ShieldGuardDamageReductionRate;
+        playerMaxHealth = PlayFabDataStore.playerBaseStats.Health;
+        healthGenerationRate = PlayFabDataStore.playerBaseStats.HealthGenerationRate;
+        bloodthirstHealAmount = PlayFabDataStore.playerBaseStats.BloodthirstHealAmount;
+        hpBoostAmount = PlayFabDataStore.playerBaseStats.HpBoostAmount;
+        shieldGuardDamageReductionRate = PlayFabDataStore.playerBaseStats.ShieldGuardDamageReductionRate;
         playerhealth = playerMaxHealth;
         isFrostbite = false;
         isBloodthirst = false;
@@ -146,11 +146,11 @@ public class PlayerHealthManager : MonoBehaviourPun
     {
         
         yield return new WaitForSeconds(1f);
-        if(frostbiteDurationTick < PlayerBaseStats.Instance.FrostbiteDuration)
+        if(frostbiteDurationTick < PlayFabDataStore.playerBaseStats.FrostbiteDuration)
         {
             if(photonView.IsMine)
             {
-                playerhealth -= (playerMaxHealth * PlayerBaseStats.Instance.FrostbiteDamageRate) / PlayerBaseStats.Instance.FrostbiteDuration;
+                playerhealth -= (playerMaxHealth * PlayFabDataStore.playerBaseStats.FrostbiteDamageRate) / PlayFabDataStore.playerBaseStats.FrostbiteDuration;
                 photonView.RPC("UpdateHealth", RpcTarget.All, playerhealth, damageOrigin, false);
             }
             frostbiteDurationTick++;
@@ -206,9 +206,9 @@ public class PlayerHealthManager : MonoBehaviourPun
     public void OnPlayerHit(int _playerViewId, float _damageDone, bool _isFrostbite, bool _isChill, bool _isFrostNova, bool _isRage)
     {
         DamageOrigin = _playerViewId;
-        if (_isRage) _damageDone += _damageDone * PlayerBaseStats.Instance.RageDamageRate;  
+        if (_isRage) _damageDone += _damageDone * PlayFabDataStore.playerBaseStats.RageDamageRate;  
         if (_isFrostbite) StartFrostbite(DamageOrigin);
-        if (_isChill) GetComponent<PlayerMovementController>().StartChill(PlayerBaseStats.Instance.ChillDuration);
+        if (_isChill) GetComponent<PlayerMovementController>().StartChill(PlayFabDataStore.playerBaseStats.ChillDuration);
 
         TakeDamage(_damageDone, _isFrostNova);
 
@@ -312,7 +312,7 @@ public class PlayerHealthManager : MonoBehaviourPun
 
         UpdateHealthBar();
 
-        if((playerhealth / playerMaxHealth <= PlayerBaseStats.Instance.RageStartRate) && isRage)
+        if((playerhealth / playerMaxHealth <= PlayFabDataStore.playerBaseStats.RageStartRate) && isRage)
         {
             rageParticle.SetActive(true);
         }
@@ -370,7 +370,7 @@ public class PlayerHealthManager : MonoBehaviourPun
     {
         get
         {
-            return ((playerhealth / playerMaxHealth <= PlayerBaseStats.Instance.RageStartRate) && isRage);
+            return ((playerhealth / playerMaxHealth <= PlayFabDataStore.playerBaseStats.RageStartRate) && isRage);
         }
         set
         {
@@ -466,7 +466,7 @@ public class PlayerHealthManager : MonoBehaviourPun
     void StrongHeart_RPC()
     {
         strongHeartParticle.SetActive(true);
-        healthGenerationRate *= PlayerBaseStats.Instance.StrongHeartMultiplier;
+        healthGenerationRate *= PlayFabDataStore.playerBaseStats.StrongHeartMultiplier;
     }
 
     public float HealthGenerationRate

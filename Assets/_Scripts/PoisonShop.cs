@@ -135,12 +135,12 @@ public class PoisonShop : MonoBehaviourPun
         if (other.GetComponent<PhotonView>().IsMine && players.Count == 1)
         {
             poisonPickupTimer += Time.deltaTime;
-            //HUDManager.Instance.SetPoisonPickupProgress(poisonPickupTimer / PlayerBaseStats.Instance.PoisonPickupTime);
-            if(poisonPickupTimer >= PlayerBaseStats.Instance.PoisonPickupTime)
+            //HUDManager.Instance.SetPoisonPickupProgress(poisonPickupTimer / PlayFabDataStore.playerBaseStats.PoisonPickupTime);
+           /* if(poisonPickupTimer >= PlayFabDataStore.playerBaseStats.PoisonPickupTime)
             {
                 //other.GetComponent<PlayerNetworkManager>().ActivatePoison(other.GetComponent<PhotonView>().ViewID);
                 //HUDManager.Instance.DisablePoisonPickupLoader();
-            }
+            }*/
 
         }
     }

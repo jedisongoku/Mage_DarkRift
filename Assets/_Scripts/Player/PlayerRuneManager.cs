@@ -133,12 +133,12 @@ public class PlayerRuneManager : MonoBehaviour
 
     void FasterRecharge()
     {
-        playerCombatManager.PrimarySkillRecharge = PlayerBaseStats.Instance.PrimarySkillRecharge * PlayerBaseStats.Instance.FasterRechargeMultiplier;
+        playerCombatManager.PrimarySkillRecharge = PlayFabDataStore.playerBaseStats.PrimarySkillRecharge * PlayFabDataStore.playerBaseStats.FasterRechargeMultiplier;
     }
 
     void DashReducedCooldown()
     {
-        playerCombatManager.SecondarySkillCooldown = PlayerBaseStats.Instance.SecondarySkillCooldown * PlayerBaseStats.Instance.DashSpeedMultiplier;
+        playerCombatManager.SecondarySkillCooldown = PlayFabDataStore.playerBaseStats.SecondarySkillCooldown * PlayFabDataStore.playerBaseStats.DashSpeedMultiplier;
     }
 
     void Frostbite()

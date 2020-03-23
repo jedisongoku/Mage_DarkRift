@@ -449,6 +449,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2052417205}
   - component: {fileID: 2052417204}
+  - component: {fileID: 2052417206}
   m_Layer: 0
   m_Name: PlayFabAuthenticator
   m_TagString: Untagged
@@ -482,6 +483,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2052417206
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2052417203}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4a0b43f62b164af4c8260c1a903d0d7c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &5036748839522582824
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -674,5 +687,11 @@ PrefabInstance:
       propertyPath: m_Camera
       value: 
       objectReference: {fileID: 31622538}
+    - target: {fileID: 2589668891066621706, guid: d7d650b8ccc2b7043ad3fdae8c871fb0,
+        type: 3}
+      propertyPath: skin
+      value: 
+      objectReference: {fileID: 8237208475714640577, guid: 5f68a14429977414198a20ae72616650,
+        type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d7d650b8ccc2b7043ad3fdae8c871fb0, type: 3}

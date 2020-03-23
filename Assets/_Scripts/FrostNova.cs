@@ -11,7 +11,7 @@ public class FrostNova : MonoBehaviour
         Debug.Log("HIT : " + LayerMask.LayerToName(other.gameObject.layer));
         if (other.gameObject.layer == 8 && other.gameObject.GetComponent<PhotonView>() != null)
         {
-            other.gameObject.GetComponent<PlayerMovementController>().StartChill(PlayerBaseStats.Instance.ChillDuration);
+            other.gameObject.GetComponent<PlayerMovementController>().StartChill(PlayFabDataStore.playerBaseStats.ChillDuration);
         }
 
 

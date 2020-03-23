@@ -119,7 +119,7 @@ public class PlayerCombatManager : MonoBehaviourPun
         {
             primarySkillCooldownTimer += Time.deltaTime;
             secondarySkillCooldownTimer += Time.deltaTime;
-            HUDManager.Instance.SetSecondarySkillCooldownUI = secondarySkillCooldownTimer / PlayerBaseStats.Instance.SecondarySkillCooldown;
+            HUDManager.Instance.SetSecondarySkillCooldownUI = secondarySkillCooldownTimer / PlayFabDataStore.playerBaseStats.SecondarySkillCooldown;
 
             //TOUCH 0
             if(Input.touchCount > 0)
@@ -312,7 +312,7 @@ public class PlayerCombatManager : MonoBehaviourPun
     IEnumerator PrimarySkillChargerReady(int _chargeID)
     {
         primarySkillUICharges[_chargeID - 1].SetActive(false);
-        if(_chargeID == PlayerBaseStats.Instance.PrimarySkillCharge)
+        if(_chargeID == PlayFabDataStore.playerBaseStats.PrimarySkillCharge)
         {
             primarSkillchargeTimer_1 = 0;
         }
@@ -343,7 +343,7 @@ public class PlayerCombatManager : MonoBehaviourPun
         {
             primarySkillUICharges[_chargeID - 1].SetActive(true);
             primarySkillCharge++;
-            if(primarySkillCharge < PlayerBaseStats.Instance.PrimarySkillCharge)
+            if(primarySkillCharge < PlayFabDataStore.playerBaseStats.PrimarySkillCharge)
             {
                 primarySkillUIChargeProgressBars[_chargeID].fillAmount = 0;
                 primarSkillchargeTimer_1 = 0;
@@ -417,19 +417,6 @@ public class PlayerCombatManager : MonoBehaviourPun
         controller.DamageOrigin = this.gameObject;
         controller.PlayerViewID = photonView.ViewID;
         controller.Traveling = true;
-
-
-        /*
-        obj.GetComponent<PrimarySkillController>().PlayerOrigin = photonView.ViewID;
-        obj.GetComponent<PrimarySkillController>().DamageDone = primarySkillDamage;
-        if (isFrostbite) obj.GetComponent<PrimarySkillController>().Frostbite = isFrostbite;
-        if (isChill) obj.GetComponent<PrimarySkillController>().Chill = isChill;
-        if (isRage) obj.GetComponent<PrimarySkillController>().Rage = isRage;
-        if (isFrostNova) obj.GetComponent<PrimarySkillController>().FrostNova = isFrostNova;
-        obj.GetComponent<PrimarySkillController>().Traveling = true;*/
-
-
-        //GameObject particle = Instantiate(primarySkillPrefab, primarySkillSpawnLocation.transform.position, Quaternion.identity) as GameObject;
     }
 
     public void ApplyDamageToEnemy(GameObject _enemy)
@@ -442,11 +429,11 @@ public class PlayerCombatManager : MonoBehaviourPun
 
     void SetPlayerBaseStats()
     {
-        primarySkillDamage = PlayerBaseStats.Instance.PrimarySkillDamage;
-        primarySkillCooldown = PlayerBaseStats.Instance.PrimarySkillCooldown;
-        primarySkillCharge = PlayerBaseStats.Instance.PrimarySkillCharge;
-        primarySkillRecharge = PlayerBaseStats.Instance.PrimarySkillRecharge;
-        secondarySkillCooldown = PlayerBaseStats.Instance.SecondarySkillCooldown;
+        primarySkillDamage = PlayFabDataStore.playerBaseStats.PrimarySkillDamage;
+        primarySkillCooldown = PlayFabDataStore.playerBaseStats.PrimarySkillCooldown;
+        primarySkillCharge = PlayFabDataStore.playerBaseStats.PrimarySkillCharge;
+        primarySkillRecharge = PlayFabDataStore.playerBaseStats.PrimarySkillRecharge;
+        secondarySkillCooldown = PlayFabDataStore.playerBaseStats.SecondarySkillCooldown;
         isFrostbite = false;
         isChill = false;
         isRage = false;
@@ -604,7 +591,7 @@ public class PlayerCombatManager : MonoBehaviourPun
     [PunRPC]
     void PrimarySkillDamage_RPC(int _damage)
     {
-        primarySkillDamage = Mathf.RoundToInt(PlayerBaseStats.Instance.PrimarySkillDamage * PlayerBaseStats.Instance.DamageBoostMultiplier);
+        primarySkillDamage = Mathf.RoundToInt(PlayFabDataStore.playerBaseStats.PrimarySkillDamage * PlayFabDataStore.playerBaseStats.DamageBoostMultiplier);
     }
 
     public float PrimarySkillRecharge

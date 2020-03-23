@@ -173,7 +173,7 @@ public class PrimarySkillController : MonoBehaviour
                 if (other.gameObject.GetComponent<PhotonView>().ViewID != PlayerViewID)
                 {
 
-                    //if (isRage) damageDone += damageDone * PlayerBaseStats.Instance.RageDamageRate;
+                    //if (isRage) damageDone += damageDone * PlayFabDataStore.playerBaseStats.RageDamageRate;
                     //other.gameObject.GetComponent<PlayerHealthManager>().DamageTaken = damageDone;
 
                     //if (other.gameObject.GetComponent<PlayerHealthManager>().CanTakeDamage()) ApplyDamage(other.gameObject);
@@ -182,7 +182,7 @@ public class PrimarySkillController : MonoBehaviour
                     other.gameObject.GetComponent<PlayerHealthManager>().DamageOrigin = playerViewId;
                     other.gameObject.GetComponent<PlayerHealthManager>().TakeDamage(damageDone);
                     if (isFrostbite) other.gameObject.GetComponent<PlayerHealthManager>().StartFrostbite(playerViewId);
-                    if (isChill) other.gameObject.GetComponent<PlayerMovementController>().StartChill(PlayerBaseStats.Instance.ChillDuration);*/
+                    if (isChill) other.gameObject.GetComponent<PlayerMovementController>().StartChill(PlayFabDataStore.playerBaseStats.ChillDuration);*/
 
                     isPlayer = true;
                     Destroy(other.gameObject);
