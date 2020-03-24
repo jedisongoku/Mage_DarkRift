@@ -92,27 +92,41 @@ public class HUDManager : MonoBehaviourPunCallbacks
 
     IEnumerator Applaunch()
     {
-        switch (PhotonNetwork.NetworkClientState)
+        if(isContenDownloaded)
         {
-            case ClientState.ConnectingToMasterServer:
-                launchLoadingText.text = "Connecting to server";
-                break;
-            case ClientState.ConnectedToMasterServer:
-                launchLoadingBar.fillAmount += 0.02f;
-                launchLoadingText.text = Mathf.RoundToInt(launchLoadingBar.fillAmount * 100) + "%";
-                break;
+            switch (PhotonNetwork.NetworkClientState)
+            {
+                case ClientState.ConnectingToMasterServer:
+                    launchLoadingText.text = "Connecting to server";
+                    break;
+                case ClientState.ConnectedToMasterServer:
+                    launchLoadingBar.fillAmount += 0.02f;
+                    launchLoadingText.text = Mathf.RoundToInt(launchLoadingBar.fillAmount * 100) + "%";
+                    break;
 
-            default:
-                launchLoadingText.text = Mathf.RoundToInt(launchLoadingBar.fillAmount * 100) + "%";
-                break;
+                default:
+                    launchLoadingText.text = Mathf.RoundToInt(launchLoadingBar.fillAmount * 100) + "%";
+                    break;
+            }
         }
+        
         
         yield return new WaitForSeconds(0);
 
         if (launchLoadingBar.fillAmount < 1)
         {
-            launchLoadingBar.fillAmount += Time.deltaTime / 25;
+            if(!isContenDownloaded)
+            {
+                launchLoadingBar.fillAmount += Time.deltaTime / 5;
+            }
+            else
+            {
+                launchLoadingBar.fillAmount += Time.deltaTime / 5;
+                
+            }
+            launchLoadingText.text = Mathf.RoundToInt(launchLoadingBar.fillAmount * 100) + "%";
             StartCoroutine(Applaunch());
+      
         }
         else
         {
@@ -130,7 +144,7 @@ public class HUDManager : MonoBehaviourPunCallbacks
 
     void UpdatePlayerName()
     {
-        playerName.text = PersistData.instance.GameData.PlayerName;
+        playerName.text = PlayFabDataStore.playerName;
     }
 
     #endregion
@@ -168,8 +182,8 @@ public class HUDManager : MonoBehaviourPunCallbacks
         {
             listItem.gameObject.SetActive(false);
         }
-
-        for(int i = 0; i < PlayerRuneManager.playerRuneList.Count; i++)
+        var runeCount = PlayerRuneManager.playerRuneList.Count > 3 ? 3 : PlayerRuneManager.playerRuneList.Count;
+        for (int i = 0; i < runeCount; i++)
         {
             runeOptions[i].GetComponentInChildren<Text>().text = PlayerRuneManager.playerRuneList[i].DisplayName;
             runeOptions[i].gameObject.SetActive(true);
@@ -253,7 +267,7 @@ public class HUDManager : MonoBehaviourPunCallbacks
 
     IEnumerator GameSceneLoading()
     {
-        if(loadingBar.fillAmount < 0.85f || loadingBar.fillAmount >= 0.95f)
+        if(loadingBar.fillAmount <= 0.85f || loadingBar.fillAmount >= 0.95f)
         {
             loadingBar.fillAmount += Time.deltaTime / 2;
         }

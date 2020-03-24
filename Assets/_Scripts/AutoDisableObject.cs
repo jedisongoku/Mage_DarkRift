@@ -13,7 +13,7 @@ public class AutoDisableObject : MonoBehaviour
     // Update is called once per frame
     void OnEnable()
     {
-        Invoke("Disable", 3f);
+        Invoke("Disable", 5f);
     }
 
     void Disable()

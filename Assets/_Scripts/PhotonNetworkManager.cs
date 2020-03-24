@@ -26,17 +26,25 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
         {
             Destroy(gameObject);
         }
+        
+    }
+
+    public void ConnectToPhoton()
+    {
         PhotonNetwork.UseAlternativeUdpPorts = true;
 
-        if (PersistData.instance.GameData.PlayerName != null)
+        /*
+        if (PlayFabDataStore.playerName != null)
         {
-            PhotonNetwork.LocalPlayer.NickName = PersistData.instance.GameData.PlayerName;
+            PhotonNetwork.LocalPlayer.NickName = PlayFabDataStore.playerName;
             PhotonNetwork.ConnectUsingSettings();
         }
         else
         {
             Debug.Log("Player Nickname is invalid!");
-        }
+        }*/
+
+        PhotonNetwork.ConnectUsingSettings();
         PhotonNetwork.KeepAliveInBackground = 0;
         PhotonNetwork.AutomaticallySyncScene = true;
         SceneManager.sceneLoaded += OnSceneLoaded;
@@ -55,15 +63,21 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
 
     public override void OnDisconnected(DisconnectCause cause)
     {
+#if (!UNITY_EDITOR)
+        // your code here
         Debug.Log("Disconnected");
         HUDManager.Instance.StartAppLaunch();
         SceneManager.LoadScene(0);
+#endif
+
     }
 
     //OnConnectedToMaster is called once user connects to Photon Server
     public override void OnConnectedToMaster()
     {
-        Debug.Log(PhotonNetwork.LocalPlayer.NickName + " Connected to Photon Server");
+        Debug.Log("Connected to Photon Server");
+        PlayFabLoginManager.instance.LoginPlayFab();
+
     }
 
     //OnJoinedRoom is called when user joins to a room
@@ -84,11 +98,11 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
         Debug.Log(message);
 
         ExitGames.Client.Photon.Hashtable roomPropterties = new ExitGames.Client.Photon.Hashtable();
-        roomPropterties.Add("Level", PersistData.instance.GameData.GameMode);
-        string[] lobbyProperties = { "Level", PersistData.instance.GameData.GameMode };
+        roomPropterties.Add("Level", PlayFabDataStore.gameMode);
+        string[] lobbyProperties = { "Level", PlayFabDataStore.gameMode };
         RoomOptions roomOptions = new RoomOptions();
         roomOptions.CustomRoomPropertiesForLobby = lobbyProperties;
-        string roomName = PersistData.instance.GameData.GameMode + Random.Range(1000, 10000);
+        string roomName = PlayFabDataStore.gameMode + Random.Range(1000, 10000);
         roomOptions.CustomRoomProperties = roomPropterties;
         roomOptions.MaxPlayers = 8;
 
@@ -103,7 +117,7 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
         Debug.Log(PhotonNetwork.CurrentRoom.Name + " is created.");
         if (PhotonNetwork.IsMasterClient)
         {
-            PhotonNetwork.LoadLevel(PersistData.instance.GameData.GameMode);
+            PhotonNetwork.LoadLevel(PlayFabDataStore.gameMode);
         }
     }
 
@@ -142,6 +156,12 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
             HUDManager.Instance.characterLocation.SetActive(true);
         }
         
+    }
+
+    public void UpdatePlayerName()
+    {
+        PhotonNetwork.LocalPlayer.NickName = PlayFabDataStore.playerName;
+        HUDManager.Instance.isContenDownloaded = true;
     }
 
     #endregion

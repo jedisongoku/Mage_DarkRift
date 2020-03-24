@@ -13,8 +13,9 @@ public class PlayFabLoginManager : MonoBehaviour
 
 
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
+        Debug.Log("1");
         if (instance == null)
         {
             DontDestroyOnLoad(gameObject);
@@ -25,6 +26,12 @@ public class PlayFabLoginManager : MonoBehaviour
             Destroy(gameObject);
         }
 
+        LoginPlayFab();
+    }
+
+    public void LoginPlayFab()
+    {
+        
         StartCoroutine(Login());
     }
 
@@ -42,14 +49,23 @@ public class PlayFabLoginManager : MonoBehaviour
 
     IEnumerator DownloadContent()
     {
-        int callsToWait = 5;
+        callCounter = 0;
+        int callsToWait = 4;
         PlayFabApiCalls.instance.GetPlayerBaseStats();
         PlayFabApiCalls.instance.GetVirtualCurrency_Gems();
         PlayFabApiCalls.instance.GetVirtualCurrency_Coins();
         PlayFabApiCalls.instance.GetVirtualCurrency_Energy();
-        PlayFabApiCalls.instance.CreateNewProfile();
+        if(PlayFabApiCalls.isNewUser)
+        {
+            callsToWait++;
+            PlayFabApiCalls.instance.CreateNewProfile();
+        }
+        
 
         yield return new WaitUntil(() => (callCounter == callsToWait));
+
+        PhotonNetworkManager.Instance.UpdatePlayerName();
+        PhotonNetworkManager.Instance.ConnectToPhoton();
 
 
 
@@ -59,6 +75,7 @@ public class PlayFabLoginManager : MonoBehaviour
     public void IncrementCallCounter()
     {
         callCounter++;
+        Debug.Log("Counter :" + callCounter);
     }
 
     private void OnEnable()

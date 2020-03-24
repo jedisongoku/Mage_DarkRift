@@ -8,6 +8,7 @@ using System.Collections.Generic;
 public class PlayFabApiCalls : MonoBehaviour
 {
     public static PlayFabApiCalls instance;
+    public static bool isNewUser;
 
     public delegate void OnApiCallSuccessEvent();
     public static event OnApiCallSuccessEvent OnApiCallSuccess;
@@ -41,6 +42,7 @@ public class PlayFabApiCalls : MonoBehaviour
 
         PlayFabClientAPI.LoginWithCustomID(request, (result) =>
         {
+            isNewUser = result.NewlyCreated;
             PlayFabDataStore.playFabID = result.PlayFabId;
             RequestPhotonToken(result);
         }, (error) =>
@@ -158,6 +160,7 @@ public class PlayFabApiCalls : MonoBehaviour
             PlayFabDataStore.vc_energy = result.Balance;
             PlayFabLoginManager.instance.IncrementCallCounter();
 
+
         }, (error) =>
         {
             ApiCallFail();
@@ -178,7 +181,6 @@ public class PlayFabApiCalls : MonoBehaviour
         PlayFabClientAPI.ExecuteCloudScript(request, (result) =>
         {
             //Result
-            ApiCallSuccess();
         }, (error) =>
         {
             ApiCallFail();
@@ -218,7 +220,9 @@ public class PlayFabApiCalls : MonoBehaviour
         {
             //Result
             PlayFabDataStore.playerProfile = JsonUtility.FromJson<PlayerProfile>(result.Data["PlayerProfile"].Value);
+            PlayFabDataStore.playerName = PlayFabDataStore.playerProfile.playerName;
             PlayFabLoginManager.instance.IncrementCallCounter();
+
         }, (error) =>
         {
             OnPlayFabError(error);
