@@ -170,13 +170,33 @@ public class PlayFabApiCalls : MonoBehaviour
 
     #endregion
 
-    public void GetVirtualCurrency(string currencyCode)
+    public void AddVirtualCurrency(int currencyAmount, string currencyCode)
     {
 
         var request = new ExecuteCloudScriptRequest()
         {
             FunctionName = "AddVirtualCurrency",
-            FunctionParameter = new { code = currencyCode}
+            FunctionParameter = new { currencyAmount = currencyAmount, currencyCode = currencyCode}
+        };
+        PlayFabClientAPI.ExecuteCloudScript(request, (result) =>
+        {
+            //Result
+
+        }, (error) =>
+        {
+            ApiCallFail();
+            OnPlayFabError(error);
+
+        });
+    }
+
+    public void SubtractVirtualCurrency(int currencyAmount, string currencyCode)
+    {
+
+        var request = new ExecuteCloudScriptRequest()
+        {
+            FunctionName = "SubtractVirtualCurrency",
+            FunctionParameter = new { currencyAmount = currencyAmount, currencyCode = currencyCode}
         };
         PlayFabClientAPI.ExecuteCloudScript(request, (result) =>
         {

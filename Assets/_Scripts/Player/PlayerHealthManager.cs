@@ -245,16 +245,15 @@ public class PlayerHealthManager : MonoBehaviourPun
         GameObject obj;
         if (_isFrostNova)
         {
+            /*
             obj = ObjectPooler.Instance.GetPrimarySkillFrostNovaPrefab();
-            obj.transform.position = transform.position + Vector3.up;
+            obj.transform.position = transform.position + Vector3.up;*/
+            //FrostNoca is Disabled - keeping it for future use
         }
-        else
-        {
-            
-            obj = ObjectPooler.Instance.GetPrimarySkillExplosionPrefab();
-            obj.transform.position = transform.position + Vector3.up;
-            obj.transform.rotation = Quaternion.FromToRotation(Vector3.up, Vector3.zero);
-        }
+
+        obj = ObjectPooler.Instance.GetPrimarySkillExplosionPrefab();
+        obj.transform.position = transform.position + Vector3.up;
+        obj.transform.rotation = Quaternion.FromToRotation(Vector3.up, Vector3.zero);
 
         obj.SetActive(true);
 

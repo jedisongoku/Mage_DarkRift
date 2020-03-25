@@ -13,6 +13,8 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
     public static event PhotonEvents OnJoinedRoomEvent;
     public static event PhotonEvents OnPlayerEnteredRoomEvent;
 
+    private bool isGamePaused { get; set; }
+
     #region Unity Mono Calls
     // Start is called before the first frame update
     void Start()
@@ -76,7 +78,6 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
     public override void OnConnectedToMaster()
     {
         Debug.Log("Connected to Photon Server");
-        PlayFabLoginManager.instance.LoginPlayFab();
 
     }
 
@@ -109,6 +110,22 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
         PhotonNetwork.CreateRoom(roomName, roomOptions);
 
         
+    }
+    private void OnApplicationPause(bool pause)
+    {
+        isGamePaused = pause;
+    }
+
+    private void OnApplicationFocus(bool focus)
+    {
+        if(focus && isGamePaused && !PhotonNetwork.IsConnected)
+        {
+            /*
+            Debug.Log("Not Connected");
+            HUDManager.Instance.StartAppLaunch();
+            SceneManager.LoadScene(0);
+            ConnectToPhoton();*/
+        }
     }
 
 
@@ -152,6 +169,7 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
     {
         if(scene.buildIndex == 0)
         {
+            if (!PhotonNetwork.IsConnected) ConnectToPhoton();
             HUDManager.Instance.GetComponent<Canvas>().worldCamera = Camera.main;
             HUDManager.Instance.characterLocation.SetActive(true);
         }

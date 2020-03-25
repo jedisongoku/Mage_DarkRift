@@ -25,6 +25,7 @@ public class PlayerRuneManager : MonoBehaviour
 
         if(runeCatalog != null)
         {
+            runeCatalog.Clear();
             //Primary SKill Runes
             runeCatalog.Add(new Rune("Damage Boost", "DamageBoost", "Deal Higher Damage", 1,1));
             runeCatalog.Add(new Rune("Faster Recharge", "FasterRecharge", "Primary Skill Recharges Faster", 1, 1));

@@ -21,6 +21,10 @@ public class HUDManager : MonoBehaviourPunCallbacks
     [SerializeField] private Text playerName;
     [SerializeField] public GameObject characterLocation;
 
+    [SerializeField] private Text coinsCurrencyText;
+    [SerializeField] private Text gemsCurrencyText;
+    [SerializeField] private Text energyCurrencyText;
+
 
     [Header("Waiting Area Panel")]
     public GameObject waitingAreaPanel;
@@ -140,11 +144,19 @@ public class HUDManager : MonoBehaviourPunCallbacks
     void UpdateMenuPanel()
     {
         UpdatePlayerName();
+        UpdateCurrencies();
     }
 
     void UpdatePlayerName()
     {
         playerName.text = PlayFabDataStore.playerName;
+    }
+
+    void UpdateCurrencies()
+    {
+        coinsCurrencyText.text = PlayFabDataStore.vc_coins.ToString();
+        gemsCurrencyText.text = PlayFabDataStore.vc_gems.ToString();
+        energyCurrencyText.text = PlayFabDataStore.vc_energy + "/50";
     }
 
     #endregion
@@ -200,12 +212,22 @@ public class HUDManager : MonoBehaviourPunCallbacks
 
     public void OnPlayGameButtonClicked()
     {     
-        ExitGames.Client.Photon.Hashtable roomPropterties = new ExitGames.Client.Photon.Hashtable();
-        roomPropterties.Add("Level", gameMode);
-        PhotonNetwork.JoinRandomRoom(roomPropterties, 0);
-        loadingBar.fillAmount = 0;
-        ActivatePanels(loadingPanel.name);
-        StartCoroutine(GameSceneLoading());
+        if(PlayFabDataStore.vc_energy >= 5)
+        {
+            ExitGames.Client.Photon.Hashtable roomPropterties = new ExitGames.Client.Photon.Hashtable();
+            roomPropterties.Add("Level", gameMode);
+            PhotonNetwork.JoinRandomRoom(roomPropterties, 0);
+            loadingBar.fillAmount = 0;
+            ActivatePanels(loadingPanel.name);
+            StartCoroutine(GameSceneLoading());
+
+            PlayFabApiCalls.instance.SubtractVirtualCurrency(5, "EN");
+        }
+        else
+        {
+            //ask user to refill energy
+        }
+        
 
     }
 
@@ -221,14 +243,24 @@ public class HUDManager : MonoBehaviourPunCallbacks
     }
     public void OnRespawnButtonClicked()
     {
-        if(GameManager.Instance.CanRespawn)
+        if(PlayFabDataStore.vc_energy >= 5)
         {
-            //OnGameLevelLoaded(); 
-            GameManager.Instance.RespawnPlayer();
+            if (GameManager.Instance.CanRespawn)
+            {
+                //OnGameLevelLoaded(); 
+                GameManager.Instance.RespawnPlayer();
+            }
+            isRespawnRequested = true;
+            playerControllerPanel.SetActive(true);
+            deathPanel.SetActive(false);
+
+            PlayFabApiCalls.instance.SubtractVirtualCurrency(5, "EN");
         }
-        isRespawnRequested = true;
-        playerControllerPanel.SetActive(true);
-        deathPanel.SetActive(false);
+        else
+        {
+            //ask user to refill
+        }
+        
 
 
     }
@@ -258,6 +290,7 @@ public class HUDManager : MonoBehaviourPunCallbacks
     public void OnGameLevelLoaded()
     {
         //ActivatePanels(loadingPanel.name);
+        Debug.Log("Game Level Loaded");
         loadingBar.fillAmount = 0.95f;
         deathPanel.SetActive(false);
         playerControllerPanel.SetActive(true);
@@ -380,5 +413,8 @@ public class HUDManager : MonoBehaviourPunCallbacks
         ActivatePanels(launchPanel.name);
         StartCoroutine(Applaunch());
     }
+    #endregion
+
+    #region Ad
     #endregion
 }

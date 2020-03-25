@@ -26,6 +26,11 @@ public class PlayFabLoginManager : MonoBehaviour
             Destroy(gameObject);
         }
 
+        
+    }
+
+    void Start()
+    {
         LoginPlayFab();
     }
 
@@ -50,15 +55,18 @@ public class PlayFabLoginManager : MonoBehaviour
     IEnumerator DownloadContent()
     {
         callCounter = 0;
-        int callsToWait = 4;
+        int callsToWait = 5;
         PlayFabApiCalls.instance.GetPlayerBaseStats();
         PlayFabApiCalls.instance.GetVirtualCurrency_Gems();
         PlayFabApiCalls.instance.GetVirtualCurrency_Coins();
         PlayFabApiCalls.instance.GetVirtualCurrency_Energy();
         if(PlayFabApiCalls.isNewUser)
         {
-            callsToWait++;
             PlayFabApiCalls.instance.CreateNewProfile();
+        }
+        else
+        {
+            PlayFabApiCalls.instance.GetUserData();
         }
         
 

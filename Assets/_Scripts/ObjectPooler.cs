@@ -9,14 +9,14 @@ public class ObjectPooler : MonoBehaviour
 
     [SerializeField] private GameObject primarySkillPrefab;
     [SerializeField] private GameObject primarySkillExplosionPrefab;
-    [SerializeField] private GameObject primarySkillFrostNovaPrefab;
+    [SerializeField] private GameObject primarySkillEnvironmentExplosionPrefab;
     [SerializeField] private int primarySkillPrefabPooledAmount = 2;
     [SerializeField] private int primarySkillExplosionPrefabPooledAmount = 2;
-    [SerializeField] private int primarySkillFrostNovaPrefabPooledAmount = 1;
+    [SerializeField] private int primarySkillEnvironmentExplosionPrefabPooledAmount = 2;
 
     List<GameObject> primarySkillPrefabList;
     List<GameObject> primarySkillExplosionPrefabList;
-    List<GameObject> primarySkillFrostNovaPrefabList;
+    List<GameObject> primarySkillEnvironmentExplosionPrefabList;
 
     bool willGrow = true;
 
@@ -31,7 +31,7 @@ public class ObjectPooler : MonoBehaviour
         
         primarySkillPrefabList = new List<GameObject>();
         primarySkillExplosionPrefabList = new List<GameObject>();
-        primarySkillFrostNovaPrefabList = new List<GameObject>();
+        primarySkillEnvironmentExplosionPrefabList = new List<GameObject>();
 
 
         //Primary Skill Particle Instantiation 
@@ -51,11 +51,11 @@ public class ObjectPooler : MonoBehaviour
         }
 
         //Primary Skill OnHit FrostNova Particle Instantiation 
-        for (int i = 0; i < primarySkillFrostNovaPrefabPooledAmount * PhotonNetwork.CurrentRoom.PlayerCount; i++)
+        for (int i = 0; i < primarySkillEnvironmentExplosionPrefabPooledAmount * PhotonNetwork.CurrentRoom.PlayerCount; i++)
         {
-            GameObject obj = (GameObject)Instantiate(primarySkillFrostNovaPrefab);
+            GameObject obj = (GameObject)Instantiate(primarySkillEnvironmentExplosionPrefab);
             obj.SetActive(false);
-            primarySkillFrostNovaPrefabList.Add(obj);
+            primarySkillEnvironmentExplosionPrefabList.Add(obj);
         }
     }
 
@@ -99,20 +99,20 @@ public class ObjectPooler : MonoBehaviour
         return null;
     }
 
-    public GameObject GetPrimarySkillFrostNovaPrefab()
+    public GameObject GetPrimarySkillEnvironmentExplosionPrefab()
     {
-        for (int i = 0; i < primarySkillFrostNovaPrefabList.Count; i++)
+        for (int i = 0; i < primarySkillEnvironmentExplosionPrefabList.Count; i++)
         {
-            if (!primarySkillFrostNovaPrefabList[i].activeInHierarchy)
+            if (!primarySkillEnvironmentExplosionPrefabList[i].activeInHierarchy)
             {
-                return primarySkillFrostNovaPrefabList[i];
+                return primarySkillEnvironmentExplosionPrefabList[i];
             }
         }
 
         if (willGrow)
         {
-            GameObject obj = (GameObject)Instantiate(primarySkillFrostNovaPrefab);
-            primarySkillFrostNovaPrefabList.Add(obj);
+            GameObject obj = (GameObject)Instantiate(primarySkillEnvironmentExplosionPrefab);
+            primarySkillEnvironmentExplosionPrefabList.Add(obj);
             return obj;
         }
 

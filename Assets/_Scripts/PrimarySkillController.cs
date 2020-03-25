@@ -205,9 +205,9 @@ public class PrimarySkillController : MonoBehaviour
     private void Destroy(GameObject other)
     {
         GameObject obj;
-        if (isFrostNova && !isPlayer)
+        if (!isPlayer)
         {
-            obj = ObjectPooler.Instance.GetPrimarySkillFrostNovaPrefab();
+            obj = ObjectPooler.Instance.GetPrimarySkillEnvironmentExplosionPrefab();
             obj.transform.position = transform.position;
             obj.SetActive(true);
         }

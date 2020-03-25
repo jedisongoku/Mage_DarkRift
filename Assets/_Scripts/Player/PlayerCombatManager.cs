@@ -161,6 +161,10 @@ public class PlayerCombatManager : MonoBehaviourPun
                                 {
                                     PrimarySkill(closestEnemy.transform.position);
                                 }
+                                else
+                                {
+                                    PrimarySkill(transform.position + transform.forward);
+                                }
                             }
 
                             aimAssist.SetPosition(1, aimAssist.GetPosition(0));
@@ -212,6 +216,10 @@ public class PlayerCombatManager : MonoBehaviourPun
                                 {
                                     PrimarySkill(closestEnemy.transform.position);
                                 }
+                                else
+                                {
+                                    PrimarySkill(transform.position + transform.forward);
+                                }
                             }
 
                             aimAssist.SetPosition(1, aimAssist.GetPosition(0));
@@ -228,23 +236,14 @@ public class PlayerCombatManager : MonoBehaviourPun
             
             if(Input.GetButtonDown("Fire1") && !Application.isMobilePlatform)
             {
-                GameObject closestEnemy = null;
-                float distance = 10;
-                foreach (var enemy in PhotonNetwork.PhotonViews)
-                {
-                    if (enemy.ViewID != photonView.ViewID)
-                    {
-                        if (distance > (enemy.gameObject.transform.position - transform.position).magnitude)
-                        {
-                            distance = (enemy.gameObject.transform.position - transform.position).magnitude;
-                            closestEnemy = enemy.gameObject;
-                        }
-                    }
-
-                }
+                GameObject closestEnemy = ClosestEnemy();
                 if (closestEnemy != null)
                 {
                     PrimarySkill(closestEnemy.transform.position);
+                }
+                else
+                {
+                    PrimarySkill(transform.position + transform.forward);
                 }
             }
             if(Input.GetButtonDown("Dash"))
@@ -258,7 +257,7 @@ public class PlayerCombatManager : MonoBehaviourPun
     GameObject ClosestEnemy()
     {
         GameObject closestEnemy = null;
-        float distance = 13;
+        float distance = 15;
         foreach (var enemy in PhotonNetwork.PhotonViews)
         {
             if (enemy.ViewID != photonView.ViewID && !enemy.GetComponent<PlayerCombatManager>().IsDead && LineOfSight(enemy.gameObject))
