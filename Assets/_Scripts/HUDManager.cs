@@ -38,6 +38,9 @@ public class HUDManager : MonoBehaviourPunCallbacks
     [Header("Shop Panel")]
     [SerializeField] public GameObject shopPanel;
 
+    [Header("Skin Panel")]
+    [SerializeField] public GameObject skinPanel;
+
     [Header("Game Panel")]
     [SerializeField] private VariableJoystick movementJoystick;
     [SerializeField] private VariableJoystick aimJoystick;
@@ -239,7 +242,12 @@ public class HUDManager : MonoBehaviourPunCallbacks
         ActivatePanels(shopPanel.name);
     }
 
-    public void OnShopBackButtonClicked()
+    public void OnSkinButtonClicked()
+    {
+        ActivatePanels(skinPanel.name);
+    }
+
+    public void OnPanelBackButtonClicked()
     {
         ActivatePanels(menuPanel.name);
     }
@@ -403,6 +411,7 @@ public class HUDManager : MonoBehaviourPunCallbacks
         launchPanel.SetActive(panelToBeActivated.Equals(launchPanel.name));
         menuPanel.SetActive(panelToBeActivated.Equals(menuPanel.name));
         shopPanel.SetActive(panelToBeActivated.Equals(shopPanel.name));
+        skinPanel.SetActive(panelToBeActivated.Equals(skinPanel.name));
         waitingAreaPanel.SetActive(panelToBeActivated.Equals(waitingAreaPanel.name));
         loadingPanel.SetActive(panelToBeActivated.Equals(loadingPanel.name));
         gamePanel.SetActive(panelToBeActivated.Equals(gamePanel.name));

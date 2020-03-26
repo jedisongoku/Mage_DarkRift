@@ -750,7 +750,15 @@ public class PlayerCombatManager : MonoBehaviourPun
                 isTransparent = true;
                 foreach (var render in playerModel.GetComponent<MeshRenderersInModel>().MeshRenderers)
                 {
-                    render.material.shader = transparentShader;
+                    if(render.transform.name.Equals("Halo"))
+                    {
+                        render.enabled = false;
+                    }
+                    else
+                    {
+                        render.material.shader = transparentShader;
+                    }
+                    
                 }
                 foreach (var render in playerModel.GetComponent<MeshRenderersInModel>().SkinnedMeshRenderers)
                 {
@@ -785,8 +793,16 @@ public class PlayerCombatManager : MonoBehaviourPun
         {
             foreach (var render in playerModel.GetComponent<MeshRenderersInModel>().MeshRenderers)
             {
-                render.gameObject.SetActive(true);
-                render.material.shader = transparentShader;
+                if (render.transform.name.Equals("Halo"))
+                {
+                    render.enabled = false;
+                }
+                else
+                {
+                    render.gameObject.SetActive(true);
+                    render.material.shader = transparentShader;
+                }
+                
             }
             foreach (var render in playerModel.GetComponent<MeshRenderersInModel>().SkinnedMeshRenderers)
             {
@@ -822,7 +838,15 @@ public class PlayerCombatManager : MonoBehaviourPun
                 isTransparent = false;
                 foreach (var render in playerModel.GetComponent<MeshRenderersInModel>().MeshRenderers)
                 {
-                    render.material.shader = standardShader;
+                    if (render.transform.name.Equals("Halo"))
+                    {
+                        render.enabled = true;
+                    }
+                    else
+                    {
+                        render.material.shader = standardShader;
+                    }
+                    
                 }
                 foreach (var render in playerModel.GetComponent<MeshRenderersInModel>().SkinnedMeshRenderers)
                 {
@@ -838,8 +862,17 @@ public class PlayerCombatManager : MonoBehaviourPun
             {
                 foreach (var render in playerModel.GetComponent<MeshRenderersInModel>().MeshRenderers)
                 {
-                    render.gameObject.SetActive(true);
-                    render.material.shader = standardShader;
+                    if (render.transform.name.Equals("Halo"))
+                    {
+                        render.enabled = true;
+                        render.gameObject.SetActive(true);
+                    }
+                    else
+                    {
+                        render.gameObject.SetActive(true);
+                        render.material.shader = standardShader;
+                    }
+                    
                 }
                 foreach (var render in playerModel.GetComponent<MeshRenderersInModel>().SkinnedMeshRenderers)
                 {
