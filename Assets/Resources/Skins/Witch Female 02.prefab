@@ -16556,7 +16556,6 @@ GameObject:
   m_Component:
   - component: {fileID: 5848554464743436571}
   - component: {fileID: 4323756968089445482}
-  - component: {fileID: 1458044362302391459}
   m_Layer: 13
   m_Name: Witch Female 02
   m_TagString: Untagged
@@ -16611,25 +16610,6 @@ MonoBehaviour:
   meshrenderers:
   - {fileID: 5848554464745482287}
   - {fileID: 5848554464745234657}
---- !u!95 &1458044362302391459
-Animator:
-  serializedVersion: 3
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5848554464743229989}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 877980bf604da2945ae29bb31cbe5c64, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &5848554464743230287
 GameObject:
   m_ObjectHideFlags: 0

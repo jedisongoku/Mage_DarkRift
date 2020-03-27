@@ -46,21 +46,18 @@ public class PlayFabLoginManager : MonoBehaviour
 
         yield return new WaitUntil(() => (isPlayFabNextCallSuccess == true || isPlayFabNextCallFailed == true));
 
+        
         if(isPlayFabNextCallSuccess)
         {
+            isPlayFabNextCallSuccess = false;
             StartCoroutine(DownloadContent());
         }
     }
 
     IEnumerator DownloadContent()
     {
-        callCounter = 0;
-        int callsToWait = 5;
-        PlayFabApiCalls.instance.GetPlayerBaseStats();
-        PlayFabApiCalls.instance.GetVirtualCurrency_Gems();
-        PlayFabApiCalls.instance.GetVirtualCurrency_Coins();
-        PlayFabApiCalls.instance.GetVirtualCurrency_Energy();
-        if(PlayFabApiCalls.isNewUser)
+        
+        if (PlayFabApiCalls.isNewUser)
         {
             PlayFabApiCalls.instance.CreateNewProfile();
         }
@@ -68,6 +65,18 @@ public class PlayFabLoginManager : MonoBehaviour
         {
             PlayFabApiCalls.instance.GetUserData();
         }
+
+        yield return new WaitUntil(() => (isPlayFabNextCallSuccess || isPlayFabNextCallFailed));
+        HUDManager.Instance.isLoginSuccess = true;
+        callCounter = 0;
+        int callsToWait = 6;
+        PlayFabApiCalls.instance.GetCatalogItems();
+        PlayFabApiCalls.instance.GetPlayerBaseStats();
+        PlayFabApiCalls.instance.GetVirtualCurrency_Gems();
+        PlayFabApiCalls.instance.GetVirtualCurrency_Coins();
+        PlayFabApiCalls.instance.GetVirtualCurrency_Energy();
+        PlayFabApiCalls.instance.GetPlayerSkins();
+        
         
 
         yield return new WaitUntil(() => (callCounter == callsToWait));

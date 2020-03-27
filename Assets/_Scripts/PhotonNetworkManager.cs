@@ -179,7 +179,7 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
     public void UpdatePlayerName()
     {
         PhotonNetwork.LocalPlayer.NickName = PlayFabDataStore.playerName;
-        HUDManager.Instance.isContenDownloaded = true;
+        HUDManager.Instance.isContentDownloaded = true;
     }
 
     #endregion

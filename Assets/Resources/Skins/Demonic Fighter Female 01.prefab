@@ -611,7 +611,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3551488555035220732}
-  - component: {fileID: 3551488555025558708}
   - component: {fileID: 7079638196143428295}
   m_Layer: 13
   m_Name: Demonic Fighter Female 01
@@ -648,25 +647,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!95 &3551488555025558708
-Animator:
-  serializedVersion: 3
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3551488555034978152}
-  m_Enabled: 1
-  m_Avatar: {fileID: 9000000, guid: 231d45dba8bff13478d80904318e7bc4, type: 3}
-  m_Controller: {fileID: 9100000, guid: b28a5814760ae474880bf98404639623, type: 2}
-  m_CullingMode: 1
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!114 &7079638196143428295
 MonoBehaviour:
   m_ObjectHideFlags: 0

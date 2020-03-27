@@ -14,16 +14,17 @@ public class HUDManager : MonoBehaviourPunCallbacks
     [SerializeField] public GameObject launchPanel;
     [SerializeField] private Text launchLoadingText;
     [SerializeField] private Image launchLoadingBar;
-    public bool isContenDownloaded { get; set; }
+    public bool isContentDownloaded { get; set; }
+    public bool isLoginSuccess { get; set; }
 
     [Header("Menu Panel")]
     [SerializeField] public GameObject menuPanel;
     [SerializeField] private Text playerName;
     [SerializeField] public GameObject characterLocation;
 
-    [SerializeField] private Text coinsCurrencyText;
-    [SerializeField] private Text gemsCurrencyText;
-    [SerializeField] private Text energyCurrencyText;
+    [SerializeField] private Text menuCoinsCurrencyText;
+    [SerializeField] private Text menuGemsCurrencyText;
+    [SerializeField] private Text menuEnergyCurrencyText;
 
 
     [Header("Waiting Area Panel")]
@@ -38,8 +39,19 @@ public class HUDManager : MonoBehaviourPunCallbacks
     [Header("Shop Panel")]
     [SerializeField] public GameObject shopPanel;
 
+    [SerializeField] private Text shopCoinsCurrencyText;
+    [SerializeField] private Text shopGemsCurrencyText;
+    [SerializeField] private Text shopEnergyCurrencyText;
+
     [Header("Skin Panel")]
     [SerializeField] public GameObject skinPanel;
+    [SerializeField] public Button buyWithCoinButton;
+    [SerializeField] public Button buyWithGemButton;
+    [SerializeField] public Button selectSkinButton;
+
+    [SerializeField] private Text skinCoinsCurrencyText;
+    [SerializeField] private Text skinGemsCurrencyText;
+    [SerializeField] private Text skinEnergyCurrencyText;
 
     [Header("Game Panel")]
     [SerializeField] private VariableJoystick movementJoystick;
@@ -68,6 +80,7 @@ public class HUDManager : MonoBehaviourPunCallbacks
  
     private string gameMode = "Deathmatch";
     private bool isRespawnRequested = false;
+    
     
     
 
@@ -102,7 +115,7 @@ public class HUDManager : MonoBehaviourPunCallbacks
 
     IEnumerator Applaunch()
     {
-        if(isContenDownloaded)
+        if(isContentDownloaded)
         {
             switch (PhotonNetwork.NetworkClientState)
             {
@@ -110,7 +123,7 @@ public class HUDManager : MonoBehaviourPunCallbacks
                     launchLoadingText.text = "Connecting to server";
                     break;
                 case ClientState.ConnectedToMasterServer:
-                    launchLoadingBar.fillAmount += 0.02f;
+                    launchLoadingBar.fillAmount += 0.3f;
                     launchLoadingText.text = Mathf.RoundToInt(launchLoadingBar.fillAmount * 100) + "%";
                     break;
 
@@ -119,20 +132,27 @@ public class HUDManager : MonoBehaviourPunCallbacks
                     break;
             }
         }
+        else if(!isLoginSuccess)
+        {
+            launchLoadingBar.fillAmount += Time.deltaTime / 25;
+            launchLoadingText.text = Mathf.RoundToInt(launchLoadingBar.fillAmount * 100) + "%";
+        }
         
         
         yield return new WaitForSeconds(0);
 
         if (launchLoadingBar.fillAmount < 1)
         {
-            if(!isContenDownloaded)
+            if(!isContentDownloaded)
             {
-                launchLoadingBar.fillAmount += Time.deltaTime / 5;
+                if (isLoginSuccess)
+                {
+                    launchLoadingBar.fillAmount += Time.deltaTime;
+                }
             }
             else
             {
-                launchLoadingBar.fillAmount += Time.deltaTime / 5;
-                
+                launchLoadingBar.fillAmount += Time.deltaTime / 10;
             }
             launchLoadingText.text = Mathf.RoundToInt(launchLoadingBar.fillAmount * 100) + "%";
             StartCoroutine(Applaunch());
@@ -160,9 +180,17 @@ public class HUDManager : MonoBehaviourPunCallbacks
 
     void UpdateCurrencies()
     {
-        coinsCurrencyText.text = PlayFabDataStore.vc_coins.ToString();
-        gemsCurrencyText.text = PlayFabDataStore.vc_gems.ToString();
-        energyCurrencyText.text = PlayFabDataStore.vc_energy + "/50";
+        menuCoinsCurrencyText.text = PlayFabDataStore.vc_coins.ToString();
+        menuGemsCurrencyText.text = PlayFabDataStore.vc_gems.ToString();
+        menuEnergyCurrencyText.text = PlayFabDataStore.vc_energy + "/50";
+
+        shopCoinsCurrencyText.text = PlayFabDataStore.vc_coins.ToString();
+        shopGemsCurrencyText.text = PlayFabDataStore.vc_gems.ToString();
+        shopEnergyCurrencyText.text = PlayFabDataStore.vc_energy + "/50";
+
+        skinCoinsCurrencyText.text = PlayFabDataStore.vc_coins.ToString();
+        skinGemsCurrencyText.text = PlayFabDataStore.vc_gems.ToString();
+        skinEnergyCurrencyText.text = PlayFabDataStore.vc_energy + "/50";
     }
 
     #endregion
@@ -245,11 +273,56 @@ public class HUDManager : MonoBehaviourPunCallbacks
     public void OnSkinButtonClicked()
     {
         ActivatePanels(skinPanel.name);
+        OnSkinPreviewed(true, PlayFabDataStore.playerActiveSkin);
     }
 
     public void OnPanelBackButtonClicked()
     {
         ActivatePanels(menuPanel.name);
+    }
+
+    public void OnSkinPreviewed(bool isOwned, string name)
+    {
+        MenuSkinController.instance.ShowcaseSkin(name);
+
+        Debug.Log("isowned " + isOwned);
+        Debug.Log("name " + name);
+        bool buyWithCoin = PlayFabDataStore.gameSkinCatalog[name].currencyType == "CO" ? true : false;
+        Debug.Log("coin " + buyWithCoin);
+
+        if (name == PlayFabDataStore.playerActiveSkin)
+        {
+            buyWithCoinButton.interactable = false;
+            buyWithGemButton.interactable = false;
+        }
+        else
+        {
+            buyWithCoinButton.interactable = true;
+            buyWithGemButton.interactable = true;
+
+        }
+
+        if (buyWithCoin)
+        {
+            buyWithCoinButton.gameObject.transform.parent.Find("Buy").gameObject.SetActive(!isOwned);
+            buyWithCoinButton.gameObject.transform.parent.Find("Select").gameObject.SetActive(isOwned);
+
+            buyWithCoinButton.gameObject.transform.parent.Find("Buy/CostText").GetComponent<Text>().text = PlayFabDataStore.gameSkinCatalog[name].cost.ToString();
+        }
+        else
+        {
+            buyWithGemButton.gameObject.transform.parent.Find("Buy").gameObject.SetActive(!isOwned);
+            buyWithGemButton.gameObject.transform.parent.Find("Select").gameObject.SetActive(isOwned);
+
+            buyWithGemButton.gameObject.transform.parent.Find("Buy/CostText").GetComponent<Text>().text = PlayFabDataStore.gameSkinCatalog[name].cost.ToString();
+        }
+
+        Debug.Log(buyWithCoinButton.gameObject.name);
+        buyWithCoinButton.transform.parent.gameObject.SetActive(buyWithCoin);
+        buyWithGemButton.transform.parent.gameObject.SetActive(!buyWithCoin);
+
+        
+
     }
 
     public void OnPlayerDeath()

@@ -5683,7 +5683,6 @@ GameObject:
   m_Component:
   - component: {fileID: 164918283341544793}
   - component: {fileID: 4950826586572206939}
-  - component: {fileID: 4870843951321000130}
   m_Layer: 13
   m_Name: Angel Male 01
   m_TagString: Untagged
@@ -5740,25 +5739,6 @@ MonoBehaviour:
   - {fileID: 164918283343967577}
   - {fileID: 7447629189952421193}
   - {fileID: 164918283343523709}
---- !u!95 &4870843951321000130
-Animator:
-  serializedVersion: 3
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 164918283341782255}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 877980bf604da2945ae29bb31cbe5c64, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &164918283341784685
 GameObject:
   m_ObjectHideFlags: 0

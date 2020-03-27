@@ -35,7 +35,7 @@ public class PlayerNetworkManager : MonoBehaviourPunCallbacks
     [PunRPC]
     void SelectSkin(int _skinIndex, bool _isDead)
     {
-        GameObject skin = Instantiate(playerSkins[_skinIndex], playerSkinParent.transform) as GameObject;
+        GameObject skin = Instantiate(Resources.Load("Skins/" + PlayFabDataStore.playerActiveSkin) as GameObject, playerSkinParent.transform);
         GetComponent<PlayerCombatManager>().PlayerModel = skin;
         GetComponent<PlayerHealthManager>().PlayerModel = skin;
         playerSkinParent.GetComponent<Animator>().Rebind();

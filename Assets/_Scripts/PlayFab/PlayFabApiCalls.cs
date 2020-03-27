@@ -37,7 +37,7 @@ public class PlayFabApiCalls : MonoBehaviour
         var request = new LoginWithCustomIDRequest()
         {
             CreateAccount = true,
-            CustomId = PlayFabSettings.DeviceUniqueIdentifier,
+            CustomId = "320468009",
         };
 
         PlayFabClientAPI.LoginWithCustomID(request, (result) =>
@@ -221,6 +221,7 @@ public class PlayFabApiCalls : MonoBehaviour
         PlayFabClientAPI.ExecuteCloudScript(request, (result) =>
         {
             //Result
+            Debug.Log("NEW USER CREATED");
             GetUserData();
         }, (error) =>
         {
@@ -241,6 +242,60 @@ public class PlayFabApiCalls : MonoBehaviour
             //Result
             PlayFabDataStore.playerProfile = JsonUtility.FromJson<PlayerProfile>(result.Data["PlayerProfile"].Value);
             PlayFabDataStore.playerName = PlayFabDataStore.playerProfile.playerName;
+            PlayFabDataStore.playerActiveSkin = PlayFabDataStore.playerProfile.skinName;
+
+            ApiCallSuccess();
+
+        }, (error) =>
+        {
+            ApiCallFail();
+            OnPlayFabError(error);
+
+        });
+    }
+
+    public void GetPlayerSkins()
+    {
+        var request = new GetUserInventoryRequest()
+        {
+
+        };
+        PlayFabClientAPI.GetUserInventory(request, (result) =>
+        {
+            //Result
+            //PlayFabDataStore.playerProfile = JsonUtility.FromJson<PlayerProfile>(result.Data["PlayerProfile"].Value);
+            foreach(var item in result.Inventory)
+            {
+                if(item.ItemClass == "Skin")
+                {
+                    PlayFabDataStore.playerSkins.Add(item.ItemId, new SkinModel(item.ItemId, item.DisplayName, item.UnitCurrency, (int)item.UnitPrice));
+                }
+            }
+            PlayFabLoginManager.instance.IncrementCallCounter();
+
+        }, (error) =>
+        {
+            OnPlayFabError(error);
+
+        });
+    }
+
+    public void GetCatalogItems()
+    {
+        var request = new GetCatalogItemsRequest()
+        {
+
+        };
+        PlayFabClientAPI.GetCatalogItems(request, (result) =>
+        {
+            foreach (var item in result.Catalog)
+            {
+                if (item.ItemClass == "Skin")
+                {
+                    string currencyUnity = item.VirtualCurrencyPrices.ContainsKey("CO") ? "CO" : "GM";
+                    PlayFabDataStore.gameSkinCatalog.Add(item.ItemId, new SkinModel(item.ItemId, item.DisplayName, currencyUnity, (int)item.VirtualCurrencyPrices[currencyUnity]));
+                }
+            }
             PlayFabLoginManager.instance.IncrementCallCounter();
 
         }, (error) =>
