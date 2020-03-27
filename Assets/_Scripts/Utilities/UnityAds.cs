@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Advertisements;
-public class UnityAds : MonoBehaviour
+public class UnityAds : MonoBehaviour, IUnityAdsListener
 {
     public static UnityAds instance;
 
@@ -12,29 +12,27 @@ public class UnityAds : MonoBehaviour
 #endif
 
     bool testMode = true;
+    string myPlacementId = "rewardedVideo";
 
     void Start()
     {
-        instance = this;
-        //watchAdsForSpeed = GetComponent<Button>();
 
-        // Set interactivity to be dependent on the Placement’s status:
-        //watchAdsForSpeed.interactable = Advertisement.IsReady(myPlacementId);
-
-        // Map the ShowRewardedVideo function to the button’s click listener:
-        //if (watchAdsForSpeed) watchAdsForSpeed.onClick.AddListener(ShowRewardedVideo);
-
+        // Initialize the Ads listener and service:
+        Advertisement.AddListener(this);
         Advertisement.Initialize(gameId, true);
     }
 
-
-    public void RefillEnergyAds(string placementId)
+    // Implement a function for showing a rewarded video ad:
+    public void RefillEnergyAd()
     {
-        // If the ready Placement is rewarded, activate the button: 
-        if (Advertisement.IsReady())
-        {
-            Advertisement.Show(placementId);
-        }
+        myPlacementId = "RefillEnergy";
+        Advertisement.Show(myPlacementId);
+    }
+
+    // Implement IUnityAdsListener interface methods:
+    public void OnUnityAdsReady(string placementId)
+    {
+
     }
 
     public void OnUnityAdsDidFinish(string placementId, ShowResult showResult)
@@ -42,7 +40,9 @@ public class UnityAds : MonoBehaviour
         // Define conditional logic for each ad completion status:
         if (showResult == ShowResult.Finished)
         {
+            Debug.Log("Ad finished");
             // Reward the user for watching the ad to completion.
+            PlayFabApiCalls.instance.AddVirtualCurrency(50 - PlayFabDataStore.vc_energy, "EN");
         }
         else if (showResult == ShowResult.Skipped)
         {
@@ -50,7 +50,7 @@ public class UnityAds : MonoBehaviour
         }
         else if (showResult == ShowResult.Failed)
         {
-            Debug.LogWarning("The ad did not finish due to an error.");
+            Debug.LogWarning("the ad did not finish");
         }
     }
 

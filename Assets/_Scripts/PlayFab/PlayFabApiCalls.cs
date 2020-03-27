@@ -181,6 +181,7 @@ public class PlayFabApiCalls : MonoBehaviour
         PlayFabClientAPI.ExecuteCloudScript(request, (result) =>
         {
             //Result
+            GetPlayerInventory();
 
         }, (error) =>
         {

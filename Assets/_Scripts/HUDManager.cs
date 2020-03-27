@@ -181,6 +181,7 @@ public class HUDManager : MonoBehaviourPunCallbacks
 
     public void UpdateCurrencies()
     {
+        Debug.Log("Updated Currencies");
         menuCoinsCurrencyText.text = PlayFabDataStore.vc_coins.ToString();
         menuGemsCurrencyText.text = PlayFabDataStore.vc_gems.ToString();
         menuEnergyCurrencyText.text = PlayFabDataStore.vc_energy + "/50";
@@ -192,6 +193,16 @@ public class HUDManager : MonoBehaviourPunCallbacks
         skinCoinsCurrencyText.text = PlayFabDataStore.vc_coins.ToString();
         skinGemsCurrencyText.text = PlayFabDataStore.vc_gems.ToString();
         skinEnergyCurrencyText.text = PlayFabDataStore.vc_energy + "/50";
+    }
+
+    public void RefillEnergyWithGems()
+    {
+        if(PlayFabDataStore.vc_gems >= 5)
+        {
+            PlayFabApiCalls.instance.SubtractVirtualCurrency(5, "GM");
+            PlayFabApiCalls.instance.AddVirtualCurrency(50 - PlayFabDataStore.vc_energy, "EN");
+
+        }
     }
 
     #endregion
@@ -261,6 +272,7 @@ public class HUDManager : MonoBehaviourPunCallbacks
         else
         {
             //ask user to refill energy
+            ActivatePanels(shopPanel.name);
         }
         
 
