@@ -172,6 +172,7 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
             if (!PhotonNetwork.IsConnected) ConnectToPhoton();
             HUDManager.Instance.GetComponent<Canvas>().worldCamera = Camera.main;
             HUDManager.Instance.characterLocation.SetActive(true);
+            PlayFabApiCalls.instance.GetPlayerInventory();
         }
         
     }

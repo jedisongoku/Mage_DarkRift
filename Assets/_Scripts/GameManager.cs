@@ -16,7 +16,7 @@ public class GameManager : MonoBehaviour
 
     private static GameObject currentPlayer;
     private static int currentPlayerViewID;
-    private static int playerKillCount = 0;
+    public static int playerKillCount = 0;
     private int respawnCooldown = 6;
     private bool canRespawn = false;
 
@@ -52,7 +52,8 @@ public class GameManager : MonoBehaviour
     {
         Instance = this;
         HUDManager.Instance.OnGameLevelLoaded();
-  
+        playerKillCount = 0;
+
     }
 
 
@@ -90,8 +91,14 @@ public class GameManager : MonoBehaviour
     public void RespawnPlayer()
     {
         currentPlayer.GetComponent<PlayerCombatManager>().RespawnPlayer();
+        playerKillCount = 0;
         //Invoke("SetSpawnLocation",0.1f);
 
+    }
+
+    public int GetRewardAmount()
+    {
+        return Mathf.RoundToInt(playerKillCount * 15 * Mathf.Pow(1.35f, currentPlayer.GetComponent<PlayerLevelManager>().GetPlayerLevel()));
     }
 
     public int SpawnLocationIndex
@@ -123,6 +130,7 @@ public class GameManager : MonoBehaviour
         {
             DeadPlayerLevel = _playerkilled.GetComponent<PlayerLevelManager>().GetPlayerLevel();
             Debug.Log("Dead player level " + DeadPlayerLevel);
+            playerKillCount++;
 
             if(OnPlayerKill != null)
             {

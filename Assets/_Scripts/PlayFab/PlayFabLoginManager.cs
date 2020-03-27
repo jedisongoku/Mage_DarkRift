@@ -69,13 +69,10 @@ public class PlayFabLoginManager : MonoBehaviour
         yield return new WaitUntil(() => (isPlayFabNextCallSuccess || isPlayFabNextCallFailed));
         HUDManager.Instance.isLoginSuccess = true;
         callCounter = 0;
-        int callsToWait = 6;
+        int callsToWait = 3;
         PlayFabApiCalls.instance.GetCatalogItems();
         PlayFabApiCalls.instance.GetPlayerBaseStats();
-        PlayFabApiCalls.instance.GetVirtualCurrency_Gems();
-        PlayFabApiCalls.instance.GetVirtualCurrency_Coins();
-        PlayFabApiCalls.instance.GetVirtualCurrency_Energy();
-        PlayFabApiCalls.instance.GetPlayerSkins();
+        PlayFabApiCalls.instance.GetPlayerInventory();
         
         
 

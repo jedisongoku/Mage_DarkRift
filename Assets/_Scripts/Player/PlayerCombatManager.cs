@@ -443,7 +443,9 @@ public class PlayerCombatManager : MonoBehaviourPun
     {
         GetComponent<PlayerMovementController>().enabled = true;
         primarySkillCharges.SetActive(true);
-        
+
+        GetComponent<PlayerLevelManager>().ResetOnRespawn();
+
         PlayerRuneManager.Instance.RestartPlayerRunes();
         photonView.RPC("RespawnClients", RpcTarget.All, GameManager.Instance.SpawnLocationIndex);
 
@@ -540,7 +542,7 @@ public class PlayerCombatManager : MonoBehaviourPun
             HUDManager.Instance.OnPlayerDeath();
 
             //ScoreManager.Instance.Score = 0;
-            GetComponent<PlayerLevelManager>().ResetOnDeath();
+            
             GameObject.Find("VirtualCamera").GetComponent<CinemachineVirtualCamera>().Follow = null;
             aimAssist.SetPosition(1, aimAssist.GetPosition(0));
             aimJoystick.OnPointerUp(null);

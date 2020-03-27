@@ -71,6 +71,7 @@ public class HUDManager : MonoBehaviourPunCallbacks
     public GameObject scoreboardPlayerPref;
     public GameObject runeSelection;
     public Button[] runeOptions;
+    public GameObject coinReward;
     public Text fps;
 
     [Header("Level")]
@@ -178,7 +179,7 @@ public class HUDManager : MonoBehaviourPunCallbacks
         playerName.text = PlayFabDataStore.playerName;
     }
 
-    void UpdateCurrencies()
+    public void UpdateCurrencies()
     {
         menuCoinsCurrencyText.text = PlayFabDataStore.vc_coins.ToString();
         menuGemsCurrencyText.text = PlayFabDataStore.vc_gems.ToString();
@@ -368,6 +369,17 @@ public class HUDManager : MonoBehaviourPunCallbacks
         isRespawnRequested = false;
         respawnCooldownText.gameObject.SetActive(true);
         StartCoroutine(RespawnCooldown(GameManager.Instance.RespawnCooldown));
+
+        coinReward.SetActive(false);
+        if (GameManager.playerKillCount > 0)
+        {
+            coinReward.transform.Find("CoinText").GetComponent<Text>().text = GameManager.Instance.GetRewardAmount().ToString();
+            coinReward.SetActive(true);
+
+            PlayFabApiCalls.instance.UpdateStatistics(GameManager.playerKillCount);
+            PlayFabApiCalls.instance.AddVirtualCurrency(GameManager.Instance.GetRewardAmount(), "CO");
+            //Make api calls
+        }
         //respawnButton.SetActive(true);
     }
     public void OnRespawnButtonClicked()

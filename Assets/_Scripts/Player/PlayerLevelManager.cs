@@ -92,7 +92,7 @@ public class PlayerLevelManager : MonoBehaviourPunCallbacks
         levelText.text = _level.ToString();
     }
 
-    public void ResetOnDeath()
+    public void ResetOnRespawn()
     {
         currentXP = 0;
         currentLevel = 1;

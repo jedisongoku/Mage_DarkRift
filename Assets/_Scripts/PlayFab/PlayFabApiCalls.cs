@@ -37,7 +37,7 @@ public class PlayFabApiCalls : MonoBehaviour
         var request = new LoginWithCustomIDRequest()
         {
             CreateAccount = true,
-            CustomId = "320468009",
+            CustomId = Mathf.RoundToInt(Random.Range(1000000, 9999999999)).ToString()
         };
 
         PlayFabClientAPI.LoginWithCustomID(request, (result) =>
@@ -254,7 +254,7 @@ public class PlayFabApiCalls : MonoBehaviour
         });
     }
 
-    public void GetPlayerSkins()
+    public void GetPlayerInventory()
     {
         var request = new GetUserInventoryRequest()
         {
@@ -264,6 +264,7 @@ public class PlayFabApiCalls : MonoBehaviour
         {
             //Result
             //PlayFabDataStore.playerProfile = JsonUtility.FromJson<PlayerProfile>(result.Data["PlayerProfile"].Value);
+            PlayFabDataStore.playerSkins = new Dictionary<string, SkinModel>();
             foreach(var item in result.Inventory)
             {
                 if(item.ItemClass == "Skin" && !PlayFabDataStore.playerSkins.ContainsKey(item.ItemId))
@@ -271,7 +272,14 @@ public class PlayFabApiCalls : MonoBehaviour
                     PlayFabDataStore.playerSkins.Add(item.ItemId, new SkinModel(item.ItemId, item.DisplayName, item.UnitCurrency, (int)item.UnitPrice));
                 }
             }
+
+            PlayFabDataStore.vc_coins = result.VirtualCurrency["CO"];
+            PlayFabDataStore.vc_gems = result.VirtualCurrency["GM"];
+            PlayFabDataStore.vc_energy = result.VirtualCurrency["EN"];
+
+
             PlayFabLoginManager.instance.IncrementCallCounter();
+            HUDManager.Instance.UpdateCurrencies();
 
         }, (error) =>
         {
@@ -332,6 +340,26 @@ public class PlayFabApiCalls : MonoBehaviour
         {
 
             if (error.Error == PlayFabErrorCode.InsufficientFunds) HUDManager.Instance.InsufficientFunds_VC();
+            OnPlayFabError(error);
+
+        });
+    }
+
+    public void UpdateStatistics(int _kills)
+    {
+
+        var request = new ExecuteCloudScriptRequest()
+        {
+            FunctionName = "UpdateStatistics",
+            FunctionParameter = new { kills = _kills }
+
+        };
+        PlayFabClientAPI.ExecuteCloudScript(request, (result) =>
+        {
+            //Result
+            Debug.Log("Statistics Updated");
+        }, (error) =>
+        {
             OnPlayFabError(error);
 
         });
