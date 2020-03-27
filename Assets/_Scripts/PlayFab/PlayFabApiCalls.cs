@@ -266,7 +266,7 @@ public class PlayFabApiCalls : MonoBehaviour
             //PlayFabDataStore.playerProfile = JsonUtility.FromJson<PlayerProfile>(result.Data["PlayerProfile"].Value);
             foreach(var item in result.Inventory)
             {
-                if(item.ItemClass == "Skin")
+                if(item.ItemClass == "Skin" && !PlayFabDataStore.playerSkins.ContainsKey(item.ItemId))
                 {
                     PlayFabDataStore.playerSkins.Add(item.ItemId, new SkinModel(item.ItemId, item.DisplayName, item.UnitCurrency, (int)item.UnitPrice));
                 }
@@ -300,6 +300,38 @@ public class PlayFabApiCalls : MonoBehaviour
 
         }, (error) =>
         {
+            OnPlayFabError(error);
+
+        });
+    }
+
+    public void PurchaseItem(string ItemID, int price, string currency)
+    {
+        Debug.Log("Attempting to buy skin");
+
+        var request = new PurchaseItemRequest()
+        {
+            ItemId = ItemID,
+            Price = price,
+            VirtualCurrency = currency
+            
+        };
+        PlayFabClientAPI.PurchaseItem(request, (result) =>
+        {
+            if(result.Items != null)
+            {
+                if(!PlayFabDataStore.playerSkins.ContainsKey(result.Items[0].ItemId))
+                {
+                    PlayFabDataStore.playerSkins.Add(result.Items[0].ItemId, new SkinModel(result.Items[0].ItemId, result.Items[0].DisplayName, result.Items[0].UnitCurrency, (int)result.Items[0].UnitPrice));
+                }
+                
+            }
+            HUDManager.Instance.OnSkinPreviewed(true, result.Items[0].ItemId);
+
+        }, (error) =>
+        {
+
+            if (error.Error == PlayFabErrorCode.InsufficientFunds) HUDManager.Instance.InsufficientFunds_VC();
             OnPlayFabError(error);
 
         });

@@ -8,8 +8,7 @@ public class MenuSkinController : MonoBehaviour
     [SerializeField] RuntimeAnimatorController controller;
     [SerializeField] Avatar avatar;
 
-    GameObject activeSkin;
-    GameObject showcasedSkin;
+    public GameObject activeSkin;
 
 
     // Start is called before the first frame update
@@ -66,7 +65,7 @@ public class MenuSkinController : MonoBehaviour
         {
             activeSkin = Instantiate(Resources.Load("Skins/" + name) as GameObject, transform);
         }
-
+        activeSkin.name = name;
         activeSkin.AddComponent<Animator>();
         activeSkin.GetComponent<Animator>().runtimeAnimatorController = controller;
         activeSkin.GetComponent<Animator>().avatar = avatar;

@@ -304,25 +304,60 @@ public class HUDManager : MonoBehaviourPunCallbacks
 
         if (buyWithCoin)
         {
-            buyWithCoinButton.gameObject.transform.parent.Find("Buy").gameObject.SetActive(!isOwned);
-            buyWithCoinButton.gameObject.transform.parent.Find("Select").gameObject.SetActive(isOwned);
+            buyWithCoinButton.transform.Find("Buy").gameObject.SetActive(!isOwned);
+            buyWithCoinButton.transform.Find("Select").gameObject.SetActive(isOwned);
 
-            buyWithCoinButton.gameObject.transform.parent.Find("Buy/CostText").GetComponent<Text>().text = PlayFabDataStore.gameSkinCatalog[name].cost.ToString();
+            buyWithCoinButton.transform.Find("Buy/CostText").GetComponent<Text>().text = PlayFabDataStore.gameSkinCatalog[name].cost.ToString();
+
+            buyWithCoinButton.onClick.RemoveAllListeners();
+            if(isOwned) buyWithCoinButton.onClick.AddListener(MakeSkinActive);
+            else buyWithCoinButton.onClick.AddListener(BuySkin);
+
+
         }
         else
         {
-            buyWithGemButton.gameObject.transform.parent.Find("Buy").gameObject.SetActive(!isOwned);
-            buyWithGemButton.gameObject.transform.parent.Find("Select").gameObject.SetActive(isOwned);
+            buyWithGemButton.transform.Find("Buy").gameObject.SetActive(!isOwned);
+            buyWithGemButton.transform.Find("Select").gameObject.SetActive(isOwned);
 
-            buyWithGemButton.gameObject.transform.parent.Find("Buy/CostText").GetComponent<Text>().text = PlayFabDataStore.gameSkinCatalog[name].cost.ToString();
+            buyWithGemButton.transform.Find("Buy/CostText").GetComponent<Text>().text = PlayFabDataStore.gameSkinCatalog[name].cost.ToString();
+
+            buyWithGemButton.onClick.RemoveAllListeners();
+            if (isOwned) buyWithGemButton.onClick.AddListener(MakeSkinActive);
+            else buyWithGemButton.onClick.AddListener(BuySkin);
         }
 
         Debug.Log(buyWithCoinButton.gameObject.name);
-        buyWithCoinButton.transform.parent.gameObject.SetActive(buyWithCoin);
-        buyWithGemButton.transform.parent.gameObject.SetActive(!buyWithCoin);
+        buyWithCoinButton.gameObject.SetActive(buyWithCoin);
+        buyWithGemButton.gameObject.SetActive(!buyWithCoin);
+
 
         
 
+    }
+
+    public void MakeSkinActive()
+    {
+        PlayFabDataStore.playerActiveSkin = MenuSkinController.instance.activeSkin.name;
+        PlayFabDataStore.playerProfile.skinName = MenuSkinController.instance.activeSkin.name;
+        //Update on playfab
+
+        buyWithCoinButton.interactable = false;
+        buyWithGemButton.interactable = false;
+
+
+    }
+
+    public void BuySkin()
+    {
+        Debug.Log(MenuSkinController.instance.activeSkin.name);
+        PlayFabApiCalls.instance.PurchaseItem(PlayFabDataStore.gameSkinCatalog[MenuSkinController.instance.activeSkin.name].itemID, PlayFabDataStore.gameSkinCatalog[MenuSkinController.instance.activeSkin.name].cost,
+            PlayFabDataStore.gameSkinCatalog[MenuSkinController.instance.activeSkin.name].currencyType);
+    }
+
+    public void InsufficientFunds_VC()
+    {
+        ActivatePanels(shopPanel.name);
     }
 
     public void OnPlayerDeath()
