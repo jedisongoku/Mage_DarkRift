@@ -54,8 +54,8 @@ public class HUDManager : MonoBehaviourPunCallbacks
     [SerializeField] private Text skinEnergyCurrencyText;
 
     [Header("Game Panel")]
-    [SerializeField] private VariableJoystick movementJoystick;
-    [SerializeField] private VariableJoystick aimJoystick;
+    [SerializeField] private DynamicJoystick movementJoystick;
+    [SerializeField] private FloatingJoystick aimJoystick;
     [SerializeField] public GameObject[] playerUIList;
     [SerializeField] public GameObject[] killFeed;
     public GameObject[] scoreboardItems;
@@ -209,14 +209,14 @@ public class HUDManager : MonoBehaviourPunCallbacks
 
     #region Public Calls
 
-    public VariableJoystick MovementJoystick
+    public DynamicJoystick MovementJoystick
     {
         get
         {
             return movementJoystick;
         }
     }
-    public VariableJoystick AimJoystick
+    public FloatingJoystick AimJoystick
     {
         get
         {

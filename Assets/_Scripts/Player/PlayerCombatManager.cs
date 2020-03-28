@@ -10,7 +10,7 @@ public class PlayerCombatManager : MonoBehaviourPun
 {
     [SerializeField] private PlayerMovementController playerMovementController;
     [SerializeField] private PlayerHealthManager playerHealthManager;
-    private VariableJoystick aimJoystick;
+    private FloatingJoystick aimJoystick;
   
     Animator m_Animator;
     bool isDead = false;
@@ -58,7 +58,7 @@ public class PlayerCombatManager : MonoBehaviourPun
     private Shader standardShader;
     private Shader transparentShader;
     private bool isTransparent { get; set; }
-    private bool isInvisible { get; set; }
+    public bool isInvisible { get; set; }
     public bool canBeSeen { get; set; }
     private int bushCount { get; set; }
 
@@ -71,6 +71,8 @@ public class PlayerCombatManager : MonoBehaviourPun
 
     bool leftFirstTouch = false;
     bool rightFirstTouch = false;
+
+    GameObject closestEnemy;
 
 
 
@@ -92,6 +94,7 @@ public class PlayerCombatManager : MonoBehaviourPun
             //playerMovementController.enabled = true;
             aimJoystick = HUDManager.Instance.AimJoystick;
             GameObject.Find("VirtualCamera").GetComponent<CinemachineVirtualCamera>().Follow = this.transform;
+            //GetComponent<CapsuleCollider>().radius = 0.75f;
             
 
 
@@ -156,7 +159,7 @@ public class PlayerCombatManager : MonoBehaviourPun
                             }
                             else
                             {
-                                GameObject closestEnemy = ClosestEnemy();
+                                closestEnemy = ClosestEnemy(closestEnemy);
                                 if (closestEnemy != null)
                                 {
                                     PrimarySkill(closestEnemy.transform.position);
@@ -211,7 +214,7 @@ public class PlayerCombatManager : MonoBehaviourPun
                             }
                             else
                             {
-                                GameObject closestEnemy = ClosestEnemy();
+                                closestEnemy = ClosestEnemy(closestEnemy);
                                 if (closestEnemy != null)
                                 {
                                     PrimarySkill(closestEnemy.transform.position);
@@ -236,15 +239,20 @@ public class PlayerCombatManager : MonoBehaviourPun
             
             if(Input.GetButtonDown("Fire1") && !Application.isMobilePlatform)
             {
-                GameObject closestEnemy = ClosestEnemy();
-                if (closestEnemy != null)
+                if (primarySkillCooldownTimer >= primarySkillCooldown && primarySkillCharge > 0)
                 {
-                    PrimarySkill(closestEnemy.transform.position);
+                    closestEnemy = ClosestEnemy(closestEnemy);
+                    if (closestEnemy != null)
+                    {
+                        
+                        PrimarySkill(closestEnemy.transform.position);
+                    }
+                    else
+                    {
+                        PrimarySkill(transform.position + transform.forward);
+                    }
                 }
-                else
-                {
-                    PrimarySkill(transform.position + transform.forward);
-                }
+                
             }
             if(Input.GetButtonDown("Dash"))
             {
@@ -254,13 +262,27 @@ public class PlayerCombatManager : MonoBehaviourPun
         }     
     }
 
-    GameObject ClosestEnemy()
+    GameObject ClosestEnemy(GameObject targetEnemy)
     {
         GameObject closestEnemy = null;
         float distance = 15;
+        
+        if (targetEnemy != null)
+        {
+            Debug.Log("is dead " + targetEnemy.GetComponent<PlayerCombatManager>().IsDead);
+            Debug.Log("is invisible " + targetEnemy.GetComponent<PlayerCombatManager>().isInvisible);
+            Debug.Log("in range of " + (targetEnemy.transform.position - transform.position).magnitude);
+            if (!targetEnemy.GetComponent<PlayerCombatManager>().IsDead && !targetEnemy.GetComponent<PlayerCombatManager>().isInvisible && distance > (targetEnemy.transform.position - transform.position).magnitude)
+            {
+                Debug.Log("Attack same enemy");
+                return targetEnemy;
+            }
+        }
+        Debug.Log("Attack different enemy");
+
         foreach (var enemy in PhotonNetwork.PhotonViews)
         {
-            if (enemy.ViewID != photonView.ViewID && !enemy.GetComponent<PlayerCombatManager>().IsDead && LineOfSight(enemy.gameObject))
+            if (enemy.ViewID != photonView.ViewID && !enemy.GetComponent<PlayerCombatManager>().IsDead && LineOfSight(enemy.gameObject) && !enemy.GetComponent<PlayerCombatManager>().isInvisible)
             {
                 if (distance > (enemy.gameObject.transform.position - transform.position).magnitude)
                 {
@@ -268,7 +290,6 @@ public class PlayerCombatManager : MonoBehaviourPun
                     closestEnemy = enemy.gameObject;
                 }
             }
-
         }
         return closestEnemy;
     }
@@ -290,7 +311,7 @@ public class PlayerCombatManager : MonoBehaviourPun
     bool LineOfSight(GameObject enemy)
     {
         RaycastHit hit;
-        var rayDirection = enemy.transform.position - transform.position;
+        var rayDirection = (enemy.transform.position + transform.up) - (transform.position + transform.up);
         if (Physics.Raycast(transform.position + transform.up, rayDirection, out hit))
         {
             if (hit.transform.gameObject.layer == 8)
@@ -411,10 +432,12 @@ public class PlayerCombatManager : MonoBehaviourPun
         obj.SetActive(true);
 
         PrimarySkillController controller = obj.GetComponent<PrimarySkillController>();
+
         //Where stats applied to the particle object
-        controller.SetParticleMoveDirection = new Vector3(direction.x, 0, direction.z);
         controller.DamageOrigin = this.gameObject;
         controller.PlayerViewID = photonView.ViewID;
+        //controller.SetParticleDestination = aimLocation;
+        controller.SetParticleMoveDirection = new Vector3(direction.x, 0, direction.z);
         controller.Traveling = true;
     }
 

@@ -11,6 +11,7 @@ public class PrimarySkillController : MonoBehaviour
     private bool isTraveling = false;
     private Vector3 impactNormal;
     private Vector3 particleMoveDirection = Vector3.zero;
+    private Vector3 particleDestination = Vector3.zero;
     private float damageDone = 0;
     private float destroyTimer = 0f;
     private bool isHit = false;
@@ -104,6 +105,7 @@ public class PrimarySkillController : MonoBehaviour
         {
             particleMoveDirection = value;
             StartCoroutine(ParticleTravel());
+            Traveling = true;
 
         }
     }
@@ -172,17 +174,7 @@ public class PrimarySkillController : MonoBehaviour
             {
                 if (other.gameObject.GetComponent<PhotonView>().ViewID != PlayerViewID)
                 {
-
-                    //if (isRage) damageDone += damageDone * PlayFabDataStore.playerBaseStats.RageDamageRate;
-                    //other.gameObject.GetComponent<PlayerHealthManager>().DamageTaken = damageDone;
-
-                    //if (other.gameObject.GetComponent<PlayerHealthManager>().CanTakeDamage()) ApplyDamage(other.gameObject);
                     if (other.gameObject.GetComponent<PlayerHealthManager>().CanTakeDamage()) DamageOrigin.GetComponent<PlayerCombatManager>().ApplyDamageToEnemy(other.gameObject);
-                    /*
-                    other.gameObject.GetComponent<PlayerHealthManager>().DamageOrigin = playerViewId;
-                    other.gameObject.GetComponent<PlayerHealthManager>().TakeDamage(damageDone);
-                    if (isFrostbite) other.gameObject.GetComponent<PlayerHealthManager>().StartFrostbite(playerViewId);
-                    if (isChill) other.gameObject.GetComponent<PlayerMovementController>().StartChill(PlayFabDataStore.playerBaseStats.ChillDuration);*/
 
                     isPlayer = true;
                     Destroy(other.gameObject);
@@ -196,11 +188,11 @@ public class PrimarySkillController : MonoBehaviour
         }  
         
     }
-
+    /*
     void ApplyDamage(GameObject _enemy)
     {
         _enemy.GetComponent<PlayerHealthManager>().OnPlayerHit(playerViewId, damageDone, isFrostbite, isChill, isFrostNova, isRage);
-    }
+    }*/
 
     private void Destroy(GameObject other)
     {

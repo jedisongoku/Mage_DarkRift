@@ -6,7 +6,7 @@ public class PlayerMovementController : MonoBehaviourPun, IPunObservable
 {
     [SerializeField] private float turnSpeed = 20f;
     [SerializeField] private float walkSpeed = 1f;
-    private VariableJoystick joystick;
+    private DynamicJoystick joystick;
 
     Animator m_Animator;
     Rigidbody m_Rigidbody;
