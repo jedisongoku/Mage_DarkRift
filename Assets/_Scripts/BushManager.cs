@@ -16,23 +16,25 @@ public class BushManager : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.layer == 8 )
+        if (other.gameObject.layer == 17 )
         {
+            other.transform.parent.gameObject.GetComponent<PlayerCombatManager>().isInBush = true;
+
             if(!players.ContainsKey(bushGroupId))
             {
                 var temp = new Dictionary<int, int>();
-                temp.Add(other.gameObject.GetComponent<PhotonView>().ViewID, 0);
+                temp.Add(other.transform.parent.gameObject.GetComponent<PhotonView>().ViewID, 0);
                 players.Add(bushGroupId, temp);
             }
             else
             {
-                if (!players[bushGroupId].ContainsKey(other.gameObject.GetComponent<PhotonView>().ViewID))
+                if (!players[bushGroupId].ContainsKey(other.transform.parent.gameObject.GetComponent<PhotonView>().ViewID))
                 {
-                    players[bushGroupId].Add(other.gameObject.GetComponent<PhotonView>().ViewID, 0);
+                    players[bushGroupId].Add(other.transform.parent.gameObject.GetComponent<PhotonView>().ViewID, 0);
                 }
                 else
                 {
-                    players[bushGroupId][other.gameObject.GetComponent<PhotonView>().ViewID]++;
+                    players[bushGroupId][other.transform.parent.gameObject.GetComponent<PhotonView>().ViewID]++;
                 }
             }
         }
@@ -40,29 +42,29 @@ public class BushManager : MonoBehaviour
 
     private void OnTriggerStay(Collider other)
     {
-        if (other.gameObject.layer == 8 && players[bushGroupId].Count > 1)
+        if (other.gameObject.layer == 17 && players[bushGroupId].Count > 1)
         {   
-            other.GetComponent<PlayerCombatManager>().canBeSeen = true;
+            other.transform.parent.gameObject.GetComponent<PlayerCombatManager>().canBeSeen = true;
         }
-        else if(other.gameObject.layer == 8 && players[bushGroupId].Count <= 1)
+        else if(other.gameObject.layer == 17 && players[bushGroupId].Count <= 1)
         {
-            other.GetComponent<PlayerCombatManager>().canBeSeen = false;
+            other.transform.parent.gameObject.GetComponent<PlayerCombatManager>().canBeSeen = false;
         }
     }
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.gameObject.layer == 8)
+        if (other.gameObject.layer == 17)
         {
-            if(players.ContainsKey(bushGroupId))
+            if (players.ContainsKey(bushGroupId))
             {
-                if (players[bushGroupId].ContainsKey(other.gameObject.GetComponent<PhotonView>().ViewID) && players[bushGroupId][other.gameObject.GetComponent<PhotonView>().ViewID] == 0)
+                if (players[bushGroupId].ContainsKey(other.transform.parent.gameObject.GetComponent<PhotonView>().ViewID) && players[bushGroupId][other.transform.parent.gameObject.GetComponent<PhotonView>().ViewID] == 0)
                 {
-                    players[bushGroupId].Remove(other.gameObject.GetComponent<PhotonView>().ViewID);
+                    players[bushGroupId].Remove(other.transform.parent.gameObject.GetComponent<PhotonView>().ViewID);
                 }
-                else if (players[bushGroupId].ContainsKey(other.gameObject.GetComponent<PhotonView>().ViewID) && players[bushGroupId][other.gameObject.GetComponent<PhotonView>().ViewID] > 0)
+                else if (players[bushGroupId].ContainsKey(other.transform.parent.gameObject.GetComponent<PhotonView>().ViewID) && players[bushGroupId][other.transform.parent.gameObject.GetComponent<PhotonView>().ViewID] > 0)
                 {
-                    players[bushGroupId][other.gameObject.GetComponent<PhotonView>().ViewID]--;
+                    players[bushGroupId][other.transform.parent.gameObject.GetComponent<PhotonView>().ViewID]--;
                 }
             }
             

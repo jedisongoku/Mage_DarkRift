@@ -31,6 +31,13 @@ public class PlayFabLoginManager : MonoBehaviour
 
     void Start()
     {
+        Social.localUser.Authenticate(success => {
+            if (success)
+                Debug.Log("Social success");
+            else
+                Debug.Log("Failed to social authenticate");
+        });
+
         LoginPlayFab();
     }
 
@@ -60,6 +67,8 @@ public class PlayFabLoginManager : MonoBehaviour
         if (PlayFabApiCalls.isNewUser)
         {
             PlayFabApiCalls.instance.CreateNewProfile();
+            if(Social.localUser.authenticated) PlayFabApiCalls.instance.LinkGameCenter();
+
         }
         else
         {

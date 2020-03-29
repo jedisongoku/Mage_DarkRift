@@ -10,6 +10,7 @@ public class PlayerCombatManager : MonoBehaviourPun
 {
     [SerializeField] private PlayerMovementController playerMovementController;
     [SerializeField] private PlayerHealthManager playerHealthManager;
+    [SerializeField] private CapsuleCollider playerDamageCollider;
     private FloatingJoystick aimJoystick;
   
     Animator m_Animator;
@@ -61,6 +62,8 @@ public class PlayerCombatManager : MonoBehaviourPun
     public bool isInvisible { get; set; }
     public bool canBeSeen { get; set; }
     private int bushCount { get; set; }
+
+    public bool isInBush { get; set; }
 
 
     [Header("Runes")]
@@ -256,7 +259,7 @@ public class PlayerCombatManager : MonoBehaviourPun
             }
             if(Input.GetButtonDown("Dash"))
             {
-                Debug.Log("DASHING");
+                //Debug.Log("DASHING");
                 SecondarySkill();
             }
         }     
@@ -269,20 +272,18 @@ public class PlayerCombatManager : MonoBehaviourPun
         
         if (targetEnemy != null)
         {
-            Debug.Log("is dead " + targetEnemy.GetComponent<PlayerCombatManager>().IsDead);
-            Debug.Log("is invisible " + targetEnemy.GetComponent<PlayerCombatManager>().isInvisible);
-            Debug.Log("in range of " + (targetEnemy.transform.position - transform.position).magnitude);
-            if (!targetEnemy.GetComponent<PlayerCombatManager>().IsDead && !targetEnemy.GetComponent<PlayerCombatManager>().isInvisible && distance > (targetEnemy.transform.position - transform.position).magnitude)
+            if (!targetEnemy.GetComponent<PlayerCombatManager>().IsDead && targetEnemy.GetComponent<PlayerCombatManager>().canBeSeen && distance > (targetEnemy.transform.position - transform.position).magnitude)
             {
-                Debug.Log("Attack same enemy");
+                //Debug.Log("Attack same enemy");
                 return targetEnemy;
             }
         }
-        Debug.Log("Attack different enemy");
+        //Debug.Log("Attack different enemy");
 
         foreach (var enemy in PhotonNetwork.PhotonViews)
         {
-            if (enemy.ViewID != photonView.ViewID && !enemy.GetComponent<PlayerCombatManager>().IsDead && LineOfSight(enemy.gameObject) && !enemy.GetComponent<PlayerCombatManager>().isInvisible)
+            if (enemy.ViewID != photonView.ViewID && !enemy.GetComponent<PlayerCombatManager>().IsDead && LineOfSight(enemy.gameObject) &&
+                (enemy.GetComponent<PlayerCombatManager>().canBeSeen || !enemy.GetComponent<PlayerCombatManager>().isInvisible))
             {
                 if (distance > (enemy.gameObject.transform.position - transform.position).magnitude)
                 {
@@ -488,6 +489,7 @@ public class PlayerCombatManager : MonoBehaviourPun
         transform.position = GameManager.Instance.SpawnLocation(_spawnLocationIndex);
         m_Animator.SetTrigger("Respawn");
         GetComponent<CapsuleCollider>().enabled = true;
+        playerDamageCollider.enabled = true;
         playerHealthManager.RespawnPlayer();
         IsDead = false;
         playerMovementController.enabled = true;
@@ -579,6 +581,7 @@ public class PlayerCombatManager : MonoBehaviourPun
 
         m_Animator.SetTrigger("Dead");
         GetComponent<CapsuleCollider>().enabled = false;
+        playerDamageCollider.enabled = false;
     }
 
     public GameObject PrimarySkillSpawnLocation
@@ -766,7 +769,7 @@ public class PlayerCombatManager : MonoBehaviourPun
 
     private void OnTriggerEnter(Collider other)
     {
-        if(photonView.IsMine && other.gameObject.layer == 15)
+        if(photonView.IsMine && other.gameObject.layer == 15 && isInBush)
         {
             bushCount++;
             if (!isTransparent)
@@ -791,12 +794,13 @@ public class PlayerCombatManager : MonoBehaviourPun
                 }
             }
         }
-        else if (other.gameObject.layer == 15)
+        else if (other.gameObject.layer == 15 && isInBush)
         {
             bushCount++;
             if (!isInvisible && !canBeSeen)
             {
                 isInvisible = true;
+                /*
                 foreach (var render in playerModel.GetComponent<MeshRenderersInModel>().MeshRenderers)
                 {
                     render.gameObject.SetActive(false);
@@ -805,7 +809,8 @@ public class PlayerCombatManager : MonoBehaviourPun
                 foreach (var render in playerModel.GetComponent<MeshRenderersInModel>().SkinnedMeshRenderers)
                 {
                     render.gameObject.SetActive(false);
-                }
+                }*/
+                playerModel.SetActive(false);
                 SwitchPlayerElements(false);
             }
         }
@@ -816,6 +821,7 @@ public class PlayerCombatManager : MonoBehaviourPun
     {
         if(!photonView.IsMine && canBeSeen && isInvisible)
         {
+            
             foreach (var render in playerModel.GetComponent<MeshRenderersInModel>().MeshRenderers)
             {
                 if (render.transform.name.Equals("Halo"))
@@ -824,20 +830,22 @@ public class PlayerCombatManager : MonoBehaviourPun
                 }
                 else
                 {
-                    render.gameObject.SetActive(true);
+                    //render.gameObject.SetActive(true);
                     render.material.shader = transparentShader;
                 }
                 
             }
             foreach (var render in playerModel.GetComponent<MeshRenderersInModel>().SkinnedMeshRenderers)
             {
-                render.gameObject.SetActive(true);
+                //render.gameObject.SetActive(true);
                 render.material.shader = transparentShader;
             }
             playerUI.SetActive(true);
+            playerModel.SetActive(true);
         }
         else if(!photonView.IsMine && !canBeSeen && isInvisible)
         {
+            /*
             foreach (var render in playerModel.GetComponent<MeshRenderersInModel>().MeshRenderers)
             {
                 render.gameObject.SetActive(false);
@@ -845,7 +853,8 @@ public class PlayerCombatManager : MonoBehaviourPun
             foreach (var render in playerModel.GetComponent<MeshRenderersInModel>().SkinnedMeshRenderers)
             {
                 render.gameObject.SetActive(false);
-            }
+            }*/
+            playerModel.SetActive(false);
             playerUI.SetActive(false);
         }
     }
@@ -853,12 +862,12 @@ public class PlayerCombatManager : MonoBehaviourPun
     private void OnTriggerExit(Collider other)
     {
         
-        if(photonView.IsMine && other.gameObject.layer == 15)
+        if(photonView.IsMine && other.gameObject.layer == 15 && isInBush)
         {
             bushCount--;
             if (isTransparent && bushCount == 0)
             {
-                playerBase.gameObject.SetActive(true);
+                
                 
                 isTransparent = false;
                 foreach (var render in playerModel.GetComponent<MeshRenderersInModel>().MeshRenderers)
@@ -877,10 +886,14 @@ public class PlayerCombatManager : MonoBehaviourPun
                 {
                     render.material.shader = standardShader;
                 }
-                
+
+                playerBase.gameObject.SetActive(true);
+                isInBush = false;
+
             }
+            
         }
-        else if(other.gameObject.layer == 15)
+        else if(other.gameObject.layer == 15 && isInBush)
         {
             bushCount--;
             if (isInvisible && bushCount == 0)
@@ -890,26 +903,29 @@ public class PlayerCombatManager : MonoBehaviourPun
                     if (render.transform.name.Equals("Halo"))
                     {
                         render.enabled = true;
-                        render.gameObject.SetActive(true);
+                        //render.gameObject.SetActive(true);
                     }
                     else
                     {
-                        render.gameObject.SetActive(true);
+                        //render.gameObject.SetActive(true);
                         render.material.shader = standardShader;
                     }
                     
                 }
                 foreach (var render in playerModel.GetComponent<MeshRenderersInModel>().SkinnedMeshRenderers)
                 {
-                    render.gameObject.SetActive(true);
+                    //render.gameObject.SetActive(true);
                     render.material.shader = standardShader;
                 }
+                playerModel.SetActive(true);
                 isInvisible = false;
                 canBeSeen = false;
                 SwitchPlayerElements(true);
-                
+                isInBush = false;
+
             }
         }
+        
 
 
     }

@@ -37,7 +37,7 @@ public class PlayFabApiCalls : MonoBehaviour
         var request = new LoginWithCustomIDRequest()
         {
             CreateAccount = true,
-            CustomId = Mathf.RoundToInt(Random.Range(1000000, 9999999999)).ToString()
+            CustomId = PlayFabSettings.DeviceUniqueIdentifier
         };
 
         PlayFabClientAPI.LoginWithCustomID(request, (result) =>
@@ -80,6 +80,22 @@ public class PlayFabApiCalls : MonoBehaviour
         //We finally tell Photon to use this authentication parameters throughout the entire application.
         PhotonNetwork.AuthValues = customAuth;
         ApiCallSuccess();
+    }
+
+    public void LinkGameCenter()
+    {
+        var request = new LinkGameCenterAccountRequest()
+        {
+            GameCenterId = Social.localUser.id
+        };
+        PlayFabClientAPI.LinkGameCenterAccount(request, (result) =>
+        {
+            Debug.Log("Game center linked");
+
+        }, (error) =>
+        {
+
+        });
     }
 
 
@@ -201,6 +217,9 @@ public class PlayFabApiCalls : MonoBehaviour
         };
         PlayFabClientAPI.ExecuteCloudScript(request, (result) =>
         {
+            if (currencyCode == "EN") PlayFabDataStore.vc_energy -= currencyAmount;
+            else if (currencyCode == "CO") PlayFabDataStore.vc_coins -= currencyAmount;
+            else if (currencyCode == "GM") PlayFabDataStore.vc_gems -= currencyAmount;
             //Result
         }, (error) =>
         {
@@ -359,6 +378,32 @@ public class PlayFabApiCalls : MonoBehaviour
         {
             //Result
             Debug.Log("Statistics Updated");
+        }, (error) =>
+        {
+            OnPlayFabError(error);
+
+        });
+    }
+
+    public void UpdateProfile()
+    {
+
+        var request = new ExecuteCloudScriptRequest()
+        {
+            FunctionName = "UpdateProfile",
+            FunctionParameter = new { 
+                playerName = PlayFabDataStore.playerProfile.playerName,
+                totalKills = PlayFabDataStore.playerProfile.totalKills,
+                totalDeaths = PlayFabDataStore.playerProfile.totalDeaths,
+                maxLevelReached = PlayFabDataStore.playerProfile.maxLevelReached,
+                skinName = PlayFabDataStore.playerProfile.skinName
+                }
+
+    };
+        PlayFabClientAPI.ExecuteCloudScript(request, (result) =>
+        {
+            //Result
+            Debug.Log("Profile Updated");
         }, (error) =>
         {
             OnPlayFabError(error);

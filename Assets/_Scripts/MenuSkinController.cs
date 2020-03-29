@@ -15,13 +15,13 @@ public class MenuSkinController : MonoBehaviour
     void Start()
     {
         instance = this;
-        SwitchSkin();
+        //SwitchSkin();
     }
 
     private void OnEnable()
     {
-        
 
+        SwitchSkin();
     }
 
     public void SwitchSkin()

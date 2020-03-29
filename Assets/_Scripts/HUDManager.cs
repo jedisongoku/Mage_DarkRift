@@ -121,7 +121,7 @@ public class HUDManager : MonoBehaviourPunCallbacks
             switch (PhotonNetwork.NetworkClientState)
             {
                 case ClientState.ConnectingToMasterServer:
-                    launchLoadingText.text = "Connecting to server";
+                    launchLoadingText.text = "Downloading Content";
                     break;
                 case ClientState.ConnectedToMasterServer:
                     launchLoadingBar.fillAmount += 0.3f;
@@ -354,6 +354,7 @@ public class HUDManager : MonoBehaviourPunCallbacks
         PlayFabDataStore.playerActiveSkin = MenuSkinController.instance.activeSkin.name;
         PlayFabDataStore.playerProfile.skinName = MenuSkinController.instance.activeSkin.name;
         //Update on playfab
+        PlayFabApiCalls.instance.UpdateProfile();
 
         buyWithCoinButton.interactable = false;
         buyWithGemButton.interactable = false;
@@ -396,7 +397,8 @@ public class HUDManager : MonoBehaviourPunCallbacks
     }
     public void OnRespawnButtonClicked()
     {
-        if(PlayFabDataStore.vc_energy >= 5)
+        Debug.Log("Energy " + PlayFabDataStore.vc_energy);
+        if (PlayFabDataStore.vc_energy >= 5)
         {
             if (GameManager.Instance.CanRespawn)
             {
@@ -413,6 +415,8 @@ public class HUDManager : MonoBehaviourPunCallbacks
         else
         {
             //ask user to refill
+            Debug.Log("Watch ads");
+            UnityAds.instance.RefillEnergyAd();
         }
         
 

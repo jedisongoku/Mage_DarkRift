@@ -168,16 +168,18 @@ public class PrimarySkillController : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        //Debug.Log("Collided with :" + other.gameObject.name);
         if(isTraveling)
         {
-            if (other.gameObject.layer == 8 && other.gameObject.GetComponent<PhotonView>() != null)
+            if (other.gameObject.layer == 16 && other.transform.parent.gameObject.GetComponent<PhotonView>() != null)
             {
-                if (other.gameObject.GetComponent<PhotonView>().ViewID != PlayerViewID)
+                Debug.Log("Collided with :" + other.gameObject.name);
+                if (other.transform.parent.gameObject.GetComponent<PhotonView>().ViewID != PlayerViewID)
                 {
-                    if (other.gameObject.GetComponent<PlayerHealthManager>().CanTakeDamage()) DamageOrigin.GetComponent<PlayerCombatManager>().ApplyDamageToEnemy(other.gameObject);
+                    if (other.transform.parent.gameObject.GetComponent<PlayerHealthManager>().CanTakeDamage()) DamageOrigin.GetComponent<PlayerCombatManager>().ApplyDamageToEnemy(other.transform.parent.gameObject);
 
                     isPlayer = true;
-                    Destroy(other.gameObject);
+                    Destroy(other.transform.parent.gameObject);
                 }
             }
             else if (other.gameObject.layer == 11)

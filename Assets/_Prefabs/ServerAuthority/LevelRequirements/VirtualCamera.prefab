@@ -69,8 +69,8 @@ MonoBehaviour:
   m_DeadZoneHeight: 0.15
   m_DeadZoneDepth: 0
   m_UnlimitedSoftZone: 0
-  m_SoftZoneWidth: 1
-  m_SoftZoneHeight: 0.8
+  m_SoftZoneWidth: 1.1
+  m_SoftZoneHeight: 1.1
   m_BiasX: 0
   m_BiasY: 0
   m_CenterOnActivate: 1
@@ -139,7 +139,7 @@ MonoBehaviour:
   m_LookAt: {fileID: 0}
   m_Follow: {fileID: 0}
   m_Lens:
-    FieldOfView: 7
+    FieldOfView: 6
     OrthographicSize: 8
     NearClipPlane: 0.3
     FarClipPlane: 500
@@ -165,3 +165,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 006a08f352b127141842feb9ebb93cc2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  left: -27
+  right: 27
+  top: 28
+  bottom: -26

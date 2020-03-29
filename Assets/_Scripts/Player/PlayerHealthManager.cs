@@ -103,7 +103,7 @@ public class PlayerHealthManager : MonoBehaviourPun
         yield return new WaitForSeconds(1f);
         if (playerhealth < playerMaxHealth)
         {
-            if(CanHeal)
+            if(CanHeal && !isFrostbite)
             {
                 playerhealth += playerMaxHealth * healthGenerationRate;
                 if (playerhealth > playerMaxHealth)
