@@ -201,7 +201,7 @@ public class HUDManager : MonoBehaviourPunCallbacks
         {
             PlayFabApiCalls.instance.SubtractVirtualCurrency(5, "GM");
             PlayFabApiCalls.instance.AddVirtualCurrency(50 - PlayFabDataStore.vc_energy, "EN");
-
+            
         }
     }
 
@@ -402,9 +402,10 @@ public class HUDManager : MonoBehaviourPunCallbacks
             {
                 //OnGameLevelLoaded(); 
                 GameManager.Instance.RespawnPlayer();
+                playerControllerPanel.SetActive(true);
             }
             isRespawnRequested = true;
-            playerControllerPanel.SetActive(true);
+            //playerControllerPanel.SetActive(true);
             deathPanel.SetActive(false);
 
             PlayFabApiCalls.instance.SubtractVirtualCurrency(5, "EN");

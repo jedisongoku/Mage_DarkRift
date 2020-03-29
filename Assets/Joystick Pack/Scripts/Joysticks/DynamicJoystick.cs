@@ -7,6 +7,10 @@ public class DynamicJoystick : Joystick
 {
     public float MoveThreshold { get { return moveThreshold; } set { moveThreshold = Mathf.Abs(value); } }
 
+    public int pointerId;
+    bool isTouched;
+    bool isFirstMultiTouch = true;
+
     [SerializeField] private float moveThreshold = 1;
 
     private Vector2 fixedPosition = Vector2.zero;
@@ -24,6 +28,8 @@ public class DynamicJoystick : Joystick
         background.anchoredPosition = ScreenPointToAnchoredPosition(eventData.position);
         background.gameObject.SetActive(true);
         base.OnPointerDown(eventData);
+
+
     }
 
     public override void OnPointerUp(PointerEventData eventData)
@@ -32,12 +38,17 @@ public class DynamicJoystick : Joystick
 
         //background.gameObject.SetActive(false);
         base.OnPointerUp(eventData);
+
+
+
+
     }
 
     protected override void HandleInput(float magnitude, Vector2 normalised, Vector2 radius, Camera cam)
     {
         if (magnitude > moveThreshold)
         {
+            
             Vector2 difference = normalised * (magnitude - moveThreshold) * radius;
             background.anchoredPosition += difference;
         }

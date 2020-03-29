@@ -7,6 +7,9 @@ public class FloatingJoystick : Joystick
 {
 
     private Vector2 fixedPosition = Vector2.zero;
+    public int pointerId;
+    bool isTouched;
+    bool isFirstMultiTouch = true;
 
     protected override void Start()
     {
@@ -23,6 +26,8 @@ public class FloatingJoystick : Joystick
         GameManager.Instance.GetCurrentPlayer.GetComponent<PlayerCombatManager>().canShoot = true;
 
         base.OnPointerDown(eventData);
+            
+
     }
 
     public override void OnPointerUp(PointerEventData eventData)
@@ -31,5 +36,6 @@ public class FloatingJoystick : Joystick
 
         //background.gameObject.SetActive(false);
         base.OnPointerUp(eventData);
+
     }
 }

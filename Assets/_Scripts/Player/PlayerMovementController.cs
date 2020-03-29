@@ -166,8 +166,11 @@ public class PlayerMovementController : MonoBehaviourPun, IPunObservable
         int anim_y = movement.y < 0 ? -1 : movement.y > 0 ? 1 : 0;
         m_Animator.SetFloat("Horizontal", anim_x);
         m_Animator.SetFloat("Vertical", anim_y);
-        
 
+        if(GetComponent<PlayerCombatManager>().IsDead)
+        {
+            m_Rigidbody.velocity = Vector3.zero;
+        }
     }
 
     void OnAnimatorMove()

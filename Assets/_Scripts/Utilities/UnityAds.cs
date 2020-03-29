@@ -25,6 +25,7 @@ public class UnityAds : MonoBehaviour, IUnityAdsListener
     // Implement a function for showing a rewarded video ad:
     public void RefillEnergyAd()
     {
+        Photon.Pun.PhotonNetwork.KeepAliveInBackground = 60;
         myPlacementId = "RefillEnergy";
         Advertisement.Show(myPlacementId);
     }
@@ -32,7 +33,7 @@ public class UnityAds : MonoBehaviour, IUnityAdsListener
     // Implement IUnityAdsListener interface methods:
     public void OnUnityAdsReady(string placementId)
     {
-
+        
     }
 
     public void OnUnityAdsDidFinish(string placementId, ShowResult showResult)
@@ -52,6 +53,8 @@ public class UnityAds : MonoBehaviour, IUnityAdsListener
         {
             Debug.LogWarning("the ad did not finish");
         }
+
+        Photon.Pun.PhotonNetwork.KeepAliveInBackground = 0;
     }
 
     public void OnUnityAdsDidError(string message)
