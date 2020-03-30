@@ -105,7 +105,10 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
         roomOptions.CustomRoomPropertiesForLobby = lobbyProperties;
         string roomName = PlayFabDataStore.gameMode + Random.Range(1000, 10000);
         roomOptions.CustomRoomProperties = roomPropterties;
-        roomOptions.MaxPlayers = 8;
+        if(PlayFabDataStore.gameMode == "Deathmatch") roomOptions.MaxPlayers = 8;
+        else roomOptions.MaxPlayers = 2;
+
+
 
         PhotonNetwork.CreateRoom(roomName, roomOptions);
 
@@ -162,7 +165,10 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
     public override void OnLeftRoom()
     {
         Debug.Log("Left Room");
+#if (!UNITY_EDITOR)
         SceneManager.LoadScene(0);
+#endif
+
     }
 
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)

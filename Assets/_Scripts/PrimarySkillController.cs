@@ -147,6 +147,10 @@ public class PrimarySkillController : MonoBehaviour
             travelDistance = (transform.position - initialPosition).magnitude;
             if(travelDistance >= maxTravelDistance)
             {
+                GameObject obj;
+                obj = ObjectPooler.Instance.GetPrimarySkillEnvironmentExplosionPrefab();
+                obj.transform.position = transform.position;
+                obj.SetActive(true);
 
                 gameObject.SetActive(false);
             }
@@ -201,11 +205,11 @@ public class PrimarySkillController : MonoBehaviour
         GameObject obj;
         if (!isPlayer)
         {
+            Debug.Log("Not hittin anyhting");
             obj = ObjectPooler.Instance.GetPrimarySkillEnvironmentExplosionPrefab();
             obj.transform.position = transform.position;
             obj.SetActive(true);
         }
-        
         
         isHit = true;
         Invoke("DelayDisable", 0.25f);

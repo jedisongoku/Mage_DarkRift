@@ -9527,8 +9527,9 @@ GameObject:
   - component: {fileID: 4305032805325639226}
   - component: {fileID: 4305032805304796310}
   - component: {fileID: 4305032805299580940}
+  - component: {fileID: -3190148012369844418}
   m_Layer: 0
-  m_Name: BulletExplosionBlue
+  m_Name: EnvironmentExplosionBlue
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -14375,3 +14376,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   randomPercent: 20
+--- !u!114 &-3190148012369844418
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4305032805309941986}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d8cd4fdc8973c3748b3e60f0a82bbf05, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  explosionDestroyTime: 1.5

@@ -64,7 +64,7 @@ public class GameManager : MonoBehaviour
             if (playerPrefab != null)
             {
                 int spawnLocationIndex;
-                if (PhotonNetwork.LocalPlayer.ActorNumber <= 8)
+                if (PhotonNetwork.LocalPlayer.ActorNumber <= PhotonNetwork.CurrentRoom.MaxPlayers)
                 {
                     spawnLocationIndex = PhotonNetwork.LocalPlayer.ActorNumber - 1;
                 }
@@ -76,7 +76,8 @@ public class GameManager : MonoBehaviour
                 currentPlayer = PhotonNetwork.Instantiate(playerPrefab.name, spawnLocations[spawnLocationIndex].transform.position, Quaternion.identity);
 
                 currentPlayerViewID = currentPlayer.GetComponent<PhotonView>().ViewID;
-                PlayerRuneManager.Instance.Initialize();
+                if(PlayFabDataStore.gameMode == "Deathmatch")
+                    PlayerRuneManager.Instance.Initialize();
             }
             else
             {
@@ -105,7 +106,7 @@ public class GameManager : MonoBehaviour
     {
         get
         {
-            return Random.Range(0, 8);
+            return Random.Range(0, PhotonNetwork.CurrentRoom.MaxPlayers);
         }
     }
 

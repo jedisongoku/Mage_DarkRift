@@ -257,8 +257,10 @@ public class HUDManager : MonoBehaviourPunCallbacks
     }
 
     public void OnPlayGameButtonClicked()
-    {     
-        if(PlayFabDataStore.vc_energy >= 5)
+    {
+        PlayFabDataStore.gameMode = "Deathmatch";
+
+        if (PlayFabDataStore.vc_energy >= 5)
         {
             ExitGames.Client.Photon.Hashtable roomPropterties = new ExitGames.Client.Photon.Hashtable();
             roomPropterties.Add("Level", gameMode);
@@ -372,6 +374,18 @@ public class HUDManager : MonoBehaviourPunCallbacks
     public void InsufficientFunds_VC()
     {
         ActivatePanels(shopPanel.name);
+    }
+
+    public void On1v1Clicked()
+    {
+        PlayFabDataStore.gameMode = "Duel";
+
+        ExitGames.Client.Photon.Hashtable roomPropterties = new ExitGames.Client.Photon.Hashtable();
+        roomPropterties.Add("Level", PlayFabDataStore.gameMode);
+        PhotonNetwork.JoinRandomRoom(roomPropterties, 0);
+        loadingBar.fillAmount = 0;
+        ActivatePanels(loadingPanel.name);
+        StartCoroutine(GameSceneLoading());
     }
 
     public void OnPlayerDeath()
