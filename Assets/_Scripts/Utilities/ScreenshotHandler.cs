@@ -18,7 +18,7 @@ public class ScreenshotHandler : MonoBehaviour
     {
         if(Input.GetKeyDown(KeyCode.K))
         {
-            TakeScreenshot(256 , 256);
+            TakeScreenshot(1024 , 1024);
         }
 
         if (Input.GetKeyDown(KeyCode.I))
@@ -50,7 +50,7 @@ public class ScreenshotHandler : MonoBehaviour
             renderResult.ReadPixels(rect, 0, 0);
 
             byte[] byteArray = renderResult.EncodeToPNG();
-            System.IO.File.WriteAllBytes(Application.dataPath + "/_Textures/SkinTextures/" + MenuSkinController.instance.GetSkin().name + ".png", byteArray);
+            System.IO.File.WriteAllBytes(Application.dataPath + "/_Textures/SkinTextures/" + MenuSkinController.instance.GetSkin().name + "_loading.png", byteArray);
             Debug.Log("Saved " + MenuSkinController.instance.GetSkin().name);
 
             RenderTexture.ReleaseTemporary(renderTexture);
