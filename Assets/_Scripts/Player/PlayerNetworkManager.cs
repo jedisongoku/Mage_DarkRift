@@ -46,11 +46,14 @@ public class PlayerNetworkManager : MonoBehaviourPunCallbacks
 
     public override void OnPlayerEnteredRoom(Player newPlayer)
     {
-        photonView.RPC("SelectSkin", newPlayer, PlayFabDataStore.playerActiveSkin, GetComponent<PlayerCombatManager>().IsDead);
-        photonView.RPC("StartCartAnimation", newPlayer, CartController.instance.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsName("Forward"), 
-            CartController.instance.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).normalizedTime, CartController.instance.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).length,
-            PhotonNetwork.ServerTimestamp);
-        //GetComponent<PlayerHealthManager>().InformNewUser(newPlayer);
+        if(photonView.IsMine)
+        {
+            photonView.RPC("SelectSkin", newPlayer, PlayFabDataStore.playerActiveSkin, GetComponent<PlayerCombatManager>().IsDead);
+            photonView.RPC("StartCartAnimation", newPlayer, CartController.instance.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsName("Forward"),
+                CartController.instance.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).normalizedTime, CartController.instance.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).length,
+                PhotonNetwork.ServerTimestamp);
+        }
+
 
     }
 
