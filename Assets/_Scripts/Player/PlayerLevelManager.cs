@@ -22,8 +22,7 @@ public class PlayerLevelManager : MonoBehaviourPunCallbacks
 
     void Start()
     {
-        if (PlayFabDataStore.gameMode == "Deathmatch") this.enabled = false;
-            if (photonView.IsMine) levelStar.SetActive(false);   
+        if (photonView.IsMine) levelStar.SetActive(false);   
     }
     void OnEnable()
     {
