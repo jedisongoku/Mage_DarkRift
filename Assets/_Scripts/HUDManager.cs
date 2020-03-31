@@ -197,7 +197,7 @@ public class HUDManager : MonoBehaviourPunCallbacks
 
     public void RefillEnergyWithGems()
     {
-        if(PlayFabDataStore.vc_gems >= 5)
+        if(PlayFabDataStore.vc_gems >= 5 && PlayFabDataStore.vc_energy < 50)
         {
             PlayFabApiCalls.instance.SubtractVirtualCurrency(5, "GM");
             PlayFabApiCalls.instance.AddVirtualCurrency(50 - PlayFabDataStore.vc_energy, "EN");
@@ -446,7 +446,6 @@ public class HUDManager : MonoBehaviourPunCallbacks
         _respawnCooldown--;
         if (_respawnCooldown > 0 )
         {
-            
             StartCoroutine(RespawnCooldown(_respawnCooldown));
         }
         else
@@ -457,6 +456,11 @@ public class HUDManager : MonoBehaviourPunCallbacks
                 OnRespawnButtonClicked();
 
         }
+    }
+
+    public void ShowDeathPanel()
+    {
+        deathPanel.SetActive(true);
     }
 
     public void OnGameLevelLoaded()

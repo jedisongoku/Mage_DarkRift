@@ -44,6 +44,7 @@ public class UnityAds : MonoBehaviour, IUnityAdsListener
             Debug.Log("Ad finished");
             // Reward the user for watching the ad to completion.
             PlayFabApiCalls.instance.AddVirtualCurrency(50 - PlayFabDataStore.vc_energy, "EN");
+            if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "Deathmatch") HUDManager.Instance.ShowDeathPanel();
         }
         else if (showResult == ShowResult.Skipped)
         {
