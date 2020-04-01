@@ -79,9 +79,12 @@ MonoBehaviour:
     type: 3}
   primarySkillEnvironmentExplosionPrefab: {fileID: 4305032805309941986, guid: edf01dce11bef854681e9b4afae1e659,
     type: 3}
-  primarySkillPrefabPooledAmount: 2
-  primarySkillExplosionPrefabPooledAmount: 2
-  primarySkillEnvironmentExplosionPrefabPooledAmount: 2
+  gemPrefab: {fileID: 3957507473756178075, guid: e22854538ff2b164cb7f8bf3bde6aa9b,
+    type: 3}
+  primarySkillPrefabPooledAmount: 3
+  primarySkillExplosionPrefabPooledAmount: 3
+  primarySkillEnvironmentExplosionPrefabPooledAmount: 3
+  gemPrefabPooledAmount: 10
 --- !u!114 &9061829322974117683
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -96,7 +99,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerPrefab: {fileID: 8507488124019187166, guid: 66dc3037cdfd08440bc9ad5e6c227f98,
     type: 3}
-  poisonShopManager: {fileID: 0}
   spawnLocations:
   - {fileID: 0}
   - {fileID: 0}

@@ -11,8 +11,8 @@ public class PlayerLevelManager : MonoBehaviourPunCallbacks
     private float levelCoefficient = 1.6f;
     private int currentXP = 0;
     private int currentLevel = 1;
-    private int killXP = 18;
-    private float killXPCoefficient = 1.4f;
+    private int killXP = 15;
+    private float killXPCoefficient = 1.2f;
 
     [SerializeField] private GameObject levelStar;
     [SerializeField] private TextMeshProUGUI levelText;
@@ -65,6 +65,7 @@ public class PlayerLevelManager : MonoBehaviourPunCallbacks
             levelUpParticle.SetActive(true);
             HUDManager.Instance.DisplayRunes();
             photonView.RPC("UpdateLevel", RpcTarget.OthersBuffered, currentLevel);
+            if (currentXP >= NextLevelInXP()) currentXP = NextLevelInXP() - 5;
             
         }
 

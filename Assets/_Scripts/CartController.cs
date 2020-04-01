@@ -1,10 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using Photon.Pun;
+﻿using UnityEngine;
 
-public class CartController : MonoBehaviourPunCallbacks
+public class CartController : MonoBehaviour
 {
+    [SerializeField] GameObject gem;
+    [SerializeField] Transform gemSpawnLocation;
 
     public static CartController instance;
 
@@ -13,5 +12,31 @@ public class CartController : MonoBehaviourPunCallbacks
     {
         instance = this;
     }
+
+    public GameObject GetGemObject
+    {
+        get
+        {
+            return gem;
+        }
+    }
+
+    public Vector3 GetSpawnLocation
+    {
+        get
+        {
+            return gemSpawnLocation.position;
+        }
+    }
+
+    public Vector3 GetCartLocation
+    {
+        get
+        {
+            return transform.position;
+        }
+    }
+
+
 
 }

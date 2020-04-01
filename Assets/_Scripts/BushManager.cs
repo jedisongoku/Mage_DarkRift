@@ -11,7 +11,7 @@ public class BushManager : MonoBehaviour
 
     public static void OnPlayerDeath()
     {
-        players = new Dictionary<int, Dictionary<int, int>>();
+        //players = new Dictionary<int, Dictionary<int, int>>();
     }
 
     private void OnTriggerEnter(Collider other)

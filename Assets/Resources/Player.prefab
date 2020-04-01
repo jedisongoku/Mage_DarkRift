@@ -41,7 +41,7 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 1
   m_Enabled: 1
-  m_Radius: 0.2
+  m_Radius: 0.3
   m_Height: 1.6
   m_Direction: 1
   m_Center: {x: 0, y: 0.8, z: 0}
@@ -53079,7 +53079,7 @@ LineRenderer:
   - {x: 0, y: 0, z: 5}
   m_Parameters:
     serializedVersion: 3
-    widthMultiplier: 0.45
+    widthMultiplier: 0.5
     widthCurve:
       serializedVersion: 2
       m_Curve:
@@ -53098,7 +53098,7 @@ LineRenderer:
     colorGradient:
       serializedVersion: 2
       key0: {r: 0.5754717, g: 0.5754717, b: 0.5754717, a: 0.37254903}
-      key1: {r: 0.24528301, g: 0.24528301, b: 0.24528301, a: 0.3254902}
+      key1: {r: 0.2735849, g: 0.2735849, b: 0.2735849, a: 0.3254902}
       key2: {r: 1, g: 1, b: 0.38431373, a: 0.6784314}
       key3: {r: 1, g: 0.808114, b: 0, a: 0}
       key4: {r: 0, g: 0, b: 0, a: 0}
@@ -63118,6 +63118,7 @@ GameObject:
   - component: {fileID: 6438456283022713060}
   - component: {fileID: 5718202486688299391}
   - component: {fileID: 514162148951214188}
+  - component: {fileID: -2885383083431910706}
   m_Layer: 8
   m_Name: Player
   m_TagString: Player
@@ -63138,7 +63139,7 @@ Transform:
   m_Children:
   - {fileID: 8507488124019185994}
   - {fileID: 8507488124019186343}
-  - {fileID: 5577883137045856481}
+  - {fileID: 38586915384219559}
   - {fileID: 8115129491214733115}
   - {fileID: 5908709907402072547}
   - {fileID: 3339294857317480747}
@@ -63260,6 +63261,9 @@ MonoBehaviour:
   playerSkins:
   - {fileID: 5870090005935517072, guid: 0cf3506d282ae484ba3cc37f75b7719a, type: 3}
   playerSkinParent: {fileID: 8507488124019187166}
+  power: 10
+  radius: 5
+  upforce: 1
 --- !u!114 &6438456283022713060
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -63276,7 +63280,7 @@ MonoBehaviour:
   playerHealthManager: {fileID: 5718202486688299391}
   playerDamageCollider: {fileID: 6921259040233121731}
   playerUI: {fileID: 8507488124019187080}
-  playerBase: {fileID: 5577883137065242401}
+  playerBase: {fileID: 38586915384219558}
   playerShadow: {fileID: 8507488124019186751}
   playerHealthBar: {fileID: 8507488124019187675}
   enemyHealthBarTexture: {fileID: 21300000, guid: 7cf005012bc6b674096379b8fc90ef35,
@@ -63331,6 +63335,14 @@ MonoBehaviour:
   levelStar: {fileID: 5007738271107718523}
   levelText: {fileID: 846084868059195891}
   levelUpParticle: {fileID: 6264758637505990968}
+--- !u!81 &-2885383083431910706
+AudioListener:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8507488124019187166}
+  m_Enabled: 0
 --- !u!1 &8507488124019187194
 GameObject:
   m_ObjectHideFlags: 0
@@ -63985,13 +63997,13 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9bf782ca50427a74ca204afd91b58035, type: 3}
---- !u!198 &5577883137065242401 stripped
+--- !u!198 &38586915384219558 stripped
 ParticleSystem:
   m_CorrespondingSourceObject: {fileID: 5611918005578373252, guid: 9bf782ca50427a74ca204afd91b58035,
     type: 3}
   m_PrefabInstance: {fileID: 38586915384219557}
   m_PrefabAsset: {fileID: 0}
---- !u!4 &5577883137045856481 stripped
+--- !u!4 &38586915384219559 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5611918005563217732, guid: 9bf782ca50427a74ca204afd91b58035,
     type: 3}

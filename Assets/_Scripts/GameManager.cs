@@ -11,7 +11,6 @@ public class GameManager : MonoBehaviour
     public static event KillEvent OnPlayerKill;
 
     [SerializeField] GameObject playerPrefab;
-    [SerializeField] GameObject poisonShopManager;
     [SerializeField] GameObject[] spawnLocations;
 
     private static GameObject currentPlayer;
@@ -85,6 +84,7 @@ public class GameManager : MonoBehaviour
             }
 
         }
+
         
     }
 

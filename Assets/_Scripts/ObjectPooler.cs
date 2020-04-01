@@ -10,13 +10,16 @@ public class ObjectPooler : MonoBehaviour
     [SerializeField] private GameObject primarySkillPrefab;
     [SerializeField] private GameObject primarySkillExplosionPrefab;
     [SerializeField] private GameObject primarySkillEnvironmentExplosionPrefab;
+    [SerializeField] private GameObject gemPrefab;
     [SerializeField] private int primarySkillPrefabPooledAmount = 2;
     [SerializeField] private int primarySkillExplosionPrefabPooledAmount = 2;
     [SerializeField] private int primarySkillEnvironmentExplosionPrefabPooledAmount = 2;
+    [SerializeField] private int gemPrefabPooledAmount = 10;
 
     List<GameObject> primarySkillPrefabList;
     List<GameObject> primarySkillExplosionPrefabList;
     List<GameObject> primarySkillEnvironmentExplosionPrefabList;
+    List<GameObject> gemPrefabList;
 
     bool willGrow = true;
 
@@ -32,6 +35,7 @@ public class ObjectPooler : MonoBehaviour
         primarySkillPrefabList = new List<GameObject>();
         primarySkillExplosionPrefabList = new List<GameObject>();
         primarySkillEnvironmentExplosionPrefabList = new List<GameObject>();
+        gemPrefabList = new List<GameObject>();
 
 
         //Primary Skill Particle Instantiation 
@@ -56,6 +60,14 @@ public class ObjectPooler : MonoBehaviour
             GameObject obj = (GameObject)Instantiate(primarySkillEnvironmentExplosionPrefab);
             obj.SetActive(false);
             primarySkillEnvironmentExplosionPrefabList.Add(obj);
+        }
+
+        //Gem Instantiation 
+        for (int i = 0; i < gemPrefabPooledAmount; i++)
+        {
+            GameObject obj = (GameObject)Instantiate(gemPrefab);
+            obj.SetActive(false);
+            gemPrefabList.Add(obj);
         }
     }
 
@@ -113,6 +125,26 @@ public class ObjectPooler : MonoBehaviour
         {
             GameObject obj = (GameObject)Instantiate(primarySkillEnvironmentExplosionPrefab);
             primarySkillEnvironmentExplosionPrefabList.Add(obj);
+            return obj;
+        }
+
+        return null;
+    }
+
+    public GameObject GetGemPrefab()
+    {
+        for (int i = 0; i < gemPrefabList.Count; i++)
+        {
+            if (!gemPrefabList[i].activeInHierarchy)
+            {
+                return gemPrefabList[i];
+            }
+        }
+
+        if (willGrow)
+        {
+            GameObject obj = (GameObject)Instantiate(gemPrefab);
+            gemPrefabList.Add(obj);
             return obj;
         }
 

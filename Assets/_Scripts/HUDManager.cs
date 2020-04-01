@@ -396,6 +396,7 @@ public class HUDManager : MonoBehaviourPunCallbacks
         isRespawnRequested = false;
         respawnCooldownText.gameObject.SetActive(true);
         StartCoroutine(RespawnCooldown(GameManager.Instance.RespawnCooldown));
+        runeSelection.SetActive(false);
 
         coinReward.SetActive(false);
         if (GameManager.playerKillCount > 0)

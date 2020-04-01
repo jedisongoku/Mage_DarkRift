@@ -282,15 +282,19 @@ public class PlayerCombatManager : MonoBehaviourPun
 
         foreach (var enemy in PhotonNetwork.PhotonViews)
         {
-            if (enemy.ViewID != photonView.ViewID && !enemy.GetComponent<PlayerCombatManager>().IsDead && LineOfSight(enemy.gameObject) &&
-                (enemy.GetComponent<PlayerCombatManager>().canBeSeen || !enemy.GetComponent<PlayerCombatManager>().isInvisible))
+            if(enemy.gameObject.layer == 8)
             {
-                if (distance > (enemy.gameObject.transform.position - transform.position).magnitude)
+                if (enemy.ViewID != photonView.ViewID && !enemy.GetComponent<PlayerCombatManager>().IsDead && LineOfSight(enemy.gameObject) &&
+                (enemy.GetComponent<PlayerCombatManager>().canBeSeen || !enemy.GetComponent<PlayerCombatManager>().isInvisible))
                 {
-                    distance = (enemy.gameObject.transform.position - transform.position).magnitude;
-                    closestEnemy = enemy.gameObject;
+                    if (distance > (enemy.gameObject.transform.position - transform.position).magnitude)
+                    {
+                        distance = (enemy.gameObject.transform.position - transform.position).magnitude;
+                        closestEnemy = enemy.gameObject;
+                    }
                 }
             }
+            
         }
         return closestEnemy;
     }
