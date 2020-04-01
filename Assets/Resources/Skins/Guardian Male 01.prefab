@@ -5055,8 +5055,8 @@ SkinnedMeshRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2873138985819204389}
   m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
   m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
@@ -10676,8 +10676,8 @@ SkinnedMeshRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2873138985819409587}
   m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
   m_DynamicOccludee: 1
   m_MotionVectors: 1
   m_LightProbeUsage: 1
@@ -11104,6 +11104,14 @@ PrefabInstance:
     - target: {fileID: 175034, guid: aa38af6c13befc8429d55cc8e7407493, type: 3}
       propertyPath: m_Name
       value: Wand 08 Red
+      objectReference: {fileID: 0}
+    - target: {fileID: 2384410, guid: aa38af6c13befc8429d55cc8e7407493, type: 3}
+      propertyPath: m_CastShadows
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2384410, guid: aa38af6c13befc8429d55cc8e7407493, type: 3}
+      propertyPath: m_ReceiveShadows
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 484996, guid: aa38af6c13befc8429d55cc8e7407493, type: 3}
       propertyPath: m_LocalPosition.x
