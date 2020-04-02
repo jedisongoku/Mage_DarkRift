@@ -55,21 +55,25 @@ public class PlayerLevelManager : MonoBehaviourPunCallbacks
 
     public void AddXP(int _xp)
     {
-        Debug.Log("xp earned :" + _xp + "current level "  + currentLevel);
-        currentXP += _xp;
-        if(currentXP >= Mathf.FloorToInt(firstLevelXP * Mathf.Pow(levelCoefficient, currentLevel)))
+        if(photonView.IsMine)
         {
-            currentXP -= NextLevelInXP();
-            currentLevel++;
-            levelUpParticle.SetActive(false);
-            levelUpParticle.SetActive(true);
-            HUDManager.Instance.DisplayRunes();
-            photonView.RPC("UpdateLevel", RpcTarget.OthersBuffered, currentLevel);
-            if (currentXP >= NextLevelInXP()) currentXP = NextLevelInXP() - 5;
-            
-        }
+            Debug.Log("xp earned :" + _xp + "current level " + currentLevel);
+            currentXP += _xp;
+            if (currentXP >= Mathf.FloorToInt(firstLevelXP * Mathf.Pow(levelCoefficient, currentLevel)))
+            {
+                currentXP -= NextLevelInXP();
+                currentLevel++;
+                levelUpParticle.SetActive(false);
+                levelUpParticle.SetActive(true);
+                HUDManager.Instance.DisplayRunes();
+                photonView.RPC("UpdateLevel", RpcTarget.OthersBuffered, currentLevel);
+                if (currentXP > NextLevelInXP()) currentXP = NextLevelInXP() - 5;
 
-        HUDManager.Instance.UpdatePlayerLevel(currentLevel, currentXP, NextLevelInXP());
+            }
+
+            HUDManager.Instance.UpdatePlayerLevel(currentLevel, currentXP, NextLevelInXP());
+        }
+        
 
     }
 

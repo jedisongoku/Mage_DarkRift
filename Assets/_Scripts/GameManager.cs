@@ -12,6 +12,7 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] GameObject playerPrefab;
     [SerializeField] GameObject[] spawnLocations;
+    [SerializeField] GameObject botPlayerPrefab;
 
     private static GameObject currentPlayer;
     private static int currentPlayerViewID;
@@ -77,6 +78,36 @@ public class GameManager : MonoBehaviour
                 currentPlayerViewID = currentPlayer.GetComponent<PhotonView>().ViewID;
                 if(PlayFabDataStore.gameMode == "Deathmatch")
                     PlayerRuneManager.Instance.Initialize();
+            }
+            else
+            {
+                Debug.Log("Missin PlayerPrefab");
+            }
+
+        }
+
+        
+    }
+
+    public void InitializeBotPlayer()
+    {
+        Debug.Log("Bot Init");
+        if (PhotonNetwork.IsConnectedAndReady)
+        {
+            if (botPlayerPrefab != null)
+            {
+                int spawnLocationIndex;
+                if (PhotonNetwork.LocalPlayer.ActorNumber <= PhotonNetwork.CurrentRoom.MaxPlayers)
+                {
+                    spawnLocationIndex = PhotonNetwork.LocalPlayer.ActorNumber;
+                }
+                else
+                {
+                    spawnLocationIndex = SpawnLocationIndex;
+                }
+
+                PhotonNetwork.Instantiate(botPlayerPrefab.name, spawnLocations[spawnLocationIndex].transform.position, Quaternion.identity);
+
             }
             else
             {

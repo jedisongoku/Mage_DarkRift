@@ -40,6 +40,7 @@ public class PlayerNetworkManager : MonoBehaviourPunCallbacks
             Debug.Log("Spawn GEM 1");
             StartCoroutine(SpawnGems());
             previousLocation = CartController.instance.GetCartLocation;
+            //GameManager.Instance.InitializeBotPlayer();
         }
     }
 

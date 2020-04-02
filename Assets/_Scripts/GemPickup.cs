@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class GemPickup : MonoBehaviour
 {
-    public static Dictionary<GemPickup, Vector3> gemList = new Dictionary<GemPickup, Vector3>();
+    //public static Dictionary<GemPickup, Vector3> gemList = new Dictionary<GemPickup, Vector3>();
     bool isPickedUp = false;
     // Start is called before the first frame update
 
@@ -21,7 +21,7 @@ public class GemPickup : MonoBehaviour
         {
             isPickedUp = true;
             other.gameObject.GetComponent<PlayerLevelManager>().AddXP(5);
-            if(gemList.ContainsKey(this)) gemList.Remove(this);
+            //if(gemList.ContainsKey(this)) gemList.Remove(this);
             gameObject.SetActive(false);
         }
     }
@@ -33,6 +33,7 @@ public class GemPickup : MonoBehaviour
 
     void AddToGemList()
     {
-        gemList.Add(this, transform.position);
+
+        //gemList.Add(this, transform.position);
     }
 }

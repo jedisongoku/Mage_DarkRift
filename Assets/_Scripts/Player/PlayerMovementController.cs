@@ -46,6 +46,11 @@ public class PlayerMovementController : MonoBehaviourPun, IPunObservable
 
     }
 
+    void OnEnable()
+    {
+        SetPlayerBaseStats();
+    }
+
     void OnDisable()
     {
         chillParticle.SetActive(false);
@@ -53,8 +58,9 @@ public class PlayerMovementController : MonoBehaviourPun, IPunObservable
 
     void SetPlayerBaseStats()
     {
-        walkSpeed = PlayFabDataStore.playerBaseStats.WalkSpeed;
         isChill = false;
+        walkSpeed = PlayFabDataStore.playerBaseStats.WalkSpeed;
+        
     }
 
     void Update()
@@ -71,6 +77,7 @@ public class PlayerMovementController : MonoBehaviourPun, IPunObservable
     {
         if(!isChill)
         {
+            isChill = true;
             Debug.Log("Starting Chill...");
             photonView.RPC("StartChill_RPC", RpcTarget.All, _duration);
         }
