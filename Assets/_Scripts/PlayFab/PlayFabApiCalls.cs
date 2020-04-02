@@ -261,8 +261,6 @@ public class PlayFabApiCalls : MonoBehaviour
         {
             //Result
             PlayFabDataStore.playerProfile = JsonUtility.FromJson<PlayerProfile>(result.Data["PlayerProfile"].Value);
-            PlayFabDataStore.playerName = PlayFabDataStore.playerProfile.playerName;
-            PlayFabDataStore.playerActiveSkin = PlayFabDataStore.playerProfile.skinName;
 
             ApiCallSuccess();
 
@@ -403,7 +401,25 @@ public class PlayFabApiCalls : MonoBehaviour
         PlayFabClientAPI.ExecuteCloudScript(request, (result) =>
         {
             //Result
+            UpdateUserDisplayName(PlayFabDataStore.playerProfile.playerName);
             Debug.Log("Profile Updated");
+        }, (error) =>
+        {
+            OnPlayFabError(error);
+
+        });
+    }
+
+    public void UpdateUserDisplayName(string name)
+    {
+        var request = new UpdateUserTitleDisplayNameRequest()
+        {
+            DisplayName = name
+        };
+        PlayFabClientAPI.UpdateUserTitleDisplayName(request, (result) =>
+        {
+            //Result
+            Debug.Log("Display Name Updated");
         }, (error) =>
         {
             OnPlayFabError(error);

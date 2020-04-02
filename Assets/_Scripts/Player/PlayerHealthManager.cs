@@ -490,4 +490,9 @@ public class PlayerHealthManager : MonoBehaviourPun
             if(isShieldGuard) photonView.RPC("SetShieldGuard", RpcTarget.AllBuffered);
         }
     }
+
+    public void SwitchShieldVisibility(bool value)
+    {
+        if (isShieldGuard) shieldGuardParticle.SetActive(value);
+    }
 }

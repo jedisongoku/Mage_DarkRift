@@ -28,18 +28,18 @@ public class MenuSkinController : MonoBehaviour
     {
         if (activeSkin != null)
         {
-            if (activeSkin.name != PlayFabDataStore.playerActiveSkin)
+            if (activeSkin.name != PlayFabDataStore.playerProfile.skinName)
             {
                 Destroy(activeSkin);
-                Debug.Log("Skin name " + PlayFabDataStore.playerActiveSkin);
-                activeSkin = Instantiate(Resources.Load("Skins/" + PlayFabDataStore.playerActiveSkin) as GameObject, transform);
+                Debug.Log("Skin name " + PlayFabDataStore.playerProfile.skinName);
+                activeSkin = Instantiate(Resources.Load("Skins/" + PlayFabDataStore.playerProfile.skinName) as GameObject, transform);
             }
 
             //Instantiate(skin, transform);  
         }
         else
         {
-            activeSkin = Instantiate(Resources.Load("Skins/" + PlayFabDataStore.playerActiveSkin) as GameObject, transform);
+            activeSkin = Instantiate(Resources.Load("Skins/" + PlayFabDataStore.playerProfile.skinName) as GameObject, transform);
             
         }
         activeSkin.AddComponent<Animator>();

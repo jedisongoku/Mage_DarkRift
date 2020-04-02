@@ -497,6 +497,7 @@ public class PlayerCombatManager : MonoBehaviourPun
         playerHealthManager.RespawnPlayer();
         IsDead = false;
         playerMovementController.enabled = true;
+        bushCount = 0;
 
         if (photonView.IsMine)
         {
@@ -766,7 +767,8 @@ public class PlayerCombatManager : MonoBehaviourPun
     {
         playerUI.SetActive(value);
         playerShadow.SetActive(value);
-        playerBase.gameObject.SetActive(value);
+        playerHealthManager.SwitchShieldVisibility(value);
+        //playerBase.gameObject.SetActive(value);
 
 
     }
@@ -778,7 +780,7 @@ public class PlayerCombatManager : MonoBehaviourPun
             bushCount++;
             if (!isTransparent)
             {
-                playerBase.gameObject.SetActive(false);
+                //playerBase.gameObject.SetActive(false);
                 isTransparent = true;
                 foreach (var render in playerModel.GetComponent<MeshRenderersInModel>().MeshRenderers)
                 {
@@ -804,16 +806,6 @@ public class PlayerCombatManager : MonoBehaviourPun
             if (!isInvisible && !canBeSeen)
             {
                 isInvisible = true;
-                /*
-                foreach (var render in playerModel.GetComponent<MeshRenderersInModel>().MeshRenderers)
-                {
-                    render.gameObject.SetActive(false);
-                    
-                }
-                foreach (var render in playerModel.GetComponent<MeshRenderersInModel>().SkinnedMeshRenderers)
-                {
-                    render.gameObject.SetActive(false);
-                }*/
                 playerModel.SetActive(false);
                 SwitchPlayerElements(false);
             }
@@ -834,14 +826,12 @@ public class PlayerCombatManager : MonoBehaviourPun
                 }
                 else
                 {
-                    //render.gameObject.SetActive(true);
                     render.material.shader = transparentShader;
                 }
                 
             }
             foreach (var render in playerModel.GetComponent<MeshRenderersInModel>().SkinnedMeshRenderers)
             {
-                //render.gameObject.SetActive(true);
                 render.material.shader = transparentShader;
             }
             playerUI.SetActive(true);
@@ -849,15 +839,6 @@ public class PlayerCombatManager : MonoBehaviourPun
         }
         else if(!photonView.IsMine && !canBeSeen && isInvisible)
         {
-            /*
-            foreach (var render in playerModel.GetComponent<MeshRenderersInModel>().MeshRenderers)
-            {
-                render.gameObject.SetActive(false);
-            }
-            foreach (var render in playerModel.GetComponent<MeshRenderersInModel>().SkinnedMeshRenderers)
-            {
-                render.gameObject.SetActive(false);
-            }*/
             playerModel.SetActive(false);
             playerUI.SetActive(false);
         }
@@ -891,7 +872,7 @@ public class PlayerCombatManager : MonoBehaviourPun
                     render.material.shader = standardShader;
                 }
 
-                playerBase.gameObject.SetActive(true);
+                //playerBase.gameObject.SetActive(true);
                 isInBush = false;
 
             }
@@ -907,18 +888,15 @@ public class PlayerCombatManager : MonoBehaviourPun
                     if (render.transform.name.Equals("Halo"))
                     {
                         render.enabled = true;
-                        //render.gameObject.SetActive(true);
                     }
                     else
                     {
-                        //render.gameObject.SetActive(true);
                         render.material.shader = standardShader;
                     }
                     
                 }
                 foreach (var render in playerModel.GetComponent<MeshRenderersInModel>().SkinnedMeshRenderers)
                 {
-                    //render.gameObject.SetActive(true);
                     render.material.shader = standardShader;
                 }
                 playerModel.SetActive(true);

@@ -31,7 +31,7 @@ public class PlayerNetworkManager : MonoBehaviourPunCallbacks
         SetPlayerUI();
         if(photonView.IsMine)
         {
-            photonView.RPC("SelectSkin", RpcTarget.All, PlayFabDataStore.playerActiveSkin, false);
+            photonView.RPC("SelectSkin", RpcTarget.All, PlayFabDataStore.playerProfile.skinName, false);
             GetComponent<AudioListener>().enabled = true;
         }
 
@@ -66,7 +66,12 @@ public class PlayerNetworkManager : MonoBehaviourPunCallbacks
     {
         if(photonView.IsMine)
         {
-            photonView.RPC("SelectSkin", newPlayer, PlayFabDataStore.playerActiveSkin, GetComponent<PlayerCombatManager>().IsDead);
+            photonView.RPC("SelectSkin", newPlayer, PlayFabDataStore.playerProfile.skinName, GetComponent<PlayerCombatManager>().IsDead);
+            
+        }
+
+        if(photonView.IsMine && PhotonNetwork.IsMasterClient)
+        {
             photonView.RPC("StartCartAnimation", newPlayer, CartController.instance.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsName("Forward"),
                 CartController.instance.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).normalizedTime, CartController.instance.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).length,
                 PhotonNetwork.ServerTimestamp);

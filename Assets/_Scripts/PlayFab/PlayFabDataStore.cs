@@ -5,8 +5,8 @@ using UnityEngine;
 public class PlayFabDataStore : MonoBehaviour
 {
     public static string playFabID;
-    public static string playerName;
-    public static string playerActiveSkin;
+    //public static string playerName;
+    //public static string playerActiveSkin;
     public static string gameMode = "Deathmatch";
     public static PlayerBaseStats playerBaseStats;
     public static PlayerProfile playerProfile;

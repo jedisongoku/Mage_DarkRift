@@ -73,6 +73,7 @@ public class HUDManager : MonoBehaviourPunCallbacks
     public Button[] runeOptions;
     public GameObject coinReward;
     public Text fps;
+    public Text respawnEnergyText;
 
     [Header("Level")]
     [SerializeField] private Text levelText;
@@ -108,7 +109,7 @@ public class HUDManager : MonoBehaviourPunCallbacks
 
     void Update()
     {
-        fps.text = "fps: " + 1 / Time.deltaTime + " PING: " + PhotonNetwork.GetPing();
+        fps.text = PhotonNetwork.GetPing() + "ms";
         
     }
 
@@ -176,7 +177,7 @@ public class HUDManager : MonoBehaviourPunCallbacks
 
     void UpdatePlayerName()
     {
-        playerName.text = PlayFabDataStore.playerName;
+        playerName.text = PlayFabDataStore.playerProfile.playerName;
     }
 
     public void UpdateCurrencies()
@@ -288,7 +289,7 @@ public class HUDManager : MonoBehaviourPunCallbacks
     public void OnSkinButtonClicked()
     {
         ActivatePanels(skinPanel.name);
-        OnSkinPreviewed(true, PlayFabDataStore.playerActiveSkin);
+        OnSkinPreviewed(true, PlayFabDataStore.playerProfile.skinName);
     }
 
     public void OnPanelBackButtonClicked()
@@ -305,7 +306,7 @@ public class HUDManager : MonoBehaviourPunCallbacks
         bool buyWithCoin = PlayFabDataStore.gameSkinCatalog[name].currencyType == "CO" ? true : false;
         Debug.Log("coin " + buyWithCoin);
 
-        if (name == PlayFabDataStore.playerActiveSkin)
+        if (name == PlayFabDataStore.playerProfile.skinName)
         {
             buyWithCoinButton.interactable = false;
             buyWithGemButton.interactable = false;
@@ -351,9 +352,15 @@ public class HUDManager : MonoBehaviourPunCallbacks
 
     }
 
+    public void SavePlayerName()
+    {
+        //update playername playfab
+        PlayFabDataStore.playerProfile.playerName = playerName.GetComponentInParent<InputField>().text;
+        PlayFabApiCalls.instance.UpdateProfile();
+    }
+
     public void MakeSkinActive()
     {
-        PlayFabDataStore.playerActiveSkin = MenuSkinController.instance.activeSkin.name;
         PlayFabDataStore.playerProfile.skinName = MenuSkinController.instance.activeSkin.name;
         //Update on playfab
         PlayFabApiCalls.instance.UpdateProfile();
@@ -391,6 +398,7 @@ public class HUDManager : MonoBehaviourPunCallbacks
     public void OnPlayerDeath()
     {
         playerControllerPanel.SetActive(false);
+        respawnEnergyText.text = PlayFabDataStore.vc_energy + "/" + 50;
         deathPanel.SetActive(true);
         GameManager.Instance.CanRespawn = false;
         isRespawnRequested = false;
