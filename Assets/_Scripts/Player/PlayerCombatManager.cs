@@ -767,8 +767,13 @@ public class PlayerCombatManager : MonoBehaviourPun
     {
         playerUI.SetActive(value);
         playerShadow.SetActive(value);
-        playerHealthManager.SwitchShieldVisibility(value);
-        //playerBase.gameObject.SetActive(value);
+        
+        if (!photonView.IsMine)
+        {
+            dashTrail.SetActive(value);
+            playerHealthManager.SwitchShieldVisibility(value);
+            playerBase.gameObject.SetActive(value);
+        }
 
 
     }

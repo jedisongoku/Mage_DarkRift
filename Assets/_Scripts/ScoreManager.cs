@@ -70,7 +70,7 @@ public class ScoreManager : MonoBehaviour
         killFeed.Add(new KillFeed(_killer, _killed));
 
         GameObject feed = GetKillFeedPrefab();
-        feed.GetComponent<Text>().text = _killer + " killed " + _killed;
+        feed.transform.Find("KillFeed").GetComponent<Text>().text = _killer + " killed " + _killed;
         //feed.transform.SetParent(killFeedParent.transform);
         feed.SetActive(true);
     }

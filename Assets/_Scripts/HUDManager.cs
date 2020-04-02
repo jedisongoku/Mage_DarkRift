@@ -74,6 +74,7 @@ public class HUDManager : MonoBehaviourPunCallbacks
     public GameObject coinReward;
     public Text fps;
     public Text respawnEnergyText;
+    public Text totalPlayersText;
 
     [Header("Level")]
     [SerializeField] private Text levelText;
@@ -479,6 +480,7 @@ public class HUDManager : MonoBehaviourPunCallbacks
         loadingBar.fillAmount = 0.95f;
         deathPanel.SetActive(false);
         playerControllerPanel.SetActive(true);
+        totalPlayersText.text = PhotonNetwork.CurrentRoom.PlayerCount + "/" + PhotonNetwork.CurrentRoom.MaxPlayers;
         //StartCoroutine(GameSceneLoading());
 
     }

@@ -151,7 +151,7 @@ public class PlayerHealthManager : MonoBehaviourPun
             if(photonView.IsMine)
             {
                 playerhealth -= (playerMaxHealth * PlayFabDataStore.playerBaseStats.FrostbiteDamageRate) / PlayFabDataStore.playerBaseStats.FrostbiteDuration;
-                photonView.RPC("UpdateHealth", RpcTarget.All, playerhealth, damageOrigin, false);
+                photonView.RPC("UpdateHealth", RpcTarget.All, playerhealth, damageOrigin, true);
             }
             frostbiteDurationTick++;
             
@@ -210,11 +210,11 @@ public class PlayerHealthManager : MonoBehaviourPun
         if (_isFrostbite) StartFrostbite(DamageOrigin);
         if (_isChill) GetComponent<PlayerMovementController>().StartChill(PlayFabDataStore.playerBaseStats.ChillDuration);
 
-        TakeDamage(_damageDone, _isFrostNova);
+        TakeDamage(_damageDone);
 
     }
 
-    public void TakeDamage(float _damage, bool _isFrostNova)
+    public void TakeDamage(float _damage)
     {
         if (isShieldGuard)
         {
@@ -232,7 +232,7 @@ public class PlayerHealthManager : MonoBehaviourPun
         CanHeal = false;
         Invoke("DelayedHealthRegenrationStart", 3f);
         
-        photonView.RPC("UpdateHealth", RpcTarget.All, playerhealth, damageOrigin, _isFrostNova);
+        photonView.RPC("UpdateHealth", RpcTarget.All, playerhealth, damageOrigin, false);
     }
 
     void DelayedHealthRegenrationStart()
@@ -240,16 +240,9 @@ public class PlayerHealthManager : MonoBehaviourPun
         CanHeal = true;
     }
 
-    void EnableExplosionParticle(bool _isFrostNova)
+    void EnableExplosionParticle()
     {
         GameObject obj;
-        if (_isFrostNova)
-        {
-            /*
-            obj = ObjectPooler.Instance.GetPrimarySkillFrostNovaPrefab();
-            obj.transform.position = transform.position + Vector3.up;*/
-            //FrostNoca is Disabled - keeping it for future use
-        }
 
         obj = ObjectPooler.Instance.GetPrimarySkillExplosionPrefab();
         obj.transform.position = transform.position + Vector3.up;
@@ -279,13 +272,13 @@ public class PlayerHealthManager : MonoBehaviourPun
     }
 
     [PunRPC]
-    void UpdateHealth(float _health, int _damageOrigin, bool _FrostNova)
+    void UpdateHealth(float _health, int _damageOrigin, bool _isFrostbite)
     {
         healthGenerationTimer = 0;
 
-        if(_damageOrigin != 0)
+        if(_damageOrigin != 0 && !_isFrostbite)
         {
-            EnableExplosionParticle(_FrostNova);
+            EnableExplosionParticle();
         }
 
         playerhealth = _health;

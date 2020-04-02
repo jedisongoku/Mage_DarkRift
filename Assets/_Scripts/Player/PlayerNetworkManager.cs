@@ -67,6 +67,7 @@ public class PlayerNetworkManager : MonoBehaviourPunCallbacks
         if(photonView.IsMine)
         {
             photonView.RPC("SelectSkin", newPlayer, PlayFabDataStore.playerProfile.skinName, GetComponent<PlayerCombatManager>().IsDead);
+            HUDManager.Instance.totalPlayersText.text = PhotonNetwork.CurrentRoom.PlayerCount + "/" + PhotonNetwork.CurrentRoom.MaxPlayers;
             
         }
 
