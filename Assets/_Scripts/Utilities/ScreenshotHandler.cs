@@ -18,7 +18,7 @@ public class ScreenshotHandler : MonoBehaviour
     {
         if(Input.GetKeyDown(KeyCode.K))
         {
-            TakeScreenshot(1024 , 1024);
+            TakeScreenshot(256 , 256);
         }
 
         if (Input.GetKeyDown(KeyCode.I))
@@ -50,7 +50,7 @@ public class ScreenshotHandler : MonoBehaviour
             renderResult.ReadPixels(rect, 0, 0);
 
             byte[] byteArray = renderResult.EncodeToPNG();
-            System.IO.File.WriteAllBytes(Application.dataPath + "/_Textures/SkinTextures/" + MenuSkinController.instance.GetSkin().name + "Icon4" +
+            System.IO.File.WriteAllBytes(Application.dataPath + "/_Textures/SkinTextures/" + MenuSkinController.instance.GetSkin().name + "Icon5" +
                 ".png", byteArray);
             Debug.Log("Saved " + MenuSkinController.instance.GetSkin().name);
 
@@ -61,7 +61,7 @@ public class ScreenshotHandler : MonoBehaviour
 
     void TakeScreenshot(int width, int height)
     {
-        myCamera.targetTexture = RenderTexture.GetTemporary(width, height, 256);
+        myCamera.targetTexture = RenderTexture.GetTemporary(width, height, 16);
         takeScreenshotOnNextFrame = true;
     }
 
