@@ -38,8 +38,8 @@ public class PlayerMovementController : MonoBehaviourPun, IPunObservable
         m_Rigidbody = GetComponent<Rigidbody>();
         SetPlayerBaseStats();
         joystick = HUDManager.Instance.MovementJoystick;
-        PhotonNetwork.SendRate = 15;
-        PhotonNetwork.SerializationRate = 10;
+        PhotonNetwork.SendRate = 30;
+        PhotonNetwork.SerializationRate = 20;
 
 
         //m_AudioSource = GetComponent<AudioSource>();
@@ -136,7 +136,8 @@ public class PlayerMovementController : MonoBehaviourPun, IPunObservable
                 m_Rigidbody.position = networkPosition;
             }
 
-            m_Rigidbody.position = Vector3.MoveTowards(m_Rigidbody.position, networkPosition, Time.fixedDeltaTime * 2);
+            //m_Rigidbody.position = Vector3.MoveTowards(m_Rigidbody.position, networkPosition, Time.fixedDeltaTime * 2);
+            m_Rigidbody.position = Vector3.MoveTowards(m_Rigidbody.position, networkPosition, Vector3.Distance(m_Rigidbody.position, networkPosition) * (1.0f / PhotonNetwork.SerializationRate));
             //m_Rigidbody.rotation = Quaternion.RotateTowards(m_Rigidbody.rotation, networkRotation, Time.fixedDeltaTime);
             //movement = Vector2.Lerp(movement, newMovement, Time.fixedDeltaTime * turnSpeed);
             movement = newMovement;
