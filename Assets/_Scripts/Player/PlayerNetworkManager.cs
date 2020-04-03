@@ -67,8 +67,8 @@ public class PlayerNetworkManager : MonoBehaviourPunCallbacks
         if(photonView.IsMine)
         {
             photonView.RPC("SelectSkin", newPlayer, PlayFabDataStore.playerProfile.skinName, GetComponent<PlayerCombatManager>().IsDead);
-            HUDManager.Instance.totalPlayersText.text = PhotonNetwork.CurrentRoom.PlayerCount + "/" + PhotonNetwork.CurrentRoom.MaxPlayers;
-            
+            HUDManager.Instance.UpdateTotalPlayerCount();
+
         }
 
         if(photonView.IsMine && PhotonNetwork.IsMasterClient)
@@ -76,6 +76,15 @@ public class PlayerNetworkManager : MonoBehaviourPunCallbacks
             photonView.RPC("StartCartAnimation", newPlayer, CartController.instance.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsName("Forward"),
                 CartController.instance.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).normalizedTime, CartController.instance.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).length,
                 PhotonNetwork.ServerTimestamp);
+        }
+    }
+
+    public override void OnPlayerLeftRoom(Player otherPlayer)
+    {
+        if (photonView.IsMine)
+        {
+            HUDManager.Instance.UpdateTotalPlayerCount();
+
         }
     }
 

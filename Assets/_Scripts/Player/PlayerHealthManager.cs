@@ -451,6 +451,7 @@ public class PlayerHealthManager : MonoBehaviourPun
     void SetShieldGuard()
     {
         Debug.Log("This isa buffered message");
+        isShieldGuard = true;
         shieldGuardParticle.SetActive(true);
     }
 
@@ -486,6 +487,7 @@ public class PlayerHealthManager : MonoBehaviourPun
 
     public void SwitchShieldVisibility(bool value)
     {
+        Debug.Log("Switch shield Visibility");
         if (isShieldGuard) shieldGuardParticle.SetActive(value);
     }
 }

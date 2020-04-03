@@ -357,6 +357,7 @@ public class HUDManager : MonoBehaviourPunCallbacks
     {
         //update playername playfab
         PlayFabDataStore.playerProfile.playerName = playerName.GetComponentInParent<InputField>().text;
+        PhotonNetwork.LocalPlayer.NickName = PlayFabDataStore.playerProfile.playerName;
         PlayFabApiCalls.instance.UpdateProfile();
     }
 
@@ -480,9 +481,14 @@ public class HUDManager : MonoBehaviourPunCallbacks
         loadingBar.fillAmount = 0.95f;
         deathPanel.SetActive(false);
         playerControllerPanel.SetActive(true);
-        totalPlayersText.text = PhotonNetwork.CurrentRoom.PlayerCount + "/" + PhotonNetwork.CurrentRoom.MaxPlayers;
+        UpdateTotalPlayerCount();
         //StartCoroutine(GameSceneLoading());
 
+    }
+
+    public void UpdateTotalPlayerCount()
+    {
+        totalPlayersText.text = PhotonNetwork.CurrentRoom.PlayerCount + "/" + PhotonNetwork.CurrentRoom.MaxPlayers;
     }
 
     IEnumerator GameSceneLoading()
