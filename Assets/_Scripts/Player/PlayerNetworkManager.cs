@@ -24,6 +24,7 @@ public class PlayerNetworkManager : MonoBehaviourPunCallbacks
 
     private Vector3 previousLocation;
     private float gemSpawnTime;
+    private bool hasSkin = false;
 
     // Start is called before the first frame update
     void Start()
@@ -52,14 +53,19 @@ public class PlayerNetworkManager : MonoBehaviourPunCallbacks
     [PunRPC]
     void SelectSkin(string _skinName, bool _isDead)
     {
-        GameObject skin = Instantiate(Resources.Load("Skins/" + _skinName) as GameObject, playerSkinParent.transform);
-        GetComponent<PlayerCombatManager>().PlayerModel = skin;
-        GetComponent<PlayerHealthManager>().PlayerModel = skin;
-        playerSkinParent.GetComponent<Animator>().Rebind();
-        if(_isDead)
+        if(!hasSkin)
         {
-            GetComponent<PlayerCombatManager>().DisablePlayer();
+            hasSkin = true;
+            GameObject skin = Instantiate(Resources.Load("Skins/" + _skinName) as GameObject, playerSkinParent.transform);
+            GetComponent<PlayerCombatManager>().PlayerModel = skin;
+            GetComponent<PlayerHealthManager>().PlayerModel = skin;
+            playerSkinParent.GetComponent<Animator>().Rebind();
+            if (_isDead)
+            {
+                GetComponent<PlayerCombatManager>().DisablePlayer();
+            }
         }
+        
     }
 
     public override void OnPlayerEnteredRoom(Player newPlayer)

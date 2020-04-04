@@ -40,6 +40,7 @@ public class PlayerHealthManager : MonoBehaviourPun
     int frostbiteDurationTick = 0;
 
     bool CanHeal { get; set; }
+    public bool isSecondChance { get; set; }
 
 
     private void OnDisable()
@@ -65,38 +66,34 @@ public class PlayerHealthManager : MonoBehaviourPun
 
     void SetPlayerBaseStats()
     {
-        playerMaxHealth = PlayFabDataStore.playerBaseStats.Health;
-        healthGenerationRate = PlayFabDataStore.playerBaseStats.HealthGenerationRate;
-        bloodthirstHealAmount = PlayFabDataStore.playerBaseStats.BloodthirstHealAmount;
-        hpBoostAmount = PlayFabDataStore.playerBaseStats.HpBoostAmount;
-        shieldGuardDamageReductionRate = PlayFabDataStore.playerBaseStats.ShieldGuardDamageReductionRate;
-        playerhealth = playerMaxHealth;
-        isFrostbite = false;
-        isBloodthirst = false;
-        isHpBoost = false;
-        isStrongHeart = false;
-        isShieldGuard = false;
-        isRage = false;
-        strongHeartParticle.SetActive(false);
-        shieldGuardParticle.SetActive(false);
-        frostbiteParticle.SetActive(false);
-        CanHeal = true;
+        if(!isSecondChance)
+        {
+            playerMaxHealth = PlayFabDataStore.playerBaseStats.Health;
+            healthGenerationRate = PlayFabDataStore.playerBaseStats.HealthGenerationRate;
+            bloodthirstHealAmount = PlayFabDataStore.playerBaseStats.BloodthirstHealAmount;
+            hpBoostAmount = PlayFabDataStore.playerBaseStats.HpBoostAmount;
+            shieldGuardDamageReductionRate = PlayFabDataStore.playerBaseStats.ShieldGuardDamageReductionRate;
+            playerhealth = playerMaxHealth;
+            isFrostbite = false;
+            isBloodthirst = false;
+            isHpBoost = false;
+            isStrongHeart = false;
+            isShieldGuard = false;
+            isRage = false;
+            strongHeartParticle.SetActive(false);
+            shieldGuardParticle.SetActive(false);
+            frostbiteParticle.SetActive(false);
+            CanHeal = true;
+        }
+        else
+        {
+            if(isStrongHeart) strongHeartParticle.SetActive(true);
+            if(isShieldGuard) shieldGuardParticle.SetActive(true);
+        }
+        isSecondChance = false;
+        
 
     }
-    /*
-    IEnumerator PlayerUIFollow()
-    {
-        //playerUI.transform.position = Camera.main.WorldToScreenPoint(GameManager.Instance.GetCurrentPlayer.transform.position);
-        var targetPosition = Camera.main.WorldToScreenPoint(transform.position) + new Vector3(0, 130, 0);
-        //playerUI.transform.position = targetPosition;
-        playerUI.transform.position = Vector2.Lerp(playerUI.transform.position, targetPosition, Time.deltaTime * 15);
-        //playerUI.transform.position += new Vector3(0, 10, 0);
-
-        yield return new WaitForSeconds(0);
-
-
-        StartCoroutine(PlayerUIFollow());
-    }*/
 
     IEnumerator HealhtRegeneration()
     {
@@ -304,7 +301,7 @@ public class PlayerHealthManager : MonoBehaviourPun
 
         UpdateHealthBar();
 
-        if((playerhealth / playerMaxHealth <= PlayFabDataStore.playerBaseStats.RageStartRate) && isRage)
+        if((playerhealth / playerMaxHealth <= PlayFabDataStore.playerBaseStats.RageStartRate) && isRage && !GetComponent<PlayerCombatManager>().IsDead)
         {
             rageParticle.SetActive(true);
         }

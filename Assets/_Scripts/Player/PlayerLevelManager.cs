@@ -7,12 +7,14 @@ using Photon.Pun;
 public class PlayerLevelManager : MonoBehaviourPunCallbacks
 {
 
-    private int firstLevelXP= 16;
-    private float levelCoefficient = 1.6f;
+    private int firstLevelXP= 19;
+    private float levelCoefficient = 1.35f;
     private int currentXP = 0;
     private int currentLevel = 1;
     private int killXP = 15;
     private float killXPCoefficient = 1.2f;
+
+    public float SmartMultiplier { get; set; }
 
     [SerializeField] private GameObject levelStar;
     [SerializeField] private TextMeshProUGUI levelText;
@@ -22,7 +24,8 @@ public class PlayerLevelManager : MonoBehaviourPunCallbacks
 
     void Start()
     {
-        if (photonView.IsMine) levelStar.SetActive(false);   
+        if (photonView.IsMine) levelStar.SetActive(false);
+        SmartMultiplier = 1;
     }
     void OnEnable()
     {
@@ -58,7 +61,7 @@ public class PlayerLevelManager : MonoBehaviourPunCallbacks
         if(photonView.IsMine)
         {
             Debug.Log("xp earned :" + _xp + "current level " + currentLevel);
-            currentXP += _xp;
+            currentXP += Mathf.RoundToInt(_xp * SmartMultiplier);
             if (currentXP >= Mathf.FloorToInt(firstLevelXP * Mathf.Pow(levelCoefficient, currentLevel)))
             {
                 currentXP -= NextLevelInXP();
@@ -101,6 +104,7 @@ public class PlayerLevelManager : MonoBehaviourPunCallbacks
     {
         currentXP = 0;
         currentLevel = 1;
+        SmartMultiplier = 1;
         HUDManager.Instance.UpdatePlayerLevel(currentLevel, currentXP, NextLevelInXP());
         photonView.RPC("UpdateLevel", RpcTarget.Others, currentLevel);    
 

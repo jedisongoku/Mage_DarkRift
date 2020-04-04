@@ -28,10 +28,11 @@ public class PlayerBaseStats
     [SerializeField] private float fasterRechargeMultiplier;
     [SerializeField] private float dashSpeedMultiplier;
     [SerializeField] private float strongHeartMultiplier;
+    [SerializeField] private float smartMultiplier;
 
     public PlayerBaseStats(float _walkSpeed, int _health, float _healthGenerationRate, int _primarySkillDamage, float _primarySkillCooldown, int _primarySKillCharge, float _primarySkillRecharge, float _secondarySkillCooldown,
     int _bloodthirstHealAmount, int _hpBoostAmount, float _shieldGuardDamageReductionRate, float _frostbiteDamageRate, int _frostbiteDuration, float _chillSlowRate, float _chillDuration, float _rageStartRate, float _rageDamageRate,
-    float _damageBoostMultiplier, float _fasterRechargeMultiplier, float _dashSpeedMultiplier, float _strongHeartMultiplier)
+    float _damageBoostMultiplier, float _fasterRechargeMultiplier, float _dashSpeedMultiplier, float _strongHeartMultiplier, float _smartMultiplier)
     {
         walkSpeed = _walkSpeed;
         health = _health;
@@ -54,6 +55,7 @@ public class PlayerBaseStats
         fasterRechargeMultiplier = _fasterRechargeMultiplier;
         dashSpeedMultiplier = _dashSpeedMultiplier;
         strongHeartMultiplier = _strongHeartMultiplier;
+        smartMultiplier = _smartMultiplier;
     }
     public int Health
     {
@@ -234,11 +236,11 @@ public class PlayerBaseStats
         }
     }
 
-    public float PoisonPickupTime
+    public float SmartMultiplier
     {
         get
         {
-            return poisonPickupTime;
+            return smartMultiplier;
         }
     }
 }

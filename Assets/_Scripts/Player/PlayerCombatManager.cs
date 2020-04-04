@@ -71,9 +71,7 @@ public class PlayerCombatManager : MonoBehaviourPun
     bool isChill = false;
     bool isRage = false;
     bool isFrostNova = false;
-
-    bool leftFirstTouch = false;
-    bool rightFirstTouch = false;
+    bool isSecondChance = false;
 
     GameObject closestEnemy;
 
@@ -272,13 +270,13 @@ public class PlayerCombatManager : MonoBehaviourPun
         
         if (targetEnemy != null)
         {
-            if (!targetEnemy.GetComponent<PlayerCombatManager>().IsDead && targetEnemy.GetComponent<PlayerCombatManager>().canBeSeen && distance > (targetEnemy.transform.position - transform.position).magnitude)
+            if (!targetEnemy.GetComponent<PlayerCombatManager>().IsDead && (targetEnemy.GetComponent<PlayerCombatManager>().canBeSeen || !targetEnemy.GetComponent<PlayerCombatManager>().isInvisible) && distance > Vector3.Distance(targetEnemy.transform.position, transform.position))
             {
-                //Debug.Log("Attack same enemy");
+                Debug.Log("Attack same enemy");
                 return targetEnemy;
             }
         }
-        //Debug.Log("Attack different enemy");
+        Debug.Log("Attack different enemy");
 
         foreach (var enemy in PhotonNetwork.PhotonViews)
         {
@@ -287,9 +285,9 @@ public class PlayerCombatManager : MonoBehaviourPun
                 if (enemy.ViewID != photonView.ViewID && !enemy.GetComponent<PlayerCombatManager>().IsDead && LineOfSight(enemy.gameObject) &&
                 (enemy.GetComponent<PlayerCombatManager>().canBeSeen || !enemy.GetComponent<PlayerCombatManager>().isInvisible))
                 {
-                    if (distance > (enemy.gameObject.transform.position - transform.position).magnitude)
+                    if (distance > Vector3.Distance(enemy.gameObject.transform.position, transform.position))
                     {
-                        distance = (enemy.gameObject.transform.position - transform.position).magnitude;
+                        distance = Vector3.Distance(enemy.gameObject.transform.position, transform.position);
                         closestEnemy = enemy.gameObject;
                     }
                 }
@@ -456,15 +454,21 @@ public class PlayerCombatManager : MonoBehaviourPun
 
     void SetPlayerBaseStats()
     {
-        primarySkillDamage = PlayFabDataStore.playerBaseStats.PrimarySkillDamage;
-        primarySkillCooldown = PlayFabDataStore.playerBaseStats.PrimarySkillCooldown;
-        primarySkillCharge = PlayFabDataStore.playerBaseStats.PrimarySkillCharge;
-        primarySkillRecharge = PlayFabDataStore.playerBaseStats.PrimarySkillRecharge;
-        secondarySkillCooldown = PlayFabDataStore.playerBaseStats.SecondarySkillCooldown;
-        isFrostbite = false;
-        isChill = false;
-        isRage = false;
-        isFrostNova = false;
+        if(!isSecondChance)
+        {
+            primarySkillDamage = PlayFabDataStore.playerBaseStats.PrimarySkillDamage;
+            primarySkillCooldown = PlayFabDataStore.playerBaseStats.PrimarySkillCooldown;
+            primarySkillCharge = PlayFabDataStore.playerBaseStats.PrimarySkillCharge;
+            primarySkillRecharge = PlayFabDataStore.playerBaseStats.PrimarySkillRecharge;
+            secondarySkillCooldown = PlayFabDataStore.playerBaseStats.SecondarySkillCooldown;
+            isFrostbite = false;
+            isChill = false;
+            isRage = false;
+            isFrostNova = false;
+        }
+
+        isSecondChance = false;
+        
     }
 
     public void RespawnPlayer()
@@ -472,9 +476,13 @@ public class PlayerCombatManager : MonoBehaviourPun
         GetComponent<PlayerMovementController>().enabled = true;
         primarySkillCharges.SetActive(true);
 
-        GetComponent<PlayerLevelManager>().ResetOnRespawn();
+        if(!isSecondChance)
+        {       
+            GetComponent<PlayerLevelManager>().ResetOnRespawn();
+            PlayerRuneManager.Instance.RestartPlayerRunes();
+        }
 
-        PlayerRuneManager.Instance.RestartPlayerRunes();
+
         photonView.RPC("RespawnClients", RpcTarget.All, GameManager.Instance.SpawnLocationIndex);
 
     }
@@ -489,7 +497,9 @@ public class PlayerCombatManager : MonoBehaviourPun
             playerBase.gameObject.SetActive(false);
             Invoke("EnableRespawnedPlayerClients", 1f);
         }
+        
         SetPlayerBaseStats();
+
         transform.position = GameManager.Instance.SpawnLocation(_spawnLocationIndex);
         m_Animator.SetTrigger("Respawn");
         GetComponent<CapsuleCollider>().enabled = true;
@@ -525,26 +535,6 @@ public class PlayerCombatManager : MonoBehaviourPun
     #endregion
     #region Public Methods
 
-    public void RuneActivated()
-    {
-        //photonView.RPC("RuneActivated_RPC", RpcTarget.All);
-    }
-    /*
-    [PunRPC]
-    void RuneActivated_RPC()
-    {
-        if (photonView.IsMine)
-        {
-            runeActivatedBlue.SetActive(false);
-            runeActivatedBlue.SetActive(true);
-
-        }
-        else
-        {
-            runeActivatedRed.SetActive(false);
-            runeActivatedRed.SetActive(true);
-        }
-    }*/
     public bool IsDead
     {
         get
@@ -702,6 +692,26 @@ public class PlayerCombatManager : MonoBehaviourPun
     void Chill_RPC()
     {
         isChill = true;
+    }
+
+    public bool SecondChance
+    {
+        get
+        {
+            return isSecondChance;
+        }
+        set
+        {
+            isSecondChance = value;
+            if (isSecondChance) photonView.RPC("SecondChance_RPC", RpcTarget.AllBuffered);
+        }
+    }
+
+    [PunRPC]
+    void SecondChance_RPC()
+    {
+        isSecondChance = true;
+        playerHealthManager.isSecondChance = true;
     }
 
     public bool Rage
