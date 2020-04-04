@@ -178,7 +178,7 @@ public class PrimarySkillController : MonoBehaviour
             if (other.gameObject.layer == 16 && other.transform.parent.gameObject.GetComponent<PhotonView>() != null)
             {
                 Debug.Log("Collided with :" + other.gameObject.name);
-                if (other.transform.parent.gameObject.GetComponent<PhotonView>().ViewID != PlayerViewID)
+                if (other.transform.parent.gameObject.GetComponent<PhotonView>().ViewID != PlayerViewID && !isHit)
                 {
                     if (other.transform.parent.gameObject.GetComponent<PlayerHealthManager>().CanTakeDamage()) DamageOrigin.GetComponent<PlayerCombatManager>().ApplyDamageToEnemy(other.transform.parent.gameObject);
 
@@ -212,7 +212,7 @@ public class PrimarySkillController : MonoBehaviour
         }
         
         isHit = true;
-        Invoke("DelayDisable", 0.25f);
+        Invoke("DelayDisable", 0.5f);
     }
 
     private void DelayDisable()

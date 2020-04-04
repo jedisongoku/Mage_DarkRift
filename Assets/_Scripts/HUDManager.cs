@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using TMPro;
 using Photon.Pun;
 using Photon.Realtime;
+using System.Linq;
 
 public class HUDManager : MonoBehaviourPunCallbacks
 {
@@ -36,6 +37,9 @@ public class HUDManager : MonoBehaviourPunCallbacks
     [SerializeField] private Text loadingText;
     [SerializeField] private Image loadingBar;
 
+    [Header("Runes Panel")]
+    [SerializeField] public GameObject runesPanel;
+
     [Header("Shop Panel")]
     [SerializeField] public GameObject shopPanel;
 
@@ -58,6 +62,7 @@ public class HUDManager : MonoBehaviourPunCallbacks
     [SerializeField] private FloatingJoystick aimJoystick;
     [SerializeField] public GameObject[] playerUIList;
     [SerializeField] public GameObject[] killFeed;
+    [SerializeField] public Sprite[] runeTextureList;
     public GameObject[] scoreboardItems;
     public GameObject gamePanel;
     public GameObject exitGameButton;
@@ -246,6 +251,7 @@ public class HUDManager : MonoBehaviourPunCallbacks
         for (int i = 0; i < runeCount; i++)
         {
             runeOptions[i].GetComponentInChildren<Text>().text = PlayerRuneManager.playerRuneList[i].DisplayName;
+            runeOptions[i].transform.Find("RuneImage").GetComponent<Image>().sprite = Resources.Load<Sprite>("RuneTextures/" + PlayerRuneManager.playerRuneList[i].DisplayName);
             runeOptions[i].gameObject.SetActive(true);
 
         }
@@ -291,6 +297,11 @@ public class HUDManager : MonoBehaviourPunCallbacks
     {
         ActivatePanels(skinPanel.name);
         OnSkinPreviewed(true, PlayFabDataStore.playerProfile.skinName);
+    }
+
+    public void OnRunesButtonClicked()
+    {
+        ActivatePanels(runesPanel.name);
     }
 
     public void OnPanelBackButtonClicked()
@@ -581,6 +592,7 @@ public class HUDManager : MonoBehaviourPunCallbacks
     void ActivatePanels(string panelToBeActivated)
     {
         launchPanel.SetActive(panelToBeActivated.Equals(launchPanel.name));
+        runesPanel.SetActive(panelToBeActivated.Equals(runesPanel.name));
         menuPanel.SetActive(panelToBeActivated.Equals(menuPanel.name));
         shopPanel.SetActive(panelToBeActivated.Equals(shopPanel.name));
         skinPanel.SetActive(panelToBeActivated.Equals(skinPanel.name));

@@ -29,7 +29,7 @@ public class PlayerRuneManager : MonoBehaviour
             //Primary SKill Runes
             runeCatalog.Add(new Rune("Damage Boost", "DamageBoost", "Deal Higher Damage", 1,1));
             runeCatalog.Add(new Rune("Faster Recharge", "FasterRecharge", "Primary Skill Recharges Faster", 1, 1));
-            runeCatalog.Add(new Rune("Dash Reduced Cooldown", "DashReducedCooldown", "Secondary Skill Cooldown Reduced", 1, 1));
+            runeCatalog.Add(new Rune("Dash Cooldown", "DashReducedCooldown", "Secondary Skill Cooldown Reduced", 1, 1));
             runeCatalog.Add(new Rune("Frostbite", "Frostbite", "Attacks cause damage over time burn", 1, 1));
             runeCatalog.Add(new Rune("Chill", "Chill", "Attack slow enemies", 1, 1));
             //runeCatalog.Add(new Rune("Multi Shot", "MultiShot", "Fires an additional attack rapidly", 1, 1));
@@ -44,7 +44,7 @@ public class PlayerRuneManager : MonoBehaviour
             */
             //Survivability Runes
             runeCatalog.Add(new Rune("Bloodthirst", "Bloodthirst", "Restores HP when you kill an enemy", 1, 1));
-            runeCatalog.Add(new Rune("HP Boost", "HpBoost", "Max HP increased", 1, 1));
+            runeCatalog.Add(new Rune("Health Boost", "HpBoost", "Max HP increased", 1, 1));
             //runeCatalog.Add(new Rune("Invincible", "Invincible", "Become invincible once in a while", 1, 1));
             //runeCatalog.Add(new Rune("Life", "Life", "Get +1 life to continue adventure", 1, 1));
             runeCatalog.Add(new Rune("Shield Guard", "ShieldGuard", "A shield circles around you reducing damage taken", 1, 1));
