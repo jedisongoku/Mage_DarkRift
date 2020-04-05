@@ -300,15 +300,16 @@ public class PlayerCombatManager : MonoBehaviourPun
     void DrawAimLine()
     {
 
-        var aimDistance = new Vector3(aimJoystick.Horizontal, 0, aimJoystick.Vertical);
+        var aimDirection = new Vector3(aimJoystick.Horizontal, 0, aimJoystick.Vertical);
         
-        if(aimDistance.x > 0.1f || aimDistance.x < -0.1f || aimDistance.y > 0.1f || aimDistance.y < -0.1f)
+        if(aimDirection.x > 0.1f || aimDirection.x < -0.1f || aimDirection.y > 0.1f || aimDirection.y < -0.1f)
         {
-            aimDistance = new Vector3(aimJoystick.Horizontal, 0, aimJoystick.Vertical);
+            aimDirection = new Vector3(aimJoystick.Horizontal, 0, aimJoystick.Vertical);
+
         }
         aimAssist.SetPosition(0, transform.position + Vector3.up);
-        aimAssist.SetPosition(1, transform.position + Vector3.up + aimDistance * 10);
-        aimLocation = transform.position + aimDistance * 13;
+        aimAssist.SetPosition(1, transform.position + Vector3.up + aimDirection * 10);
+        aimLocation = transform.position + aimDirection * 10;
     }
 
     bool LineOfSight(GameObject enemy)
