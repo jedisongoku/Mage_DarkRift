@@ -261,6 +261,7 @@ public class PlayFabApiCalls : MonoBehaviour
         {
             //Result
             PlayFabDataStore.playerProfile = JsonUtility.FromJson<PlayerProfile>(result.Data["PlayerProfile"].Value);
+            UpdateUserDisplayName(PlayFabDataStore.playerProfile.playerName + "#");
 
             ApiCallSuccess();
 
@@ -401,7 +402,7 @@ public class PlayFabApiCalls : MonoBehaviour
         PlayFabClientAPI.ExecuteCloudScript(request, (result) =>
         {
             //Result
-            UpdateUserDisplayName(PlayFabDataStore.playerProfile.playerName);
+            UpdateUserDisplayName(PlayFabDataStore.playerProfile.playerName + "#");
             Debug.Log("Profile Updated");
         }, (error) =>
         {
@@ -420,6 +421,48 @@ public class PlayFabApiCalls : MonoBehaviour
         {
             //Result
             Debug.Log("Display Name Updated");
+        }, (error) =>
+        {
+            OnPlayFabError(error);
+
+        });
+    }
+
+    public void GetLeaderboard()
+    {
+        var request = new GetLeaderboardRequest()
+        {
+            MaxResultsCount = 100,
+            StatisticName = "Lifetime Kills",
+            
+        };
+        PlayFabClientAPI.GetLeaderboard(request, (result) =>
+        {
+            //Result
+            LeaderboardManager.Instance.RefreshLeaderboard(result.Leaderboard);
+            Debug.Log("leaderboard retrieved");
+        }, (error) =>
+        {
+            OnPlayFabError(error);
+
+        });
+    }
+    public void GetLeaderboardAroundPlayer()
+    {
+        var request = new GetLeaderboardAroundPlayerRequest()
+        {
+            StatisticName = "Lifetime Kills"
+        };
+        PlayFabClientAPI.GetLeaderboardAroundPlayer(request, (result) =>
+        {
+            //Result
+            foreach(var entry in result.Leaderboard)
+            {
+                if(entry.PlayFabId == PlayFabDataStore.playFabID)
+                    LeaderboardManager.Instance.RefreshPlayerRank(entry);
+            }
+            //LeaderboardManager.Instance.RefreshPlayerRank(result.Leaderboard.);
+            Debug.Log("leaderboard retrieved");
         }, (error) =>
         {
             OnPlayFabError(error);

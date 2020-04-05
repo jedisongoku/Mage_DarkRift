@@ -6,6 +6,7 @@ using TMPro;
 using Photon.Pun;
 using Photon.Realtime;
 using System.Linq;
+using PlayFab.ClientModels;
 
 public class HUDManager : MonoBehaviourPunCallbacks
 {
@@ -56,6 +57,10 @@ public class HUDManager : MonoBehaviourPunCallbacks
     [SerializeField] private Text skinCoinsCurrencyText;
     [SerializeField] private Text skinGemsCurrencyText;
     [SerializeField] private Text skinEnergyCurrencyText;
+
+    [Header("Leaderboard Panel")]
+    [SerializeField] public GameObject leaderboardPanel;
+    [SerializeField] public GameObject leaderboardContent;
 
     [Header("Game Panel")]
     [SerializeField] private DynamicJoystick movementJoystick;
@@ -302,6 +307,11 @@ public class HUDManager : MonoBehaviourPunCallbacks
     public void OnRunesButtonClicked()
     {
         ActivatePanels(runesPanel.name);
+    }
+
+    public void OnLeaderboardButtonClicked()
+    {
+        ActivatePanels(leaderboardPanel.name);
     }
 
     public void OnPanelBackButtonClicked()
@@ -595,6 +605,7 @@ public class HUDManager : MonoBehaviourPunCallbacks
         runesPanel.SetActive(panelToBeActivated.Equals(runesPanel.name));
         menuPanel.SetActive(panelToBeActivated.Equals(menuPanel.name));
         shopPanel.SetActive(panelToBeActivated.Equals(shopPanel.name));
+        leaderboardPanel.SetActive(panelToBeActivated.Equals(leaderboardPanel.name));
         skinPanel.SetActive(panelToBeActivated.Equals(skinPanel.name));
         waitingAreaPanel.SetActive(panelToBeActivated.Equals(waitingAreaPanel.name));
         loadingPanel.SetActive(panelToBeActivated.Equals(loadingPanel.name));
