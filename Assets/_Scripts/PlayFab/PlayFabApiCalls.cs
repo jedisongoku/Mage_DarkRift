@@ -82,6 +82,18 @@ public class PlayFabApiCalls : MonoBehaviour
         ApiCallSuccess();
     }
 
+    public void LinkGameAccount()
+    {
+        if(Application.platform == RuntimePlatform.Android)
+        {
+            LinkGooglePlay();
+        }
+        else
+        {
+            LinkGameCenter();
+        }
+    }
+
     public void LinkGameCenter()
     {
         var request = new LinkGameCenterAccountRequest()
@@ -89,6 +101,22 @@ public class PlayFabApiCalls : MonoBehaviour
             GameCenterId = Social.localUser.id
         };
         PlayFabClientAPI.LinkGameCenterAccount(request, (result) =>
+        {
+            Debug.Log("Game center linked");
+
+        }, (error) =>
+        {
+
+        });
+    }
+
+    public void LinkGooglePlay()
+    {
+        var request = new LoginWithGoogleAccountRequest()
+        {
+            TitleId = "7B0A0"
+        };
+        PlayFabClientAPI.LoginWithGoogleAccount(request, (result) =>
         {
             Debug.Log("Game center linked");
 

@@ -67,7 +67,7 @@ public class PlayFabLoginManager : MonoBehaviour
         if (PlayFabApiCalls.isNewUser)
         {
             PlayFabApiCalls.instance.CreateNewProfile();
-            if(Social.localUser.authenticated) PlayFabApiCalls.instance.LinkGameCenter();
+            if(Social.localUser.authenticated) PlayFabApiCalls.instance.LinkGameAccount();
 
         }
         else
