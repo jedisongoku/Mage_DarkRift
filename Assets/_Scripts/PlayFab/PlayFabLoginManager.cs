@@ -1,5 +1,7 @@
-﻿using GooglePlayGames;
+﻿#if UNITY_ANDROID
+using GooglePlayGames;
 using GooglePlayGames.BasicApi;
+#endif
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -33,6 +35,7 @@ public class PlayFabLoginManager : MonoBehaviour
 
     void Start()
     {
+#if UNITY_ANDROID
         if(Application.platform == RuntimePlatform.Android)
         {
             PlayGamesClientConfiguration config = new PlayGamesClientConfiguration.Builder()
@@ -47,9 +50,8 @@ public class PlayFabLoginManager : MonoBehaviour
             // Activate the Google Play Games platform
             PlayGamesPlatform.Activate();
             
-        }
-        
-
+        }       
+#endif
         Social.localUser.Authenticate(success => {
             if (success)        
                 Debug.Log("Social success");

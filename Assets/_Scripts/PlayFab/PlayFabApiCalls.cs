@@ -110,7 +110,7 @@ public class PlayFabApiCalls : MonoBehaviour
 
         });
     }
-
+#if UNITY_ANDROID
     public void LinkGooglePlay()
     {
         var request = new LinkGoogleAccountRequest()
@@ -127,9 +127,9 @@ public class PlayFabApiCalls : MonoBehaviour
 
         });
     }
+#endif
 
-
-    #endregion
+#endregion
 
     #region GameContent
     public void GetPlayerBaseStats()
