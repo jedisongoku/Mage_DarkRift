@@ -25,15 +25,4 @@ public class GemPickup : MonoBehaviour
             gameObject.SetActive(false);
         }
     }
-
-    public void AddToList()
-    {
-        Invoke("AddToGemList", 2f);
-    }
-
-    void AddToGemList()
-    {
-
-        //gemList.Add(this, transform.position);
-    }
 }

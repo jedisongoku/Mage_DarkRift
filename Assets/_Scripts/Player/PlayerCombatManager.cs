@@ -305,11 +305,13 @@ public class PlayerCombatManager : MonoBehaviourPun
         if(aimDirection.x > 0.1f || aimDirection.x < -0.1f || aimDirection.y > 0.1f || aimDirection.y < -0.1f)
         {
             aimDirection = new Vector3(aimJoystick.Horizontal, 0, aimJoystick.Vertical);
-
+            float distance = Vector3.Distance(transform.position, transform.position + aimDirection);
+            distance = 1 / distance;
+            aimDirection *= distance * 10;
         }
         aimAssist.SetPosition(0, transform.position + Vector3.up);
-        aimAssist.SetPosition(1, transform.position + Vector3.up + aimDirection * 10);
-        aimLocation = transform.position + aimDirection * 10;
+        aimAssist.SetPosition(1, transform.position + Vector3.up + aimDirection);
+        aimLocation = transform.position + aimDirection;
     }
 
     bool LineOfSight(GameObject enemy)

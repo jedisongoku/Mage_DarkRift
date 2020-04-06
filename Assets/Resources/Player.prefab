@@ -53044,8 +53044,8 @@ LineRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7017714042215466706}
   m_Enabled: 1
-  m_CastShadows: 1
-  m_ReceiveShadows: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
   m_DynamicOccludee: 1
   m_MotionVectors: 0
   m_LightProbeUsage: 0
@@ -53053,7 +53053,7 @@ LineRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 7876accd396ce7e4a9954f77433b2cac, type: 2}
+  - {fileID: 10306, guid: 0000000000000000f000000000000000, type: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -53079,7 +53079,7 @@ LineRenderer:
   - {x: 0, y: 0, z: 5}
   m_Parameters:
     serializedVersion: 3
-    widthMultiplier: 0.4
+    widthMultiplier: 0.45
     widthCurve:
       serializedVersion: 2
       m_Curve:
@@ -53097,17 +53097,17 @@ LineRenderer:
       m_RotationOrder: 4
     colorGradient:
       serializedVersion: 2
-      key0: {r: 0, g: 1, b: 1, a: 1}
-      key1: {r: 0, g: 0.25490198, b: 1, a: 1}
-      key2: {r: 1, g: 1, b: 0.38431373, a: 0.6784314}
+      key0: {r: 0.7735849, g: 0.7735849, b: 0.7735849, a: 0.19607843}
+      key1: {r: 0.24528301, g: 0.24528301, b: 0.24528301, a: 0.20784314}
+      key2: {r: 0.24528301, g: 0.24528301, b: 0.24528301, a: 0.6784314}
       key3: {r: 1, g: 0.808114, b: 0, a: 0}
       key4: {r: 0, g: 0, b: 0, a: 0}
       key5: {r: 0, g: 0, b: 0, a: 0}
       key6: {r: 0, g: 0, b: 0, a: 0}
       key7: {r: 0, g: 0, b: 0, a: 0}
       ctime0: 0
-      ctime1: 65535
-      ctime2: 38357
+      ctime1: 65388
+      ctime2: 65388
       ctime3: 65535
       ctime4: 0
       ctime5: 0
@@ -63139,7 +63139,7 @@ Transform:
   m_Children:
   - {fileID: 8507488124019185994}
   - {fileID: 8507488124019186343}
-  - {fileID: 38586915384219559}
+  - {fileID: 5577883137045856481}
   - {fileID: 8115129491214733115}
   - {fileID: 5908709907402072547}
   - {fileID: 3339294857317480747}
@@ -63280,7 +63280,7 @@ MonoBehaviour:
   playerHealthManager: {fileID: 5718202486688299391}
   playerDamageCollider: {fileID: 6921259040233121731}
   playerUI: {fileID: 8507488124019187080}
-  playerBase: {fileID: 38586915384219558}
+  playerBase: {fileID: 5577883137065242401}
   playerShadow: {fileID: 8507488124019186751}
   playerHealthBar: {fileID: 8507488124019187675}
   enemyHealthBarTexture: {fileID: 21300000, guid: 7cf005012bc6b674096379b8fc90ef35,
@@ -63997,13 +63997,13 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9bf782ca50427a74ca204afd91b58035, type: 3}
---- !u!198 &38586915384219558 stripped
+--- !u!198 &5577883137065242401 stripped
 ParticleSystem:
   m_CorrespondingSourceObject: {fileID: 5611918005578373252, guid: 9bf782ca50427a74ca204afd91b58035,
     type: 3}
   m_PrefabInstance: {fileID: 38586915384219557}
   m_PrefabAsset: {fileID: 0}
---- !u!4 &38586915384219559 stripped
+--- !u!4 &5577883137045856481 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5611918005563217732, guid: 9bf782ca50427a74ca204afd91b58035,
     type: 3}

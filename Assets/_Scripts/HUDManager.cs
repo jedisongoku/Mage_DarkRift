@@ -444,6 +444,7 @@ public class HUDManager : MonoBehaviourPunCallbacks
     public void OnRespawnButtonClicked()
     {
         Debug.Log("Energy " + PlayFabDataStore.vc_energy);
+
         if (PlayFabDataStore.vc_energy >= 5)
         {
             if (GameManager.Instance.CanRespawn)
@@ -492,6 +493,7 @@ public class HUDManager : MonoBehaviourPunCallbacks
 
     public void ShowDeathPanel()
     {
+        respawnEnergyText.text = "50/50";
         deathPanel.SetActive(true);
     }
 

@@ -102,6 +102,7 @@ public class PlayFabApiCalls : MonoBehaviour
         };
         PlayFabClientAPI.LinkGameCenterAccount(request, (result) =>
         {
+            UpdateUserDisplayName(Social.localUser.userName + "#");
             Debug.Log("Game center linked");
 
         }, (error) =>
@@ -112,12 +113,13 @@ public class PlayFabApiCalls : MonoBehaviour
 
     public void LinkGooglePlay()
     {
-        var request = new LoginWithGoogleAccountRequest()
+        var request = new LinkGoogleAccountRequest()
         {
-            TitleId = "7B0A0"
+            ServerAuthCode = GooglePlayGames.PlayGamesPlatform.Instance.GetServerAuthCode()
         };
-        PlayFabClientAPI.LoginWithGoogleAccount(request, (result) =>
+        PlayFabClientAPI.LinkGoogleAccount(request, (result) =>
         {
+            UpdateUserDisplayName(Social.localUser.userName + "#");
             Debug.Log("Game center linked");
 
         }, (error) =>
@@ -259,11 +261,20 @@ public class PlayFabApiCalls : MonoBehaviour
 
     public void CreateNewProfile()
     {
+        string username;
+        if(Social.localUser.authenticated)
+        {
+            username = Social.localUser.userName;
+        }
+        else
+        {
+            username = "Mage" + Random.Range(1000, 9999);
+        }
 
         var request = new ExecuteCloudScriptRequest()
         {
             FunctionName = "CreateNewProfile",
-            FunctionParameter = false
+            FunctionParameter = new { playerName = username }
             
         };
         PlayFabClientAPI.ExecuteCloudScript(request, (result) =>

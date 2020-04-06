@@ -144,6 +144,7 @@ public class ObjectPooler : MonoBehaviour
         if (willGrow)
         {
             GameObject obj = (GameObject)Instantiate(gemPrefab);
+            obj.SetActive(false);
             gemPrefabList.Add(obj);
             return obj;
         }

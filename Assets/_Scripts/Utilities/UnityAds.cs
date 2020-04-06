@@ -25,6 +25,7 @@ public class UnityAds : MonoBehaviour, IUnityAdsListener
     // Implement a function for showing a rewarded video ad:
     public void RefillEnergyAd()
     {
+        PlayFabApiCalls.instance.GetVirtualCurrency_Energy();
         Photon.Pun.PhotonNetwork.KeepAliveInBackground = 60;
         myPlacementId = "RefillEnergy";
         Advertisement.Show(myPlacementId);

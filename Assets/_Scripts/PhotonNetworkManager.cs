@@ -47,7 +47,7 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
         }*/
 
         PhotonNetwork.ConnectUsingSettings();
-        PhotonNetwork.KeepAliveInBackground = 0;
+        
         PhotonNetwork.AutomaticallySyncScene = true;
         SceneManager.sceneLoaded += OnSceneLoaded;
     }
@@ -85,8 +85,9 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
     public override void OnJoinedRoom()
     {
         Debug.Log(PhotonNetwork.LocalPlayer.NickName + " joined to " + PhotonNetwork.CurrentRoom.Name);
+        PhotonNetwork.KeepAliveInBackground = 0;
 
-        if(OnJoinedRoomEvent != null)
+        if (OnJoinedRoomEvent != null)
         {
             OnJoinedRoomEvent();
 
@@ -165,6 +166,7 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
     public override void OnLeftRoom()
     {
         Debug.Log("Left Room");
+        PhotonNetwork.KeepAliveInBackground = 60;
 #if (!UNITY_EDITOR)
         SceneManager.LoadScene(0);
 #endif

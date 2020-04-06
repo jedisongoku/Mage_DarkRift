@@ -1,4 +1,6 @@
-﻿using System.Collections;
+﻿using GooglePlayGames;
+using GooglePlayGames.BasicApi;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -31,15 +33,37 @@ public class PlayFabLoginManager : MonoBehaviour
 
     void Start()
     {
+        if(Application.platform == RuntimePlatform.Android)
+        {
+            PlayGamesClientConfiguration config = new PlayGamesClientConfiguration.Builder()
+        .AddOauthScope("profile")
+        .RequestServerAuthCode(false)
+        .Build();
+            PlayGamesPlatform.InitializeInstance(config);
+
+            // recommended for debugging:
+            PlayGamesPlatform.DebugLogEnabled = true;
+
+            // Activate the Google Play Games platform
+            PlayGamesPlatform.Activate();
+            
+        }
+        
+
         Social.localUser.Authenticate(success => {
-            if (success)
+            if (success)        
                 Debug.Log("Social success");
             else
                 Debug.Log("Failed to social authenticate");
+                
         });
 
         LoginPlayFab();
+
+
     }
+
+    
 
     public void LoginPlayFab()
     {

@@ -38,7 +38,6 @@ public class PlayerNetworkManager : MonoBehaviourPunCallbacks
 
         if (PhotonNetwork.IsMasterClient)
         {
-            Debug.Log("Spawn GEM 1");
             StartCoroutine(SpawnGems());
             previousLocation = CartController.instance.GetCartLocation;
             //GameManager.Instance.InitializeBotPlayer();
@@ -79,7 +78,7 @@ public class PlayerNetworkManager : MonoBehaviourPunCallbacks
 
         if(photonView.IsMine && PhotonNetwork.IsMasterClient)
         {
-            photonView.RPC("StartCartAnimation", newPlayer, CartController.instance.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsName("Forward"),
+            photonView.RPC("StartCartAnimation", RpcTarget.Others, CartController.instance.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsName("Forward"),
                 CartController.instance.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).normalizedTime, CartController.instance.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).length,
                 PhotonNetwork.ServerTimestamp);
         }
@@ -105,7 +104,6 @@ public class PlayerNetworkManager : MonoBehaviourPunCallbacks
 
     IEnumerator SpawnGems()
     {
-        Debug.Log("Spawn GEM 2");
 
         gemSpawnTime = Random.Range(3f, 5f);
 
@@ -115,10 +113,9 @@ public class PlayerNetworkManager : MonoBehaviourPunCallbacks
         random = random >= 0 ? 1 : -1;
         Vector3 randomVector = new Vector3(0, 0, random);
 
-        //GameObject obj = PhotonNetwork.Instantiate(gem.name, gemSpawnLocation.position + randomVector, Quaternion.identity);
+        
 
         int power = Random.Range(7, 12);
-        //obj.GetComponent<Rigidbody>().AddExplosionForce(power, gemSpawnLocation.position, radius, upforce, ForceMode.Impulse);
         if ((previousLocation - CartController.instance.GetCartLocation).magnitude > 1)
         {
             photonView.RPC("SpawnGem", RpcTarget.AllViaServer, power, CartController.instance.GetSpawnLocation, randomVector);
@@ -144,12 +141,10 @@ public class PlayerNetworkManager : MonoBehaviourPunCallbacks
     [PunRPC]
     void SpawnGem(int power, Vector3 spawnLocation, Vector3 randomVector)
     {
-        Debug.Log("Spawn GEM 3");
-        //GameObject obj = Instantiate(CartController.instance.GetGemObject, spawnLocation + randomVector, Quaternion.identity);
+
         GameObject obj = ObjectPooler.Instance.GetGemPrefab();
         obj.transform.position = spawnLocation + randomVector;
         obj.SetActive(true);
-        obj.GetComponent<GemPickup>().AddToList();
 
         obj.GetComponent<Rigidbody>().AddExplosionForce(power, spawnLocation, radius, upforce, ForceMode.Impulse);
     }
