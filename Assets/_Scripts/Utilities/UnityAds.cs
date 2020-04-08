@@ -31,6 +31,20 @@ public class UnityAds : MonoBehaviour, IUnityAdsListener
         Advertisement.Show(myPlacementId);
     }
 
+    public void CoinRewardAd()
+    {
+        Photon.Pun.PhotonNetwork.KeepAliveInBackground = 60;
+        myPlacementId = "CoinReward";
+        Advertisement.Show(myPlacementId);
+    }
+
+    public void GemRewardAd()
+    {
+        Photon.Pun.PhotonNetwork.KeepAliveInBackground = 60;
+        myPlacementId = "GemReward";
+        Advertisement.Show(myPlacementId);
+    }
+
     // Implement IUnityAdsListener interface methods:
     public void OnUnityAdsReady(string placementId)
     {
@@ -44,8 +58,21 @@ public class UnityAds : MonoBehaviour, IUnityAdsListener
         {
             Debug.Log("Ad finished");
             // Reward the user for watching the ad to completion.
-            PlayFabApiCalls.instance.AddVirtualCurrency(50 - PlayFabDataStore.vc_energy, "EN");
-            if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "Deathmatch") HUDManager.Instance.ShowDeathPanel();
+            if(placementId == "RefillEnergy")
+            {
+                PlayFabApiCalls.instance.AddVirtualCurrency(50 - PlayFabDataStore.vc_energy, "EN");
+                if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "Deathmatch") HUDManager.Instance.ShowDeathPanel();
+            }
+            else if(placementId == "CoinReward")
+            {
+                PlayFabApiCalls.instance.AddVirtualCurrency(50, "CO");
+            }
+            else if(placementId == "GemReward")
+            {
+                PlayFabApiCalls.instance.AddVirtualCurrency(5, "GM");
+
+            }
+            
         }
         else if (showResult == ShowResult.Skipped)
         {

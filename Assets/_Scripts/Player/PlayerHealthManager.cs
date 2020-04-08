@@ -203,7 +203,7 @@ public class PlayerHealthManager : MonoBehaviourPun
     public void OnPlayerHit(int _playerViewId, float _damageDone, bool _isFrostbite, bool _isChill, bool _isFrostNova, bool _isRage)
     {
         DamageOrigin = _playerViewId;
-        if (_isRage) _damageDone += _damageDone * PlayFabDataStore.playerBaseStats.RageDamageRate;  
+        if (_isRage) _damageDone = _damageDone * PlayFabDataStore.playerBaseStats.RageDamageRate;  
         if (_isFrostbite) StartFrostbite(DamageOrigin);
         if (_isChill) GetComponent<PlayerMovementController>().StartChill(PlayFabDataStore.playerBaseStats.ChillDuration);
 
@@ -455,6 +455,7 @@ public class PlayerHealthManager : MonoBehaviourPun
     [PunRPC]
     void StrongHeart_RPC()
     {
+        isStrongHeart = true;
         strongHeartParticle.SetActive(true);
         healthGenerationRate *= PlayFabDataStore.playerBaseStats.StrongHeartMultiplier;
     }
@@ -484,7 +485,19 @@ public class PlayerHealthManager : MonoBehaviourPun
 
     public void SwitchShieldVisibility(bool value)
     {
-        Debug.Log("Switch shield Visibility");
         if (isShieldGuard) shieldGuardParticle.SetActive(value);
+    }
+
+    public void SwitchRageVisibility(bool value)
+    {
+        if (Rage) rageParticle.SetActive(value);
+    }
+
+    public void SwitchStrongHearthVisibility(bool value)
+    {
+        Debug.Log("hearth particle " + value);
+        if (isStrongHeart) strongHeartParticle.SetActive(value);
+        
+
     }
 }

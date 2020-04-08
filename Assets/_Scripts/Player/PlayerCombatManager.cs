@@ -468,10 +468,14 @@ public class PlayerCombatManager : MonoBehaviourPun
             isChill = false;
             isRage = false;
             isFrostNova = false;
+
+
+            if (photonView.IsMine) HUDManager.Instance.ResetContinueGemCost();
         }
 
         isSecondChance = false;
-        
+
+
     }
 
     public void RespawnPlayer()
@@ -785,6 +789,8 @@ public class PlayerCombatManager : MonoBehaviourPun
         {
             dashTrail.SetActive(value);
             playerHealthManager.SwitchShieldVisibility(value);
+            playerHealthManager.SwitchRageVisibility(value);
+            playerHealthManager.SwitchStrongHearthVisibility(value);
             playerBase.gameObject.SetActive(value);
         }
 

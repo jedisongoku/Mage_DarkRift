@@ -42,13 +42,17 @@ public class LeaderboardManager : MonoBehaviour
     {
         foreach(var entry in leaderboard)
         {
-            Debug.Log("Name " + entry.DisplayName);
-            GameObject prefab = GetLeaderboardEntryPrefab();
-            prefab.transform.Find("Placement").GetComponent<Text>().text = (entry.Position + 1).ToString();
-            prefab.transform.Find("PlayerName").GetComponent<Text>().text = entry.DisplayName.ToString();
-            prefab.transform.Find("Score/Text").GetComponent<Text>().text = entry.StatValue.ToString();
-            prefab.transform.parent = leaderboardContent.transform;
-            prefab.SetActive(true);
+            if(entry.DisplayName != null)
+            {
+                Debug.Log("Name " + entry.DisplayName);
+                GameObject prefab = GetLeaderboardEntryPrefab();
+                prefab.transform.Find("Placement").GetComponent<Text>().text = (entry.Position + 1).ToString();
+                prefab.transform.Find("PlayerName").GetComponent<Text>().text = entry.DisplayName.ToString();
+                prefab.transform.Find("Score/Text").GetComponent<Text>().text = entry.StatValue.ToString();
+                prefab.transform.parent = leaderboardContent.transform;
+                prefab.SetActive(true);
+            }
+            
         }
 
     }
@@ -91,6 +95,10 @@ public class LeaderboardManager : MonoBehaviour
 
     void RefreshActivate()
     {
+        foreach(var item in leaderboardEntryList)
+        {
+            item.SetActive(false);
+        }
         refreshLeaderboard = true;
     }
 

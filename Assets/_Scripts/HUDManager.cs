@@ -67,7 +67,6 @@ public class HUDManager : MonoBehaviourPunCallbacks
     [SerializeField] private FloatingJoystick aimJoystick;
     [SerializeField] public GameObject[] playerUIList;
     [SerializeField] public GameObject[] killFeed;
-    [SerializeField] public Sprite[] runeTextureList;
     public GameObject[] scoreboardItems;
     public GameObject gamePanel;
     public GameObject exitGameButton;
@@ -85,6 +84,12 @@ public class HUDManager : MonoBehaviourPunCallbacks
     public Text fps;
     public Text respawnEnergyText;
     public Text totalPlayersText;
+    public Text continueGemText;
+    public Text continueGemCostText;
+    public Button continueButton;
+    private float continueGemMultiplier = 1.5f;
+    private int continueGemCost = 2;
+
 
     [Header("Level")]
     [SerializeField] private Text levelText;
@@ -422,7 +427,22 @@ public class HUDManager : MonoBehaviourPunCallbacks
     {
         playerControllerPanel.SetActive(false);
         respawnEnergyText.text = PlayFabDataStore.vc_energy + "/" + 50;
+
+        if(PlayFabDataStore.vc_gems < continueGemCost)
+        {
+            continueButton.interactable = false;
+        }
+        else
+        {
+            continueButton.interactable = true;
+        }
+
+        continueGemText.text = PlayFabDataStore.vc_gems.ToString();
+        continueGemCostText.text = "x" + continueGemCost;
+
         deathPanel.SetActive(true);
+        
+
         GameManager.Instance.CanRespawn = false;
         isRespawnRequested = false;
         respawnCooldownText.gameObject.SetActive(true);
@@ -440,6 +460,28 @@ public class HUDManager : MonoBehaviourPunCallbacks
             //Make api calls
         }
         //respawnButton.SetActive(true);
+    }
+
+    public void OnContinueButtonClicked()
+    {
+        if (PlayFabDataStore.vc_gems >= continueGemCost)
+        {
+            GameManager.Instance.GetCurrentPlayer.GetComponent<PlayerCombatManager>().SecondChance = true;
+            
+            if (GameManager.Instance.CanRespawn)
+            {
+                //OnGameLevelLoaded(); 
+                GameManager.Instance.RespawnPlayer();
+                playerControllerPanel.SetActive(true);
+            }
+            isRespawnRequested = true;
+            //playerControllerPanel.SetActive(true);
+            deathPanel.SetActive(false);
+
+            PlayFabApiCalls.instance.SubtractVirtualCurrency(continueGemCost, "GM");
+            continueGemCost = Mathf.CeilToInt(continueGemCost * continueGemMultiplier);
+        }
+
     }
     public void OnRespawnButtonClicked()
     {
@@ -489,6 +531,11 @@ public class HUDManager : MonoBehaviourPunCallbacks
                 OnRespawnButtonClicked();
 
         }
+    }
+
+    public void ResetContinueGemCost()
+    {
+        continueGemCost = 2;
     }
 
     public void ShowDeathPanel()
