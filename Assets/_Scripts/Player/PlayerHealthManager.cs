@@ -277,7 +277,7 @@ public class PlayerHealthManager : MonoBehaviourPun
         {
             EnableExplosionParticle();
         }
-
+        float damage = playerhealth - _health;
         playerhealth = _health;
         if(playerhealth <= 0 && !GetComponent<PlayerCombatManager>().IsDead)
         {
@@ -300,6 +300,7 @@ public class PlayerHealthManager : MonoBehaviourPun
         }
 
         UpdateHealthBar();
+        if (_damageOrigin == GameManager.Instance.GetCurrentPlayerViewID) ShowFloatingCombatText(damage);
 
         if((playerhealth / playerMaxHealth <= PlayFabDataStore.playerBaseStats.RageStartRate) && isRage && !GetComponent<PlayerCombatManager>().IsDead)
         {
@@ -481,6 +482,15 @@ public class PlayerHealthManager : MonoBehaviourPun
             isShieldGuard = value;
             if(isShieldGuard) photonView.RPC("SetShieldGuard", RpcTarget.AllBuffered);
         }
+    }
+
+    void ShowFloatingCombatText(float amount)
+    {
+        GameObject obj = ObjectPooler.Instance.GetFloatingCombatTextPrefab();
+        obj.GetComponent<TextMeshPro>().text = Mathf.RoundToInt(amount).ToString();
+        obj.transform.position = transform.position;
+        obj.SetActive(true);
+        
     }
 
     public void SwitchShieldVisibility(bool value)

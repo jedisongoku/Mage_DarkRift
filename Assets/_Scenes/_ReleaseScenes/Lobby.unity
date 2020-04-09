@@ -733,6 +733,16 @@ PrefabInstance:
       propertyPath: m_Name
       value: HUD
       objectReference: {fileID: 0}
+    - target: {fileID: 4469021793573143124, guid: d7d650b8ccc2b7043ad3fdae8c871fb0,
+        type: 3}
+      propertyPath: m_Interactable
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4469021793573143124, guid: d7d650b8ccc2b7043ad3fdae8c871fb0,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnContinueButtonClicked
+      objectReference: {fileID: 0}
     - target: {fileID: 8711717319166147067, guid: d7d650b8ccc2b7043ad3fdae8c871fb0,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -1007,16 +1017,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: ContinueCurrencyText
-      objectReference: {fileID: 0}
-    - target: {fileID: 4469021793573143124, guid: d7d650b8ccc2b7043ad3fdae8c871fb0,
-        type: 3}
-      propertyPath: m_Interactable
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4469021793573143124, guid: d7d650b8ccc2b7043ad3fdae8c871fb0,
-        type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: OnContinueButtonClicked
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d7d650b8ccc2b7043ad3fdae8c871fb0, type: 3}

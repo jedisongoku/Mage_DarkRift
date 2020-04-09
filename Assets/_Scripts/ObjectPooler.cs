@@ -11,15 +11,18 @@ public class ObjectPooler : MonoBehaviour
     [SerializeField] private GameObject primarySkillExplosionPrefab;
     [SerializeField] private GameObject primarySkillEnvironmentExplosionPrefab;
     [SerializeField] private GameObject gemPrefab;
+    [SerializeField] private GameObject floationCombatTextPrefab;
     [SerializeField] private int primarySkillPrefabPooledAmount = 2;
     [SerializeField] private int primarySkillExplosionPrefabPooledAmount = 2;
     [SerializeField] private int primarySkillEnvironmentExplosionPrefabPooledAmount = 2;
     [SerializeField] private int gemPrefabPooledAmount = 10;
+    [SerializeField] private int floationCombatTextPrefabPooledAmount = 10;
 
     List<GameObject> primarySkillPrefabList;
     List<GameObject> primarySkillExplosionPrefabList;
     List<GameObject> primarySkillEnvironmentExplosionPrefabList;
     List<GameObject> gemPrefabList;
+    List<GameObject> floationCombatTextPrefabList;
 
     bool willGrow = true;
 
@@ -36,6 +39,7 @@ public class ObjectPooler : MonoBehaviour
         primarySkillExplosionPrefabList = new List<GameObject>();
         primarySkillEnvironmentExplosionPrefabList = new List<GameObject>();
         gemPrefabList = new List<GameObject>();
+        floationCombatTextPrefabList = new List<GameObject>();
 
 
         //Primary Skill Particle Instantiation 
@@ -68,6 +72,14 @@ public class ObjectPooler : MonoBehaviour
             GameObject obj = (GameObject)Instantiate(gemPrefab);
             obj.SetActive(false);
             gemPrefabList.Add(obj);
+        }
+
+        //Floating Combat Text Instantiation 
+        for (int i = 0; i < gemPrefabPooledAmount; i++)
+        {
+            GameObject obj = (GameObject)Instantiate(floationCombatTextPrefab);
+            obj.SetActive(false);
+            floationCombatTextPrefabList.Add(obj);
         }
     }
 
@@ -146,6 +158,27 @@ public class ObjectPooler : MonoBehaviour
             GameObject obj = (GameObject)Instantiate(gemPrefab);
             obj.SetActive(false);
             gemPrefabList.Add(obj);
+            return obj;
+        }
+
+        return null;
+    }
+
+    public GameObject GetFloatingCombatTextPrefab()
+    {
+        for (int i = 0; i < floationCombatTextPrefabList.Count; i++)
+        {
+            if (!floationCombatTextPrefabList[i].activeInHierarchy)
+            {
+                return floationCombatTextPrefabList[i];
+            }
+        }
+
+        if (willGrow)
+        {
+            GameObject obj = (GameObject)Instantiate(floationCombatTextPrefab);
+            obj.SetActive(false);
+            floationCombatTextPrefabList.Add(obj);
             return obj;
         }
 

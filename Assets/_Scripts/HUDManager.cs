@@ -118,7 +118,8 @@ public class HUDManager : MonoBehaviourPunCallbacks
         }
 
         Application.targetFrameRate = 60;
-        
+        QualitySettings.vSyncCount = 0;
+
         //ActivatePanels(menuPanel.name);   
         StartCoroutine(Applaunch());
     }

@@ -154,6 +154,14 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public int GetCurrentPlayerViewID
+    {
+        get
+        {
+            return currentPlayerViewID;
+        }
+    }
+
     public void KillFeed(int _playerViewID, GameObject _playerkilled)
     {
         ScoreManager.Instance.RefreshKillFeed(PhotonNetwork.GetPhotonView(_playerViewID).Owner.NickName, _playerkilled.GetComponent<PhotonView>().Owner.NickName);
