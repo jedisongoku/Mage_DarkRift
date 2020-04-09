@@ -30,12 +30,14 @@ public class PlayerHealthManager : MonoBehaviourPun
     [SerializeField] private GameObject strongHeartParticle;
     [SerializeField] private GameObject shieldGuardParticle;
     [SerializeField] private GameObject rageParticle;
+    [SerializeField] private GameObject respawnParticle;
     bool isFrostbite = false;
     bool isBloodthirst = false;
     bool isHpBoost = false;
     bool isStrongHeart = false;
     bool isShieldGuard = false;
     bool isRage = false;
+    bool isRespawnShield = false;
 
     int frostbiteDurationTick = 0;
 
@@ -91,8 +93,20 @@ public class PlayerHealthManager : MonoBehaviourPun
             if(isShieldGuard) shieldGuardParticle.SetActive(true);
         }
         isSecondChance = false;
+        StartCoroutine(RespawnShield());
         
 
+    }
+
+    IEnumerator RespawnShield()
+    {
+        isRespawnShield = true;
+        respawnParticle.SetActive(true);
+
+        yield return new WaitForSeconds(2);
+
+        isRespawnShield = false;
+        respawnParticle.SetActive(false);
     }
 
     IEnumerator HealhtRegeneration()
@@ -213,6 +227,11 @@ public class PlayerHealthManager : MonoBehaviourPun
 
     public void TakeDamage(float _damage)
     {
+        if(isRespawnShield)
+        {
+            _damage = 0;
+        }
+
         if (isShieldGuard)
         {
             _damage -= _damage * shieldGuardDamageReductionRate;
@@ -487,7 +506,15 @@ public class PlayerHealthManager : MonoBehaviourPun
     void ShowFloatingCombatText(float amount)
     {
         GameObject obj = ObjectPooler.Instance.GetFloatingCombatTextPrefab();
-        obj.GetComponent<TextMeshPro>().text = Mathf.RoundToInt(amount).ToString();
+        if(amount == 0)
+        {
+            obj.GetComponent<TextMeshPro>().text = "BLOCK";
+        }
+        else
+        {
+            obj.GetComponent<TextMeshPro>().text = Mathf.RoundToInt(amount).ToString();
+        }
+        
         obj.transform.position = transform.position;
         obj.SetActive(true);
         

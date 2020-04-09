@@ -78,6 +78,8 @@ public class GameManager : MonoBehaviour
                 currentPlayerViewID = currentPlayer.GetComponent<PhotonView>().ViewID;
                 if(PlayFabDataStore.gameMode == "Deathmatch")
                     PlayerRuneManager.Instance.Initialize();
+
+                InitializeBotPlayer();
             }
             else
             {

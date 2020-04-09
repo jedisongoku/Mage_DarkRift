@@ -182,6 +182,7 @@ public class HUDManager : MonoBehaviourPunCallbacks
             ActivatePanels(menuPanel.name);
             
             UpdateMenuPanel();
+            //SoundManager.Instance.SwitchSound(true);
         }
 
     }
@@ -579,6 +580,7 @@ public class HUDManager : MonoBehaviourPunCallbacks
         {
             GameManager.Instance.InitializePlayer();
             Invoke("ActivateGamePanel", 0.2f);
+            SoundManager.Instance.SwitchSound(false);
         }
     }
 
