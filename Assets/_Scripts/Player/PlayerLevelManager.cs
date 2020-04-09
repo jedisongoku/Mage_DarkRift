@@ -19,13 +19,19 @@ public class PlayerLevelManager : MonoBehaviourPunCallbacks
     [SerializeField] private GameObject levelStar;
     [SerializeField] private TextMeshProUGUI levelText;
     [SerializeField] private GameObject levelUpParticle;
+    [SerializeField] Color floatingTextColor;
 
     // Start is called before the first frame update
 
     void Start()
     {
-        if (photonView.IsMine) levelStar.SetActive(false);
+        if (photonView.IsMine)
+        {
+            levelStar.SetActive(false);
+            HUDManager.Instance.UpdatePlayerLevel(currentLevel, currentXP, NextLevelInXP());
+        }
         SmartMultiplier = 1;
+        
     }
     void OnEnable()
     {
@@ -61,6 +67,7 @@ public class PlayerLevelManager : MonoBehaviourPunCallbacks
         if(photonView.IsMine)
         {
             Debug.Log("xp earned :" + _xp + "current level " + currentLevel);
+            ShowFloatingCombatText(Mathf.RoundToInt(_xp * SmartMultiplier));
             currentXP += Mathf.RoundToInt(_xp * SmartMultiplier);
             if (currentXP >= Mathf.FloorToInt(firstLevelXP * Mathf.Pow(levelCoefficient, currentLevel)))
             {
@@ -107,6 +114,16 @@ public class PlayerLevelManager : MonoBehaviourPunCallbacks
         SmartMultiplier = 1;
         HUDManager.Instance.UpdatePlayerLevel(currentLevel, currentXP, NextLevelInXP());
         photonView.RPC("UpdateLevel", RpcTarget.Others, currentLevel);    
+
+    }
+
+    void ShowFloatingCombatText(float amount)
+    {
+        GameObject obj = ObjectPooler.Instance.GetFloatingCombatTextPrefab();
+        obj.GetComponent<TextMeshPro>().text = Mathf.RoundToInt(amount) + " XP";
+        obj.GetComponent<TextMeshPro>().color = floatingTextColor;
+        obj.transform.position = transform.position;
+        obj.SetActive(true);
 
     }
 }

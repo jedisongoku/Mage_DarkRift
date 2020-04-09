@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class GemPickup : MonoBehaviour
 {
@@ -25,4 +23,6 @@ public class GemPickup : MonoBehaviour
             gameObject.SetActive(false);
         }
     }
+
+    
 }

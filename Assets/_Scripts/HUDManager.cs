@@ -674,6 +674,8 @@ public class HUDManager : MonoBehaviourPunCallbacks
         xpProgressBar.fillAmount = (float)_currentXP / (float)_maxXP;
     }
 
+
+
     public void StartAppLaunch()
     {
         Debug.Log("Disconnect on HUD");

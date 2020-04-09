@@ -1,11 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class FloatingCombatText : MonoBehaviour
 {
 
     public float DisableTime = 3f;
+    public Color defaultColor;
     public Vector3 Offset = new Vector3(-2, 2, 0);
     public Vector3 RandomizeIntensity = new Vector3(0.5f, 0, 0);
     // Start is called before the first frame update
@@ -32,7 +34,7 @@ public class FloatingCombatText : MonoBehaviour
 
     void DisableObject()
     {
-        Debug.Log("DisableFloatingText");
         gameObject.SetActive(false);
+        GetComponent<TextMeshPro>().color = defaultColor;
     }
 }

@@ -27,7 +27,7 @@ public class PlayerRuneManager : MonoBehaviour
         {
             runeCatalog.Clear();
             //Primary SKill Runes
-            /*
+            
             runeCatalog.Add(new Rune("Damage Boost", "DamageBoost", "Deal Higher Damage", 1,1));
             runeCatalog.Add(new Rune("Faster Recharge", "FasterRecharge", "Primary Skill Recharges Faster", 1, 1));
             runeCatalog.Add(new Rune("Dash Cooldown", "DashReducedCooldown", "Secondary Skill Cooldown Reduced", 1, 1));
@@ -36,8 +36,8 @@ public class PlayerRuneManager : MonoBehaviour
             runeCatalog.Add(new Rune("Bloodthirst", "Bloodthirst", "Restores HP when you kill an enemy", 1, 1));
             runeCatalog.Add(new Rune("Health Boost", "HpBoost", "Max HP increased", 1, 1));
             runeCatalog.Add(new Rune("Second Chance", "SecondChance", "Respawn without loosing abilities", 1, 1));
-            runeCatalog.Add(new Rune("Shield Guard", "ShieldGuard", "A shield circles around you reducing damage taken", 1, 1));*/
-            runeCatalog.Add(new Rune("Strong Hearth", "StrongHearth", "You are healed for more HP than before", 1, 1));
+            runeCatalog.Add(new Rune("Shield Guard", "ShieldGuard", "A shield circles around you reducing damage taken", 1, 1));
+            runeCatalog.Add(new Rune("Strong Heart", "StrongHeart", "You are healed for more HP than before", 1, 1));
             runeCatalog.Add(new Rune("Smart", "Smart", "Earn 100% more XP", 1, 1));
             runeCatalog.Add(new Rune("Rage", "Rage", "Attacks deal more damage at low HP", 1, 1));
 
@@ -169,7 +169,7 @@ public class PlayerRuneManager : MonoBehaviour
     {
         playerHealthManager.ShieldGuard = true;
     }
-    void StrongHearth()
+    void StrongHeart()
     {
         playerHealthManager.StrongHeart = true;
 

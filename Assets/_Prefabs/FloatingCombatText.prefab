@@ -92,6 +92,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   DisableTime: 3
+  defaultColor: {r: 0.81960785, g: 0, b: 0.36078432, a: 1}
   Offset: {x: 0, y: 2, z: 0}
   RandomizeIntensity: {x: 0.5, y: 0, z: 0}
 --- !u!33 &1413385706148519338
@@ -128,7 +129,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 30
+  m_text: 5
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 7bc95fc1a975a014ca33cb41d57162a4, type: 2}
   m_sharedMaterial: {fileID: -3443208678829411812, guid: 7bc95fc1a975a014ca33cb41d57162a4,
@@ -195,10 +196,10 @@ MonoBehaviour:
   m_firstVisibleCharacter: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 8.739315, y: -0.65268844, z: 8.675478, w: 4.2300053}
+  m_margin: {x: 6.9869876, y: -0.65268844, z: 6.8840885, w: 4.2300053}
   m_textInfo:
     textComponent: {fileID: 6085469053398355829}
-    characterCount: 2
+    characterCount: 1
     spriteCount: 0
     spaceCount: 0
     wordCount: 1
