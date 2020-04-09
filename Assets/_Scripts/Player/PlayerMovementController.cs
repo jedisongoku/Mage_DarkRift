@@ -28,8 +28,10 @@ public class PlayerMovementController : MonoBehaviourPun, IPunObservable
     float vertical;
     bool attack;
 
+    [SerializeField] private ParticleSystem dustParticle;
     [Header("Runes")]
     [SerializeField] private GameObject chillParticle;
+    
     bool isChill = false;
 
     void Awake()
@@ -226,5 +228,15 @@ public class PlayerMovementController : MonoBehaviourPun, IPunObservable
         isChill = false;
         joystick.OnPointerUp(null);
         this.enabled = false;
+    }
+
+    private void Step()
+    {
+        if (!GetComponent<PlayerCombatManager>().isInBush)
+        {
+            //GetComponent<AudioSource>().PlayOneShot(clip[Random.Range(0, clip.Length - 1)]);
+            dustParticle.Play();
+        }
+
     }
 }
