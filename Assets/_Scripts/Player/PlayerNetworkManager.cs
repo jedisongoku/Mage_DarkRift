@@ -105,7 +105,7 @@ public class PlayerNetworkManager : MonoBehaviourPunCallbacks
     IEnumerator SpawnGems()
     {
 
-        gemSpawnTime = Random.Range(3f, 5f);
+        gemSpawnTime = Random.Range(2f, 4f);
 
         yield return new WaitForSeconds(gemSpawnTime);
 

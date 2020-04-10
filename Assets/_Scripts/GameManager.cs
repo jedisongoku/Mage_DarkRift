@@ -79,7 +79,7 @@ public class GameManager : MonoBehaviour
                 if(PlayFabDataStore.gameMode == "Deathmatch")
                     PlayerRuneManager.Instance.Initialize();
 
-                InitializeBotPlayer();
+                //InitializeBotPlayer();
             }
             else
             {
