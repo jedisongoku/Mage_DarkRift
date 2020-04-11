@@ -53,8 +53,11 @@ public class PlayFabLoginManager : MonoBehaviour
         }       
 #endif
         Social.localUser.Authenticate(success => {
-            if (success)        
+            if (success)
+            {
                 Debug.Log("Social success");
+                if (PlayFabApiCalls.isNewUser) PlayFabApiCalls.instance.LinkGameAccount();
+            }   
             else
                 Debug.Log("Failed to social authenticate");
                 
@@ -93,7 +96,7 @@ public class PlayFabLoginManager : MonoBehaviour
         if (PlayFabApiCalls.isNewUser)
         {
             PlayFabApiCalls.instance.CreateNewProfile();
-            if(Social.localUser.authenticated) PlayFabApiCalls.instance.LinkGameAccount();
+            //if(Social.localUser.authenticated) PlayFabApiCalls.instance.LinkGameAccount();
 
         }
         else

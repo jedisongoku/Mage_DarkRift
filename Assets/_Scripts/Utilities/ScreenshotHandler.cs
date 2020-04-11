@@ -18,7 +18,7 @@ public class ScreenshotHandler : MonoBehaviour
     {
         if(Input.GetKeyDown(KeyCode.K))
         {
-            TakeScreenshot(256 , 256);
+            TakeScreenshot(2048 , 2048);
         }
 
         if (Input.GetKeyDown(KeyCode.I))

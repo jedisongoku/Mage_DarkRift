@@ -62,6 +62,10 @@ public class HUDManager : MonoBehaviourPunCallbacks
     [SerializeField] public GameObject leaderboardPanel;
     [SerializeField] public GameObject leaderboardContent;
 
+    [Header("Profile Panel")]
+    [SerializeField] public GameObject profilePanel;
+    [SerializeField] private Text profilePlayerName;
+
     [Header("Game Panel")]
     [SerializeField] private DynamicJoystick movementJoystick;
     [SerializeField] private FloatingJoystick aimJoystick;
@@ -326,6 +330,12 @@ public class HUDManager : MonoBehaviourPunCallbacks
         ActivatePanels(menuPanel.name);
     }
 
+    public void OnProfileButtonClicked()
+    {
+        ActivatePanels(profilePanel.name);
+        profilePlayerName.text = PlayFabDataStore.playerProfile.playerName;
+    }
+
     public void OnSkinPreviewed(bool isOwned, string name)
     {
         MenuSkinController.instance.ShowcaseSkin(name);
@@ -384,9 +394,14 @@ public class HUDManager : MonoBehaviourPunCallbacks
     public void SavePlayerName()
     {
         //update playername playfab
-        PlayFabDataStore.playerProfile.playerName = playerName.GetComponentInParent<InputField>().text;
-        PhotonNetwork.LocalPlayer.NickName = PlayFabDataStore.playerProfile.playerName;
-        PlayFabApiCalls.instance.UpdateProfile();
+        if(profilePlayerName.GetComponentInParent<InputField>().text.Length > 0)
+        {
+            PlayFabDataStore.playerProfile.playerName = profilePlayerName.GetComponentInParent<InputField>().text;
+            playerName.text = PlayFabDataStore.playerProfile.playerName;
+            PhotonNetwork.LocalPlayer.NickName = PlayFabDataStore.playerProfile.playerName;
+            PlayFabApiCalls.instance.UpdateProfile();
+        }
+        
     }
 
     public void MakeSkinActive()
@@ -655,6 +670,7 @@ public class HUDManager : MonoBehaviourPunCallbacks
     {
         launchPanel.SetActive(panelToBeActivated.Equals(launchPanel.name));
         runesPanel.SetActive(panelToBeActivated.Equals(runesPanel.name));
+        profilePanel.SetActive(panelToBeActivated.Equals(profilePanel.name));
         menuPanel.SetActive(panelToBeActivated.Equals(menuPanel.name));
         shopPanel.SetActive(panelToBeActivated.Equals(shopPanel.name));
         leaderboardPanel.SetActive(panelToBeActivated.Equals(leaderboardPanel.name));

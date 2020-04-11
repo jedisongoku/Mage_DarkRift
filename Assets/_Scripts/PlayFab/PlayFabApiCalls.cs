@@ -84,14 +84,12 @@ public class PlayFabApiCalls : MonoBehaviour
 
     public void LinkGameAccount()
     {
-        if(Application.platform == RuntimePlatform.Android)
-        {
-            LinkGooglePlay();
-        }
-        else
-        {
-            LinkGameCenter();
-        }
+#if UNITY_ANDROID
+        LinkGooglePlay();
+#else
+        LinkGameCenter();
+#endif
+
     }
 
     public void LinkGameCenter()
@@ -107,7 +105,7 @@ public class PlayFabApiCalls : MonoBehaviour
 
         }, (error) =>
         {
-
+            OnPlayFabError(error);
         });
     }
 #if UNITY_ANDROID
@@ -124,14 +122,14 @@ public class PlayFabApiCalls : MonoBehaviour
 
         }, (error) =>
         {
-
+            OnPlayFabError(error);
         });
     }
 #endif
 
 #endregion
 
-    #region GameContent
+#region GameContent
     public void GetPlayerBaseStats()
     {
         var request = new GetTitleDataRequest()
@@ -149,9 +147,9 @@ public class PlayFabApiCalls : MonoBehaviour
             ApiCallFail();
         });
     }
-    #endregion
+#endregion
 
-    #region Virtual Currency
+#region Virtual Currency
     public void GetVirtualCurrency_Gems()
     {
         var request = new AddUserVirtualCurrencyRequest()
@@ -214,7 +212,7 @@ public class PlayFabApiCalls : MonoBehaviour
         });
     }
 
-    #endregion
+#endregion
 
     public void AddVirtualCurrency(int currencyAmount, string currencyCode)
     {
@@ -452,19 +450,23 @@ public class PlayFabApiCalls : MonoBehaviour
 
     public void UpdateUserDisplayName(string name)
     {
-        var request = new UpdateUserTitleDisplayNameRequest()
+        if(name != null)
         {
-            DisplayName = name
-        };
-        PlayFabClientAPI.UpdateUserTitleDisplayName(request, (result) =>
-        {
-            //Result
-            Debug.Log("Display Name Updated");
-        }, (error) =>
-        {
-            OnPlayFabError(error);
+            var request = new UpdateUserTitleDisplayNameRequest()
+            {
+                DisplayName = name
+            };
+            PlayFabClientAPI.UpdateUserTitleDisplayName(request, (result) =>
+            {
+                //Result
+                Debug.Log("Display Name Updated");
+            }, (error) =>
+            {
+                OnPlayFabError(error);
 
-        });
+            });
+        }
+        
     }
 
     public void GetLeaderboard()
