@@ -121,8 +121,9 @@ public class HUDManager : MonoBehaviourPunCallbacks
             Destroy(gameObject);
         }
 
-        Application.targetFrameRate = 60;
+        Application.targetFrameRate = 9999;
         QualitySettings.vSyncCount = 0;
+        
 
         //ActivatePanels(menuPanel.name);   
         StartCoroutine(Applaunch());
@@ -566,6 +567,7 @@ public class HUDManager : MonoBehaviourPunCallbacks
         //ActivatePanels(loadingPanel.name);
         Debug.Log("Game Level Loaded");
         loadingBar.fillAmount = 0.95f;
+        runesPanel.SetActive(false);
         deathPanel.SetActive(false);
         playerControllerPanel.SetActive(true);
         UpdateTotalPlayerCount();
