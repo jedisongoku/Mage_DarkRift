@@ -475,6 +475,9 @@ public class PlayerCombatManager : MonoBehaviourPun
 
         isSecondChance = false;
 
+        //Games played statistic added
+        PlayFabApiCalls.instance.UpdateStatistics("Games Played", 1);
+
 
     }
 
@@ -556,6 +559,10 @@ public class PlayerCombatManager : MonoBehaviourPun
                 TurnOnNormalShader();
                 Debug.Log("DEAD");
                 DisablePlayer();
+                //Deaths statistic added
+                PlayFabApiCalls.instance.UpdateStatistics("Deaths", 1);
+                //Max Level statistic added
+                PlayFabApiCalls.instance.UpdateStatistics("Max Level", GetComponent<PlayerLevelManager>().GetPlayerLevel());
             }
         }
     }

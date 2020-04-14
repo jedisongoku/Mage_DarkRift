@@ -64,7 +64,16 @@ public class HUDManager : MonoBehaviourPunCallbacks
 
     [Header("Profile Panel")]
     [SerializeField] public GameObject profilePanel;
+    [SerializeField] public Text gamesPlayedText;
+    [SerializeField] public Text totalKillsText;
+    [SerializeField] public Text totalDeathsText;
+    [SerializeField] public Text killStreakText;
+    [SerializeField] public Text kdText;
+    [SerializeField] public Text rankText;
     [SerializeField] private Text profilePlayerName;
+    [SerializeField] private Image connectGameCenterImage;
+    [SerializeField] private Sprite googlePlaySprite;
+    [SerializeField] private Sprite gameCenterSprite;
 
     [Header("Game Panel")]
     [SerializeField] private DynamicJoystick movementJoystick;
@@ -333,8 +342,30 @@ public class HUDManager : MonoBehaviourPunCallbacks
 
     public void OnProfileButtonClicked()
     {
+        PlayFabApiCalls.instance.GetPlayerStatistics();
         ActivatePanels(profilePanel.name);
         profilePlayerName.text = PlayFabDataStore.playerProfile.playerName;
+#if UNITY_ANDROID
+        connectGameCenterImage.sprite = googlePlaySprite;
+#else
+        connectGameCenterImage.sprite = gameCenterSprite;
+#endif
+    }
+
+    public void RefreshProfileStatistics()
+    {
+        gamesPlayedText.text = PlayFabDataStore.playerStatistics["Games Played"].ToString();
+        totalKillsText.text = PlayFabDataStore.playerStatistics["Total Kills"].ToString();
+        totalDeathsText.text = PlayFabDataStore.playerStatistics["Total Deaths"].ToString();
+        killStreakText.text = PlayFabDataStore.playerStatistics["Kill Streak"].ToString();
+        if (PlayFabDataStore.playerStatistics["Total Kills"] > 0)
+            kdText.text = (PlayFabDataStore.playerStatistics["Total Kills"] / PlayFabDataStore.playerStatistics["Total Deaths"]).ToString();
+        else kdText.text = "0";
+    }
+
+    public void OnGameCenterConnectButtonClicked()
+    {
+        PlayFabApiCalls.instance.LinkGameAccount();
     }
 
     public void OnSkinPreviewed(bool isOwned, string name)
@@ -473,7 +504,8 @@ public class HUDManager : MonoBehaviourPunCallbacks
             coinReward.transform.Find("CoinText").GetComponent<Text>().text = GameManager.Instance.GetRewardAmount().ToString();
             coinReward.SetActive(true);
 
-            PlayFabApiCalls.instance.UpdateStatistics(GameManager.playerKillCount);
+            PlayFabApiCalls.instance.UpdateStatistics("Lifetime Kills", GameManager.playerKillCount);
+            PlayFabApiCalls.instance.UpdateStatistics("Kill Streak", GameManager.playerKillCount);
             PlayFabApiCalls.instance.AddVirtualCurrency(GameManager.Instance.GetRewardAmount(), "CO");
             //Make api calls
         }
@@ -660,9 +692,9 @@ public class HUDManager : MonoBehaviourPunCallbacks
     {
         
     }
-    #endregion
+#endregion
 
-    #region Private Calls
+#region Private Calls
 
     void ActivateGamePanel()
     {
@@ -703,8 +735,8 @@ public class HUDManager : MonoBehaviourPunCallbacks
         ActivatePanels(launchPanel.name);
         StartCoroutine(Applaunch());
     }
-    #endregion
+#endregion
 
-    #region Ad
-    #endregion
+#region Ad
+#endregion
 }

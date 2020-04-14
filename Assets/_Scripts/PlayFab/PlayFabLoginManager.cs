@@ -112,8 +112,6 @@ public class PlayFabLoginManager : MonoBehaviour
         PlayFabApiCalls.instance.GetPlayerBaseStats();
         PlayFabApiCalls.instance.GetPlayerInventory();
         
-        
-
         yield return new WaitUntil(() => (callCounter == callsToWait));
 
         PhotonNetworkManager.Instance.UpdatePlayerName();

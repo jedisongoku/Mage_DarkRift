@@ -118,7 +118,7 @@ public class PlayFabApiCalls : MonoBehaviour
         PlayFabClientAPI.LinkGoogleAccount(request, (result) =>
         {
             UpdateUserDisplayName(Social.localUser.userName + "#");
-            Debug.Log("Game center linked");
+            Debug.Log("Google Account linked");
 
         }, (error) =>
         {
@@ -401,13 +401,13 @@ public class PlayFabApiCalls : MonoBehaviour
         });
     }
 
-    public void UpdateStatistics(int _kills)
+    public void UpdateStatistics(string _name, int _kills)
     {
 
         var request = new ExecuteCloudScriptRequest()
         {
             FunctionName = "UpdateStatistics",
-            FunctionParameter = new { kills = _kills }
+            FunctionParameter = new { name = _name, kills = _kills }
 
         };
         PlayFabClientAPI.ExecuteCloudScript(request, (result) =>
@@ -488,6 +488,35 @@ public class PlayFabApiCalls : MonoBehaviour
 
         });
     }
+
+    public void GetPlayerStatistics()
+    {
+        var request = new GetPlayerStatisticsRequest()
+        {
+            
+        };
+        PlayFabClientAPI.GetPlayerStatistics(request, (result) =>
+        {
+            foreach(var stat in result.Statistics)
+            {
+                if(!PlayFabDataStore.playerStatistics.ContainsKey(stat.StatisticName))
+                {
+                    PlayFabDataStore.playerStatistics.Add(stat.StatisticName, stat.Value);
+                }
+                else
+                {
+                    PlayFabDataStore.playerStatistics[stat.StatisticName] = stat.Value;
+                }
+            }
+
+            HUDManager.Instance.RefreshProfileStatistics();
+
+        }, (error) =>
+        {
+            OnPlayFabError(error);
+
+        });
+    }
     public void GetLeaderboardAroundPlayer()
     {
         var request = new GetLeaderboardAroundPlayerRequest()
@@ -500,7 +529,10 @@ public class PlayFabApiCalls : MonoBehaviour
             foreach(var entry in result.Leaderboard)
             {
                 if(entry.PlayFabId == PlayFabDataStore.playFabID)
+                {
                     LeaderboardManager.Instance.RefreshPlayerRank(entry);
+                }
+                    
             }
             //LeaderboardManager.Instance.RefreshPlayerRank(result.Leaderboard.);
             Debug.Log("leaderboard retrieved");
