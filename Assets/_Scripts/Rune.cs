@@ -36,6 +36,14 @@ public class Rune
         }
     }
 
+    public string Description
+    {
+        get
+        {
+            return description;
+        }
+    }
+
     public Rune(string _displayName, string _functionName, string _description, int _categoryId, int _chargeAmount)
     {
         displayName = _displayName;

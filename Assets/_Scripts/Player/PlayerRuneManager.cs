@@ -28,18 +28,18 @@ public class PlayerRuneManager : MonoBehaviour
             runeCatalog.Clear();
             //Primary SKill Runes
             
-            runeCatalog.Add(new Rune("Damage Boost", "DamageBoost", "Deal Higher Damage", 1,1));
-            runeCatalog.Add(new Rune("Faster Recharge", "FasterRecharge", "Primary Skill Recharges Faster", 1, 1));
-            runeCatalog.Add(new Rune("Dash Cooldown", "DashReducedCooldown", "Secondary Skill Cooldown Reduced", 1, 1));
-            runeCatalog.Add(new Rune("Frostbite", "Frostbite", "Attacks cause damage over time burn", 1, 1));
-            runeCatalog.Add(new Rune("Chill", "Chill", "Attack slow enemies", 1, 1));   
-            runeCatalog.Add(new Rune("Bloodthirst", "Bloodthirst", "Restores HP when you kill an enemy", 1, 1));
-            runeCatalog.Add(new Rune("Health Boost", "HpBoost", "Max HP increased", 1, 1));
-            runeCatalog.Add(new Rune("Second Chance", "SecondChance", "Respawn without loosing abilities", 1, 1));
-            runeCatalog.Add(new Rune("Shield Guard", "ShieldGuard", "A shield circles around you reducing damage taken", 1, 1));
-            runeCatalog.Add(new Rune("Strong Heart", "StrongHeart", "You are healed for more HP than before", 1, 1));
-            runeCatalog.Add(new Rune("Smart", "Smart", "Earn 100% more XP", 1, 1));
-            runeCatalog.Add(new Rune("Rage", "Rage", "Attacks deal more damage at low HP", 1, 1));
+            runeCatalog.Add(new Rune("DAMAGE BOOST", "DamageBoost", "Increases damage done by 20%", 1,1));
+            runeCatalog.Add(new Rune("FASTER RECHARGE", "FasterRecharge", "Mana charges 30% faster", 1, 1));
+            runeCatalog.Add(new Rune("QUICK DASH", "DashReducedCooldown", "Reduces Dash cooldown by 40%", 1, 1));
+            runeCatalog.Add(new Rune("FROSTBITE", "Frostbite", "Applies 10% additional damage over 8 seconds", 1, 1));
+            runeCatalog.Add(new Rune("CHILL", "Chill", "Attacks slow enemies by 15% for 3 seconds", 1, 1));   
+            runeCatalog.Add(new Rune("BLOODTHIRST", "Bloodthirst", "Restores 30 health when you kill an enemy", 1, 1));
+            runeCatalog.Add(new Rune("HEALTH BOOST", "HpBoost", "Increases max health by 50%", 1, 1));
+            runeCatalog.Add(new Rune("SECOND CHANCE", "SecondChance", "Respawn once without losing your abilities", 1, 1));
+            runeCatalog.Add(new Rune("SHIELD GUARD", "ShieldGuard", "Reduces damage taken by 35%", 1, 1));
+            runeCatalog.Add(new Rune("STRONG HEART", "StrongHeart", "Increases healing over time by 75%", 1, 1));
+            runeCatalog.Add(new Rune("SMART", "Smart", "Earn 50% more XP", 1, 1));
+            runeCatalog.Add(new Rune("RAGE", "Rage", "Deal 15% more damage at low health", 1, 1));
 
             /*
             runeCatalog.Add(new Rune("Multi Shot", "MultiShot", "Fires an additional attack rapidly", 1, 1));
@@ -85,6 +85,7 @@ public class PlayerRuneManager : MonoBehaviour
     {
         //playerCombatManager.RuneActivated();
         Invoke(playerRuneList[index].FunctionName, 0);
+        HUDManager.Instance.ShowRuneInfo(playerRuneList[index].DisplayName, playerRuneList[index].Description);
         ArrangeListAfterSelection(index);
     }
 

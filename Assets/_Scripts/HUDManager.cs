@@ -80,6 +80,7 @@ public class HUDManager : MonoBehaviourPunCallbacks
     [SerializeField] private FloatingJoystick aimJoystick;
     [SerializeField] public GameObject[] playerUIList;
     [SerializeField] public GameObject[] killFeed;
+    [SerializeField] public GameObject runeInfoPanel;
     public GameObject[] scoreboardItems;
     public GameObject gamePanel;
     public GameObject exitGameButton;
@@ -288,6 +289,14 @@ public class HUDManager : MonoBehaviourPunCallbacks
     {
         PlayerRuneManager.Instance.SelectRune(index);
         runeSelection.SetActive(false);
+    }
+
+    public void ShowRuneInfo(string title, string description)
+    {
+        
+        runeInfoPanel.transform.Find("RuneName").GetComponent<Text>().text = title;
+        runeInfoPanel.transform.Find("RuneDescription").GetComponent<Text>().text = description;
+        runeInfoPanel.GetComponent<Animator>().SetTrigger("Info");
     }
 
     public void OnPlayGameButtonClicked()
