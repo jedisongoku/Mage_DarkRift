@@ -100,7 +100,8 @@ public class PlayFabApiCalls : MonoBehaviour
         };
         PlayFabClientAPI.LinkGameCenterAccount(request, (result) =>
         {
-            UpdateUserDisplayName(Social.localUser.userName + "#");
+            PlayFabDataStore.playerProfile.playerName = Social.localUser.userName;
+            UpdateProfile();
             Debug.Log("Game center linked");
 
         }, (error) =>
@@ -117,7 +118,8 @@ public class PlayFabApiCalls : MonoBehaviour
         };
         PlayFabClientAPI.LinkGoogleAccount(request, (result) =>
         {
-            UpdateUserDisplayName(Social.localUser.userName + "#");
+            PlayFabDataStore.playerProfile.playerName = Social.localUser.userName;
+            UpdateProfile();
             Debug.Log("Google Account linked");
 
         }, (error) =>
@@ -440,6 +442,7 @@ public class PlayFabApiCalls : MonoBehaviour
         {
             //Result
             UpdateUserDisplayName(PlayFabDataStore.playerProfile.playerName + "#");
+            HUDManager.Instance.UpdatePlayerName();
             Debug.Log("Profile Updated");
         }, (error) =>
         {

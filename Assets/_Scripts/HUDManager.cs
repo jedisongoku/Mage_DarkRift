@@ -208,7 +208,7 @@ public class HUDManager : MonoBehaviourPunCallbacks
         UpdateCurrencies();
     }
 
-    void UpdatePlayerName()
+    public void UpdatePlayerName()
     {
         playerName.text = PlayFabDataStore.playerProfile.playerName;
     }
