@@ -798,6 +798,8 @@ public class PlayerCombatManager : MonoBehaviourPun
             playerHealthManager.SwitchShieldVisibility(value);
             playerHealthManager.SwitchRageVisibility(value);
             playerHealthManager.SwitchStrongHearthVisibility(value);
+            playerHealthManager.SwitchFrostbiteVisibility(value);
+            playerMovementController.SwitchChillVisibility(value);
             playerBase.gameObject.SetActive(value);
         }
 

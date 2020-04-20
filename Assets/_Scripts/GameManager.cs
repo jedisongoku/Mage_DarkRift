@@ -132,7 +132,7 @@ public class GameManager : MonoBehaviour
 
     public int GetRewardAmount()
     {
-        return Mathf.RoundToInt(playerKillCount * 15 * Mathf.Pow(1.35f, currentPlayer.GetComponent<PlayerLevelManager>().GetPlayerLevel()));
+        return Mathf.RoundToInt(playerKillCount * 10 * Mathf.Pow(1.15f, currentPlayer.GetComponent<PlayerLevelManager>().GetPlayerLevel()));
     }
 
     public int SpawnLocationIndex

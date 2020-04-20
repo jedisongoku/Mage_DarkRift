@@ -239,4 +239,9 @@ public class PlayerMovementController : MonoBehaviourPun, IPunObservable
         }
 
     }
+
+    public void SwitchChillVisibility(bool value)
+    {
+        if (isChill) chillParticle.SetActive(value);
+    }
 }

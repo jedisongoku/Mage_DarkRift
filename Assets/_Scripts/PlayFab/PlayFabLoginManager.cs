@@ -15,6 +15,8 @@ public class PlayFabLoginManager : MonoBehaviour
 
     public static int callCounter = 0;
 
+    bool customLogin;
+
 
     // Start is called before the first frame update
     void Awake()
@@ -52,20 +54,24 @@ public class PlayFabLoginManager : MonoBehaviour
             
         }       
 #endif
+        
         Social.localUser.Authenticate(success => {
             if (success)
             {
                 Debug.Log("Social success");
-                if (PlayFabApiCalls.isNewUser) PlayFabApiCalls.instance.LinkGameAccount();
+                customLogin = false;
+                LoginPlayFab();
+                //if (PlayFabApiCalls.isNewUser) PlayFabApiCalls.instance.LinkGameAccount();
             }   
             else
+            {
                 Debug.Log("Failed to social authenticate");
+                customLogin = true;
+                LoginPlayFab();
+            }
+                
                 
         });
-
-        LoginPlayFab();
-
-
     }
 
     
@@ -73,12 +79,27 @@ public class PlayFabLoginManager : MonoBehaviour
     public void LoginPlayFab()
     {
         
-        StartCoroutine(Login());
+        StartCoroutine(Login(customLogin));
     }
 
-    IEnumerator Login()
+    IEnumerator Login(bool custom)
     {
-        PlayFabApiCalls.instance.AuthenticateWithCustomID();
+        if(custom)
+        {
+            isPlayFabNextCallFailed = false;
+            isPlayFabNextCallSuccess = false;
+            Debug.Log("Authentication with Custom ID");
+            PlayFabApiCalls.instance.AuthenticateWithCustomID();
+        }
+        else
+        {
+#if UNITY_ANDROID
+            PlayFabApiCalls.instance.AuthenticateWithGoogle();
+#else
+        PlayFabApiCalls.instance.AuthenticateWithAppleGameCenter();
+#endif 
+        }
+
 
         yield return new WaitUntil(() => (isPlayFabNextCallSuccess == true || isPlayFabNextCallFailed == true));
 
@@ -88,6 +109,10 @@ public class PlayFabLoginManager : MonoBehaviour
             isPlayFabNextCallSuccess = false;
             StartCoroutine(DownloadContent());
         }
+        else
+        {
+            StartCoroutine(Login(true));
+        }
     }
 
     IEnumerator DownloadContent()
@@ -96,6 +121,10 @@ public class PlayFabLoginManager : MonoBehaviour
         if (PlayFabApiCalls.isNewUser)
         {
             PlayFabApiCalls.instance.CreateNewProfile();
+            if(!customLogin)
+            {
+                PlayFabApiCalls.instance.LinkCustomId();
+            }
             //if(Social.localUser.authenticated) PlayFabApiCalls.instance.LinkGameAccount();
 
         }
@@ -116,6 +145,7 @@ public class PlayFabLoginManager : MonoBehaviour
 
         PhotonNetworkManager.Instance.UpdatePlayerName();
         PhotonNetworkManager.Instance.ConnectToPhoton();
+        HUDManager.Instance.UpdateCurrencies();
 
 
 

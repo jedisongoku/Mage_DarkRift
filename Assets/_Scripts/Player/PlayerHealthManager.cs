@@ -323,7 +323,8 @@ public class PlayerHealthManager : MonoBehaviourPun
 
         if((playerhealth / playerMaxHealth <= PlayFabDataStore.playerBaseStats.RageStartRate) && isRage && !GetComponent<PlayerCombatManager>().IsDead)
         {
-            rageParticle.SetActive(true);
+            if(!GetComponent<PlayerCombatManager>().isInvisible)
+                rageParticle.SetActive(true);
         }
         else
         {
@@ -534,7 +535,10 @@ public class PlayerHealthManager : MonoBehaviourPun
     {
         Debug.Log("hearth particle " + value);
         if (isStrongHeart) strongHeartParticle.SetActive(value);
-        
+    }
 
+    public void SwitchFrostbiteVisibility(bool value)
+    {
+        if (isFrostbite) frostbiteParticle.SetActive(value);
     }
 }

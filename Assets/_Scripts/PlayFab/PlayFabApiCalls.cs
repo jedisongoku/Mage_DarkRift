@@ -53,6 +53,49 @@ public class PlayFabApiCalls : MonoBehaviour
          });
     }
 
+    public void AuthenticateWithGoogle()
+    {
+        var request = new LoginWithGoogleAccountRequest()
+        {
+            CreateAccount = true,
+            ServerAuthCode = GooglePlayGames.PlayGamesPlatform.Instance.GetServerAuthCode()
+        };
+
+        PlayFabClientAPI.LoginWithGoogleAccount(request, (result) =>
+        {
+            isNewUser = result.NewlyCreated;
+            PlayFabDataStore.playFabID = result.PlayFabId;
+            PlayFabDataStore.gameCenterLinked = true;
+            RequestPhotonToken(result);
+        }, (error) =>
+        {
+            //Error
+            ApiCallFail();
+            OnPlayFabError(error);
+        });
+    }
+
+    public void AuthenticateWithAppleGameCenter()
+    {
+        var request = new LoginWithGameCenterRequest()
+        {
+            CreateAccount = true
+        };
+
+        PlayFabClientAPI.LoginWithGameCenter(request, (result) =>
+        {
+            isNewUser = result.NewlyCreated;
+            PlayFabDataStore.playFabID = result.PlayFabId;
+            PlayFabDataStore.gameCenterLinked = true;
+            RequestPhotonToken(result);
+        }, (error) =>
+        {
+            //Error
+            ApiCallFail();
+            OnPlayFabError(error);
+        });
+    }
+
     private void RequestPhotonToken(LoginResult obj)
     {
         LogMessage("PlayFab authenticated. Requesting photon token...");
@@ -84,12 +127,45 @@ public class PlayFabApiCalls : MonoBehaviour
 
     public void LinkGameAccount()
     {
+        if(Social.localUser.authenticated)
+        {
 #if UNITY_ANDROID
-        LinkGooglePlay();
+            LinkGooglePlay();
 #else
         LinkGameCenter();
 #endif
+        }
+        else
+        {
+            Social.localUser.Authenticate(success => {
+                if (success)
+                {
+                    Debug.Log("Social success");
+                    if (PlayFabApiCalls.isNewUser) PlayFabApiCalls.instance.LinkGameAccount();
+                }
+                else
+                    Debug.Log("Failed to social authenticate");
 
+            });
+        }
+
+
+    }
+
+    public void LinkCustomId()
+    {
+        var request = new LinkCustomIDRequest()
+        {
+            CustomId = PlayFabSettings.DeviceUniqueIdentifier
+        };
+        PlayFabClientAPI.LinkCustomID(request, (result) =>
+        {
+            Debug.Log("Custom ID linked");
+
+        }, (error) =>
+        {
+            OnPlayFabError(error);
+        });
     }
 
     public void LinkGameCenter()
@@ -102,6 +178,7 @@ public class PlayFabApiCalls : MonoBehaviour
         {
             PlayFabDataStore.playerProfile.playerName = Social.localUser.userName;
             UpdateProfile();
+            PlayFabDataStore.gameCenterLinked = true;
             Debug.Log("Game center linked");
 
         }, (error) =>
@@ -120,6 +197,7 @@ public class PlayFabApiCalls : MonoBehaviour
         {
             PlayFabDataStore.playerProfile.playerName = Social.localUser.userName;
             UpdateProfile();
+            PlayFabDataStore.gameCenterLinked = true;
             Debug.Log("Google Account linked");
 
         }, (error) =>
@@ -250,6 +328,8 @@ public class PlayFabApiCalls : MonoBehaviour
             if (currencyCode == "EN") PlayFabDataStore.vc_energy -= currencyAmount;
             else if (currencyCode == "CO") PlayFabDataStore.vc_coins -= currencyAmount;
             else if (currencyCode == "GM") PlayFabDataStore.vc_gems -= currencyAmount;
+            else if (currencyCode == "AG") PlayFabDataStore.vc_adGem -= currencyAmount;
+            else if (currencyCode == "AC") PlayFabDataStore.vc_adCoin -= currencyAmount;
             //Result
         }, (error) =>
         {
@@ -334,10 +414,14 @@ public class PlayFabApiCalls : MonoBehaviour
             PlayFabDataStore.vc_coins = result.VirtualCurrency["CO"];
             PlayFabDataStore.vc_gems = result.VirtualCurrency["GM"];
             PlayFabDataStore.vc_energy = result.VirtualCurrency["EN"];
+            PlayFabDataStore.vc_adCoin = result.VirtualCurrency["AC"];
+            PlayFabDataStore.vc_adGem = result.VirtualCurrency["AG"];
+            PlayFabDataStore.adGemRechargeTime = result.VirtualCurrencyRechargeTimes["AG"].SecondsToRecharge;
+            PlayFabDataStore.adCoinRechargeTime = result.VirtualCurrencyRechargeTimes["AC"].SecondsToRecharge;
 
 
             PlayFabLoginManager.instance.IncrementCallCounter();
-            HUDManager.Instance.UpdateCurrencies();
+            //HUDManager.Instance.UpdateCurrencies();
 
         }, (error) =>
         {

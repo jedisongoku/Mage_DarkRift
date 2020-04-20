@@ -47,6 +47,12 @@ public class HUDManager : MonoBehaviourPunCallbacks
     [SerializeField] private Text shopCoinsCurrencyText;
     [SerializeField] private Text shopGemsCurrencyText;
     [SerializeField] private Text shopEnergyCurrencyText;
+    [SerializeField] private Text remainingGemAdText;
+    [SerializeField] private Text remainingCoinAdText;
+    [SerializeField] private Animator energyAnimator;
+    [SerializeField] private Animator coinAnimator;
+    [SerializeField] private Animator gemAnimator;
+    private float animationTimer = 0;
 
     [Header("Skin Panel")]
     [SerializeField] public GameObject skinPanel;
@@ -74,6 +80,7 @@ public class HUDManager : MonoBehaviourPunCallbacks
     [SerializeField] private Image connectGameCenterImage;
     [SerializeField] private Sprite googlePlaySprite;
     [SerializeField] private Sprite gameCenterSprite;
+    [SerializeField] private Text gameCenterConnectText;
 
     [Header("Game Panel")]
     [SerializeField] private DynamicJoystick movementJoystick;
@@ -325,7 +332,15 @@ public class HUDManager : MonoBehaviourPunCallbacks
 
     public void OnShopButtonClicked()
     {
+        UpdateRemainingDailyAds();
         ActivatePanels(shopPanel.name);
+
+    }
+
+    public void UpdateRemainingDailyAds()
+    {
+        remainingCoinAdText.text = PlayFabDataStore.vc_adCoin.ToString();
+        remainingGemAdText.text = PlayFabDataStore.vc_adGem.ToString();
     }
 
     public void OnSkinButtonClicked()
@@ -352,6 +367,11 @@ public class HUDManager : MonoBehaviourPunCallbacks
     public void OnProfileButtonClicked()
     {
         PlayFabApiCalls.instance.GetPlayerStatistics();
+        if (PlayFabDataStore.gameCenterLinked)
+            gameCenterConnectText.text = "CONNECTED";
+        else
+            gameCenterConnectText.text = "CONNECT";
+
         ActivatePanels(profilePanel.name);
         profilePlayerName.text = PlayFabDataStore.playerProfile.playerName;
 #if UNITY_ANDROID
@@ -374,7 +394,8 @@ public class HUDManager : MonoBehaviourPunCallbacks
 
     public void OnGameCenterConnectButtonClicked()
     {
-        PlayFabApiCalls.instance.LinkGameAccount();
+        if(!PlayFabDataStore.gameCenterLinked)
+            PlayFabApiCalls.instance.LinkGameAccount();
     }
 
     public void OnSkinPreviewed(bool isOwned, string name)
@@ -744,8 +765,70 @@ public class HUDManager : MonoBehaviourPunCallbacks
         ActivatePanels(launchPanel.name);
         StartCoroutine(Applaunch());
     }
-#endregion
 
-#region Ad
-#endregion
+    public void CurrencyAnimation(int id, int currentAmount, int amountAdded)
+    {
+        animationTimer = 0;
+        switch(id)
+        {
+            case 0:
+                energyAnimator.enabled = true;
+                StartCoroutine(EnergyAnimation(currentAmount, amountAdded));
+                break;
+            case 1:
+                coinAnimator.enabled = true;
+                StartCoroutine(CoinAnimation(currentAmount, amountAdded));
+                break;
+            case 2:
+                gemAnimator.enabled = true;
+                StartCoroutine(GemAnimation(currentAmount, amountAdded));
+                break;
+        }
+    }
+
+    IEnumerator EnergyAnimation(int currentAmount, int amountAdded)
+    {
+        animationTimer += 0.1f;
+        shopEnergyCurrencyText.text = currentAmount + amountAdded / 20 + "/50";
+        currentAmount += amountAdded / 20;
+        yield return new WaitForSeconds(0.05f);
+
+        if (animationTimer < 1) StartCoroutine(EnergyAnimation(currentAmount, amountAdded));
+        else
+        {
+            energyAnimator.enabled = false;
+            UpdateCurrencies();
+        }  
+    }
+
+    IEnumerator CoinAnimation(int currentAmount, int amountAdded)
+    {
+        animationTimer += 0.1f;
+        shopCoinsCurrencyText.text = (currentAmount + amountAdded / 20).ToString();
+        currentAmount += amountAdded / 20;
+        yield return new WaitForSeconds(0.05f);
+
+        if (animationTimer < 1) StartCoroutine(CoinAnimation(currentAmount, amountAdded));
+        else
+        {
+            coinAnimator.enabled = false;
+            UpdateCurrencies();
+        }
+    }
+
+    IEnumerator GemAnimation(int currentAmount, int amountAdded)
+    {
+        animationTimer += 0.1f;
+        shopGemsCurrencyText.text = (currentAmount + amountAdded / 20).ToString();
+        currentAmount += amountAdded / 20;
+        yield return new WaitForSeconds(0.05f);
+
+        if (animationTimer < 1) StartCoroutine(GemAnimation(currentAmount, amountAdded));
+        else
+        {
+            gemAnimator.enabled = false;
+            UpdateCurrencies();
+        }
+    }
+    #endregion
 }

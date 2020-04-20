@@ -23,6 +23,11 @@ public class PlayFabDataStore : MonoBehaviour
     public static int vc_gems;
     public static int vc_coins;
     public static int vc_energy;
+    public static int vc_adGem;
+    public static int vc_adCoin;
+    public static int adGemRechargeTime;
+    public static int adCoinRechargeTime;
+    public static bool gameCenterLinked = false;
     // Start is called before the first frame update
     void Start()
     {

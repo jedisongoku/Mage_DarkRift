@@ -33,16 +33,26 @@ public class UnityAds : MonoBehaviour, IUnityAdsListener
 
     public void CoinRewardAd()
     {
-        Photon.Pun.PhotonNetwork.KeepAliveInBackground = 60;
-        myPlacementId = "CoinReward";
-        Advertisement.Show(myPlacementId);
+        if(PlayFabDataStore.vc_adCoin > 0)
+        {
+            Photon.Pun.PhotonNetwork.KeepAliveInBackground = 60;
+            myPlacementId = "CoinReward";
+            Advertisement.Show(myPlacementId);
+            PlayFabApiCalls.instance.SubtractVirtualCurrency(1, "AC");
+        }
+        
     }
 
     public void GemRewardAd()
     {
-        Photon.Pun.PhotonNetwork.KeepAliveInBackground = 60;
-        myPlacementId = "GemReward";
-        Advertisement.Show(myPlacementId);
+        if(PlayFabDataStore.vc_adGem > 0)
+        {
+            Photon.Pun.PhotonNetwork.KeepAliveInBackground = 60;
+            myPlacementId = "GemReward";
+            Advertisement.Show(myPlacementId);
+            PlayFabApiCalls.instance.SubtractVirtualCurrency(1, "AG");
+        }
+        
     }
 
     // Implement IUnityAdsListener interface methods:
@@ -60,15 +70,21 @@ public class UnityAds : MonoBehaviour, IUnityAdsListener
             // Reward the user for watching the ad to completion.
             if(placementId == "RefillEnergy")
             {
-                PlayFabApiCalls.instance.AddVirtualCurrency(50 - PlayFabDataStore.vc_energy, "EN");
                 if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "Deathmatch") HUDManager.Instance.ShowDeathPanel();
+                else HUDManager.Instance.CurrencyAnimation(0, PlayFabDataStore.vc_energy, 50);
+                PlayFabApiCalls.instance.AddVirtualCurrency(50 - PlayFabDataStore.vc_energy, "EN");
+                
             }
             else if(placementId == "CoinReward")
             {
+                HUDManager.Instance.UpdateRemainingDailyAds();
+                HUDManager.Instance.CurrencyAnimation(1, PlayFabDataStore.vc_coins, 50);
                 PlayFabApiCalls.instance.AddVirtualCurrency(50, "CO");
             }
             else if(placementId == "GemReward")
             {
+                HUDManager.Instance.UpdateRemainingDailyAds();
+                HUDManager.Instance.CurrencyAnimation(2, PlayFabDataStore.vc_gems, 5);
                 PlayFabApiCalls.instance.AddVirtualCurrency(5, "GM");
 
             }
