@@ -238,36 +238,42 @@ public class UnityPurchaser : MonoBehaviour, IStoreListener
         {
             Debug.Log(string.Format("ProcessPurchase: PASS. Product: '{0}'", args.purchasedProduct.definition.id));
             // The consumable item has been successfully purchased, add 100 coins to the player's in-game score.
+            HUDManager.Instance.PlayGemAnimation(0, PlayFabDataStore.vc_gems, 30);
             PlayFabApiCalls.instance.AddVirtualCurrency(30, "GM");
         }
         else if (String.Equals(args.purchasedProduct.definition.id, gems80, StringComparison.Ordinal))
         {
             Debug.Log(string.Format("ProcessPurchase: PASS. Product: '{0}'", args.purchasedProduct.definition.id));
             // The consumable item has been successfully purchased, add 100 coins to the player's in-game score.
+            HUDManager.Instance.PlayGemAnimation(1, PlayFabDataStore.vc_gems, 80);
             PlayFabApiCalls.instance.AddVirtualCurrency(80, "GM");
         }
         else if (String.Equals(args.purchasedProduct.definition.id, gems170, StringComparison.Ordinal))
         {
             Debug.Log(string.Format("ProcessPurchase: PASS. Product: '{0}'", args.purchasedProduct.definition.id));
             // The consumable item has been successfully purchased, add 100 coins to the player's in-game score.
+            HUDManager.Instance.PlayGemAnimation(2, PlayFabDataStore.vc_gems, 170);
             PlayFabApiCalls.instance.AddVirtualCurrency(170, "GM");
         }
         else if (String.Equals(args.purchasedProduct.definition.id, gems360, StringComparison.Ordinal))
         {
             Debug.Log(string.Format("ProcessPurchase: PASS. Product: '{0}'", args.purchasedProduct.definition.id));
             // The consumable item has been successfully purchased, add 100 coins to the player's in-game score.
+            HUDManager.Instance.PlayGemAnimation(3, PlayFabDataStore.vc_gems, 360);
             PlayFabApiCalls.instance.AddVirtualCurrency(360, "GM");
         }
         else if (String.Equals(args.purchasedProduct.definition.id, gems950, StringComparison.Ordinal))
         {
             Debug.Log(string.Format("ProcessPurchase: PASS. Product: '{0}'", args.purchasedProduct.definition.id));
             // The consumable item has been successfully purchased, add 100 coins to the player's in-game score.
+            HUDManager.Instance.PlayGemAnimation(4, PlayFabDataStore.vc_gems, 950);
             PlayFabApiCalls.instance.AddVirtualCurrency(950, "GM");
         }
         else if (String.Equals(args.purchasedProduct.definition.id, gems2500, StringComparison.Ordinal))
         {
             Debug.Log(string.Format("ProcessPurchase: PASS. Product: '{0}'", args.purchasedProduct.definition.id));
             // The consumable item has been successfully purchased, add 100 coins to the player's in-game score.
+            HUDManager.Instance.PlayGemAnimation(5, PlayFabDataStore.vc_gems, 2500);
             PlayFabApiCalls.instance.AddVirtualCurrency(2500, "GM");
         }
         // Or ... a non-consumable product has been purchased by this user.

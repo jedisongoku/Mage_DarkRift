@@ -25,10 +25,14 @@ public class UnityAds : MonoBehaviour, IUnityAdsListener
     // Implement a function for showing a rewarded video ad:
     public void RefillEnergyAd()
     {
-        PlayFabApiCalls.instance.GetVirtualCurrency_Energy();
-        Photon.Pun.PhotonNetwork.KeepAliveInBackground = 60;
-        myPlacementId = "RefillEnergy";
-        Advertisement.Show(myPlacementId);
+        if(PlayFabDataStore.vc_energy < 50)
+        {
+            PlayFabApiCalls.instance.GetVirtualCurrency_Energy();
+            Photon.Pun.PhotonNetwork.KeepAliveInBackground = 60;
+            myPlacementId = "RefillEnergy";
+            Advertisement.Show(myPlacementId);
+        }
+        
     }
 
     public void CoinRewardAd()
@@ -71,20 +75,20 @@ public class UnityAds : MonoBehaviour, IUnityAdsListener
             if(placementId == "RefillEnergy")
             {
                 if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "Deathmatch") HUDManager.Instance.ShowDeathPanel();
-                else HUDManager.Instance.CurrencyAnimation(0, PlayFabDataStore.vc_energy, 50);
+                else HUDManager.Instance.PlayEnergyAnimation(0, PlayFabDataStore.vc_energy, 50 - PlayFabDataStore.vc_energy);
                 PlayFabApiCalls.instance.AddVirtualCurrency(50 - PlayFabDataStore.vc_energy, "EN");
                 
             }
             else if(placementId == "CoinReward")
             {
                 HUDManager.Instance.UpdateRemainingDailyAds();
-                HUDManager.Instance.CurrencyAnimation(1, PlayFabDataStore.vc_coins, 50);
+                HUDManager.Instance.PlayCoinAnimation(0, PlayFabDataStore.vc_coins, 50);
                 PlayFabApiCalls.instance.AddVirtualCurrency(50, "CO");
             }
             else if(placementId == "GemReward")
             {
                 HUDManager.Instance.UpdateRemainingDailyAds();
-                HUDManager.Instance.CurrencyAnimation(2, PlayFabDataStore.vc_gems, 5);
+                HUDManager.Instance.PlayGemAnimation(6, PlayFabDataStore.vc_gems, 5);
                 PlayFabApiCalls.instance.AddVirtualCurrency(5, "GM");
 
             }

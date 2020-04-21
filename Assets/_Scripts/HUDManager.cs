@@ -49,10 +49,20 @@ public class HUDManager : MonoBehaviourPunCallbacks
     [SerializeField] private Text shopEnergyCurrencyText;
     [SerializeField] private Text remainingGemAdText;
     [SerializeField] private Text remainingCoinAdText;
-    [SerializeField] private Animator energyAnimator;
-    [SerializeField] private Animator coinAnimator;
-    [SerializeField] private Animator gemAnimator;
-    private float animationTimer = 0;
+    [SerializeField] private GameObject energyAnimation;
+    [SerializeField] private GameObject gemAnimation;
+    [SerializeField] private GameObject coinAnimation;
+    [SerializeField] private GameObject refillWithAdIcon;
+    [SerializeField] private GameObject refillWithGemIcon;
+    [SerializeField] private GameObject buyGem30;
+    [SerializeField] private GameObject buyGem80;
+    [SerializeField] private GameObject buyGem170;
+    [SerializeField] private GameObject buyGem360;
+    [SerializeField] private GameObject buyGem950;
+    [SerializeField] private GameObject buyGem2500;
+    [SerializeField] private GameObject dailyGem;
+    [SerializeField] private GameObject dailyCoin;
+
 
     [Header("Skin Panel")]
     [SerializeField] public GameObject skinPanel;
@@ -240,6 +250,7 @@ public class HUDManager : MonoBehaviourPunCallbacks
     {
         if(PlayFabDataStore.vc_gems >= 5 && PlayFabDataStore.vc_energy < 50)
         {
+            PlayEnergyAnimation(1, PlayFabDataStore.vc_energy, 50 - PlayFabDataStore.vc_energy);
             PlayFabApiCalls.instance.SubtractVirtualCurrency(5, "GM");
             PlayFabApiCalls.instance.AddVirtualCurrency(50 - PlayFabDataStore.vc_energy, "EN");
             
@@ -766,69 +777,78 @@ public class HUDManager : MonoBehaviourPunCallbacks
         StartCoroutine(Applaunch());
     }
 
-    public void CurrencyAnimation(int id, int currentAmount, int amountAdded)
+    public void EnergyCurrencyTextUpdate(int amount)
     {
-        animationTimer = 0;
+        shopEnergyCurrencyText.text = amount + "/50";
+    }
+
+    public void GemCurrencyTextUpdate(int amount)
+    {
+        shopGemsCurrencyText.text = amount.ToString();
+    }
+    public void PlayEnergyAnimation(int id, int currentAmount, int amountAdded)
+    {
         switch(id)
         {
             case 0:
-                energyAnimator.enabled = true;
-                StartCoroutine(EnergyAnimation(currentAmount, amountAdded));
+                energyAnimation.transform.position = refillWithAdIcon.transform.position;
+                energyAnimation.GetComponent<CurrencyAnimation>().SetAmount(currentAmount, amountAdded);
                 break;
             case 1:
-                coinAnimator.enabled = true;
-                StartCoroutine(CoinAnimation(currentAmount, amountAdded));
+                energyAnimation.transform.position = refillWithGemIcon.transform.position;
+                energyAnimation.GetComponent<CurrencyAnimation>().SetAmount(currentAmount, amountAdded);
+                break;
+        }
+        energyAnimation.SetActive(true);
+    }
+
+    public void PlayGemAnimation(int id, int currentAmount, int amountAdded)
+    {
+        switch (id)
+        {
+            case 0:
+                gemAnimation.transform.position = buyGem30.transform.position;
+                gemAnimation.GetComponent<CurrencyAnimation>().SetAmount(currentAmount, amountAdded);
+                break;
+            case 1:
+                gemAnimation.transform.position = buyGem80.transform.position;
+                gemAnimation.GetComponent<CurrencyAnimation>().SetAmount(currentAmount, amountAdded);
                 break;
             case 2:
-                gemAnimator.enabled = true;
-                StartCoroutine(GemAnimation(currentAmount, amountAdded));
+                gemAnimation.transform.position = buyGem170.transform.position;
+                gemAnimation.GetComponent<CurrencyAnimation>().SetAmount(currentAmount, amountAdded);
+                break;
+            case 3:
+                gemAnimation.transform.position = buyGem360.transform.position;
+                gemAnimation.GetComponent<CurrencyAnimation>().SetAmount(currentAmount, amountAdded);
+                break;
+            case 4:
+                gemAnimation.transform.position = buyGem950.transform.position;
+                gemAnimation.GetComponent<CurrencyAnimation>().SetAmount(currentAmount, amountAdded);
+                break;
+            case 5:
+                gemAnimation.transform.position = buyGem2500.transform.position;
+                gemAnimation.GetComponent<CurrencyAnimation>().SetAmount(currentAmount, amountAdded);
+                break;
+            case 6:
+                gemAnimation.transform.position = dailyGem.transform.position;
+                gemAnimation.GetComponent<CurrencyAnimation>().SetAmount(currentAmount, amountAdded);
                 break;
         }
+        gemAnimation.SetActive(true);
     }
 
-    IEnumerator EnergyAnimation(int currentAmount, int amountAdded)
+    public void PlayCoinAnimation(int id, int currentAmount, int amountAdded)
     {
-        animationTimer += 0.1f;
-        shopEnergyCurrencyText.text = currentAmount + amountAdded / 20 + "/50";
-        currentAmount += amountAdded / 20;
-        yield return new WaitForSeconds(0.05f);
-
-        if (animationTimer < 1) StartCoroutine(EnergyAnimation(currentAmount, amountAdded));
-        else
+        switch (id)
         {
-            energyAnimator.enabled = false;
-            UpdateCurrencies();
-        }  
-    }
+            case 0:
+                coinAnimation.transform.position = dailyCoin.transform.position;
+                coinAnimation.GetComponent<CurrencyAnimation>().SetAmount(currentAmount, amountAdded);
+                break;
 
-    IEnumerator CoinAnimation(int currentAmount, int amountAdded)
-    {
-        animationTimer += 0.1f;
-        shopCoinsCurrencyText.text = (currentAmount + amountAdded / 20).ToString();
-        currentAmount += amountAdded / 20;
-        yield return new WaitForSeconds(0.05f);
-
-        if (animationTimer < 1) StartCoroutine(CoinAnimation(currentAmount, amountAdded));
-        else
-        {
-            coinAnimator.enabled = false;
-            UpdateCurrencies();
         }
-    }
-
-    IEnumerator GemAnimation(int currentAmount, int amountAdded)
-    {
-        animationTimer += 0.1f;
-        shopGemsCurrencyText.text = (currentAmount + amountAdded / 20).ToString();
-        currentAmount += amountAdded / 20;
-        yield return new WaitForSeconds(0.05f);
-
-        if (animationTimer < 1) StartCoroutine(GemAnimation(currentAmount, amountAdded));
-        else
-        {
-            gemAnimator.enabled = false;
-            UpdateCurrencies();
-        }
+        coinAnimation.SetActive(true);
     }
     #endregion
 }
