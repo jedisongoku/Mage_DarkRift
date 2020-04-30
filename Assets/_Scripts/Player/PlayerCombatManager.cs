@@ -31,7 +31,7 @@ public class PlayerCombatManager : MonoBehaviourPun
     private float primarySkillRecharge;
 
     [Header("Player")]
-    private GameObject playerModel;
+    [SerializeField] private GameObject playerModel;
     [SerializeField] private GameObject playerUI;
     [SerializeField] private ParticleSystem playerBase;
     [SerializeField] private GameObject playerShadow;
@@ -58,7 +58,7 @@ public class PlayerCombatManager : MonoBehaviourPun
     private Shader toonLitShader;
     private Shader standardShader;
     private Shader transparentShader;
-    private bool isTransparent { get; set; }
+    public bool isTransparent { get; set; }
     public bool isInvisible { get; set; }
     public bool canBeSeen { get; set; }
     private int bushCount { get; set; }
@@ -74,6 +74,7 @@ public class PlayerCombatManager : MonoBehaviourPun
     bool isSecondChance = false;
 
     GameObject closestEnemy;
+    public bool isPlayer = true;
 
 
 
@@ -90,7 +91,7 @@ public class PlayerCombatManager : MonoBehaviourPun
         standardShader = Shader.Find("Standard");
         transparentShader = Shader.Find("Legacy Shaders/Particles/Alpha Blended");
 
-        if (photonView.IsMine)
+        if (photonView.IsMine && isPlayer)
         {
             //playerMovementController.enabled = true;
             aimJoystick = HUDManager.Instance.AimJoystick;
@@ -119,7 +120,7 @@ public class PlayerCombatManager : MonoBehaviourPun
     void Update()
     {
 
-        if(photonView.IsMine && !isDead)
+        if(photonView.IsMine && !isDead && isPlayer)
         {
             primarySkillCooldownTimer += Time.deltaTime;
             secondarySkillCooldownTimer += Time.deltaTime;
@@ -260,7 +261,13 @@ public class PlayerCombatManager : MonoBehaviourPun
                 //Debug.Log("DASHING");
                 SecondarySkill();
             }
-        }     
+        } 
+        else if(!isPlayer)
+        {
+            primarySkillCooldownTimer += Time.deltaTime;
+            secondarySkillCooldownTimer += Time.deltaTime;
+        }
+
     }
 
     GameObject ClosestEnemy(GameObject targetEnemy)
@@ -272,11 +279,11 @@ public class PlayerCombatManager : MonoBehaviourPun
         {
             if (!targetEnemy.GetComponent<PlayerCombatManager>().IsDead && (targetEnemy.GetComponent<PlayerCombatManager>().canBeSeen || !targetEnemy.GetComponent<PlayerCombatManager>().isInvisible) && distance > Vector3.Distance(targetEnemy.transform.position, transform.position))
             {
-                Debug.Log("Attack same enemy");
+                //Debug.Log("Attack same enemy");
                 return targetEnemy;
             }
         }
-        Debug.Log("Attack different enemy");
+        //Debug.Log("Attack different enemy");
 
         foreach (var enemy in PhotonNetwork.PhotonViews)
         {
@@ -483,14 +490,18 @@ public class PlayerCombatManager : MonoBehaviourPun
 
     public void RespawnPlayer()
     {
-        GetComponent<PlayerMovementController>().enabled = true;
-        primarySkillCharges.SetActive(true);
+        if(isPlayer)
+        {
+            GetComponent<PlayerMovementController>().enabled = true;
+            primarySkillCharges.SetActive(true);
 
-        if(!isSecondChance)
-        {       
-            GetComponent<PlayerLevelManager>().ResetOnRespawn();
-            PlayerRuneManager.Instance.RestartPlayerRunes();
+            if (!isSecondChance)
+            {
+                GetComponent<PlayerLevelManager>().ResetOnRespawn();
+                PlayerRuneManager.Instance.RestartPlayerRunes();
+            }
         }
+        
 
 
         photonView.RPC("RespawnClients", RpcTarget.All, GameManager.Instance.SpawnLocationIndex);
@@ -500,12 +511,12 @@ public class PlayerCombatManager : MonoBehaviourPun
     [PunRPC]
     void RespawnClients(int _spawnLocationIndex)
     {
-        if(!photonView.IsMine)
+        if(!photonView.IsMine || !isPlayer)
         {
             playerUI.SetActive(false);
             playerModel.SetActive(false);
             playerBase.gameObject.SetActive(false);
-            Invoke("EnableRespawnedPlayerClients", 1f);
+            Invoke("EnableRespawnedPlayerClients", 0.5f);
         }
         
         SetPlayerBaseStats();
@@ -519,7 +530,7 @@ public class PlayerCombatManager : MonoBehaviourPun
         playerMovementController.enabled = true;
         bushCount = 0;
 
-        if (photonView.IsMine)
+        if (photonView.IsMine && isPlayer)
         {
             
             Invoke("RespawnFollowCamera", 0.1f);
@@ -541,6 +552,10 @@ public class PlayerCombatManager : MonoBehaviourPun
         playerModel.SetActive(true);
         playerBase.gameObject.SetActive(true);
         BushManager.OnPlayerDeath();
+        if (!isPlayer)
+        {
+            GetComponent<PlayerAIController>().RespawnBotPlayer();
+        }
     }
     #endregion
     #region Public Methods
@@ -560,16 +575,25 @@ public class PlayerCombatManager : MonoBehaviourPun
                 Debug.Log("DEAD");
                 DisablePlayer();
                 //Deaths statistic added
-                PlayFabApiCalls.instance.UpdateStatistics("Deaths", 1);
+                if (isPlayer)
+                {
+                    PlayFabApiCalls.instance.UpdateStatistics("Deaths", 1);
+                    PlayFabApiCalls.instance.UpdateStatistics("Max Level", GetComponent<PlayerLevelManager>().GetPlayerLevel());
+                }
                 //Max Level statistic added
-                PlayFabApiCalls.instance.UpdateStatistics("Max Level", GetComponent<PlayerLevelManager>().GetPlayerLevel());
+
+                if (!isPlayer)
+                {
+                    GetComponent<PlayerAIController>().OnBotPlayerDeath();
+                    Invoke("RespawnBotPlayer", GameManager.Instance.RespawnCooldown);
+                }
             }
         }
     }
 
     public void DisablePlayer()
     {
-        if (photonView.IsMine)
+        if (photonView.IsMine && isPlayer)
         {
             playerMovementController.enabled = false;
             primarySkillCharges.SetActive(false);
@@ -583,7 +607,7 @@ public class PlayerCombatManager : MonoBehaviourPun
         }
         else
         {
-
+            if (!isPlayer) GetComponent<PlayerAIController>().OnDeath();
             playerUI.SetActive(false);
 
         }
@@ -792,7 +816,7 @@ public class PlayerCombatManager : MonoBehaviourPun
         playerUI.SetActive(value);
         playerShadow.SetActive(value);
         
-        if (!photonView.IsMine)
+        if (!photonView.IsMine || !isPlayer)
         {
             dashTrail.SetActive(value);
             playerHealthManager.SwitchShieldVisibility(value);
@@ -808,12 +832,11 @@ public class PlayerCombatManager : MonoBehaviourPun
 
     private void OnTriggerEnter(Collider other)
     {
-        if(photonView.IsMine && other.gameObject.layer == 15 && isInBush)
+        if(photonView.IsMine && other.gameObject.layer == 15 && isInBush && isPlayer)
         {
             bushCount++;
             if (!isTransparent)
             {
-                //playerBase.gameObject.SetActive(false);
                 isTransparent = true;
                 foreach (var render in playerModel.GetComponent<MeshRenderersInModel>().MeshRenderers)
                 {
@@ -848,9 +871,8 @@ public class PlayerCombatManager : MonoBehaviourPun
 
     private void OnTriggerStay(Collider other)
     {
-        if(!photonView.IsMine && canBeSeen && isInvisible)
+        if(!photonView.IsMine && canBeSeen && isInvisible && isPlayer)
         {
-            
             foreach (var render in playerModel.GetComponent<MeshRenderersInModel>().MeshRenderers)
             {
                 if (render.transform.name.Equals("Halo"))
@@ -875,12 +897,38 @@ public class PlayerCombatManager : MonoBehaviourPun
             playerModel.SetActive(false);
             playerUI.SetActive(false);
         }
+        else if (photonView.IsMine && canBeSeen && isInvisible && !isPlayer)
+        {
+            foreach (var render in playerModel.GetComponent<MeshRenderersInModel>().MeshRenderers)
+            {
+                if (render.transform.name.Equals("Halo"))
+                {
+                    render.enabled = false;
+                }
+                else
+                {
+                    render.material.shader = transparentShader;
+                }
+
+            }
+            foreach (var render in playerModel.GetComponent<MeshRenderersInModel>().SkinnedMeshRenderers)
+            {
+                render.material.shader = transparentShader;
+            }
+            playerUI.SetActive(true);
+            playerModel.SetActive(true);
+        }
+        else if (photonView.IsMine && !canBeSeen && isInvisible && !isPlayer)
+        {
+            playerModel.SetActive(false);
+            playerUI.SetActive(false);
+        }
     }
 
     private void OnTriggerExit(Collider other)
     {
         
-        if(photonView.IsMine && other.gameObject.layer == 15 && isInBush)
+        if(photonView.IsMine && other.gameObject.layer == 15 && isInBush && isPlayer)
         {
             bushCount--;
             if (isTransparent && bushCount == 0)
@@ -946,6 +994,77 @@ public class PlayerCombatManager : MonoBehaviourPun
     }
 
 
+    #endregion
+
+    #region BotPlayer
+
+    public void BotPlayerAutoAttack(GameObject targetPlayer)
+    {
+        if (!isPlayer && LineOfSight(targetPlayer))
+        {
+            if (targetPlayer.GetComponent<PhotonView>().IsMine && !targetPlayer.gameObject.GetComponent<PlayerCombatManager>().isTransparent)
+            {
+                if (!targetPlayer.GetComponent<PlayerCombatManager>().isPlayer && !targetPlayer.gameObject.GetComponent<PlayerCombatManager>().isInvisible)
+                {
+                    if (primarySkillCooldownTimer >= primarySkillCooldown && primarySkillCharge > 0)
+                    {
+                        PrimarySkill(targetPlayer.transform.position);
+                    }
+                }
+                else if(primarySkillCooldownTimer >= primarySkillCooldown && primarySkillCharge > 0)
+                {
+                    PrimarySkill(targetPlayer.transform.position);
+                }
+
+            }
+            else if (!targetPlayer.GetComponent<PhotonView>().IsMine && !targetPlayer.gameObject.GetComponent<PlayerCombatManager>().isInvisible)
+            {
+                if (primarySkillCooldownTimer >= primarySkillCooldown && primarySkillCharge > 0)
+                {
+                    PrimarySkill(targetPlayer.transform.position);
+                }
+            }  
+            else if (targetPlayer.gameObject.GetComponent<PlayerCombatManager>().canBeSeen)
+            {
+                if (primarySkillCooldownTimer >= primarySkillCooldown && primarySkillCharge > 0)
+                {
+                    PrimarySkill(targetPlayer.transform.position);
+                    Debug.Log("BOT ATTACKING 3!");
+                }
+            }
+                
+        }
+    }
+
+    public void BotPlayerDash()
+    {
+        if(!IsDead)
+            SecondarySkill();
+    }
+
+    public int BotPlayerPrimarySkillCharge()
+    {
+        return primarySkillCharge;
+    }
+
+    public bool BotPlayerSecondarySkillAvailable()
+    {
+        return secondarySkillCooldownTimer >= secondarySkillCooldown;
+    }
+
+    void RespawnBotPlayer()
+    {
+        if(PhotonNetwork.CurrentRoom.MaxPlayers - PhotonNetwork.CurrentRoom.PlayerCount > 0)
+        {
+            RespawnPlayer();
+        }
+        else
+        {
+            PhotonNetwork.Destroy(photonView);
+        }
+        
+
+    }
     #endregion
 
 }

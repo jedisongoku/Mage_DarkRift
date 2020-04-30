@@ -118,7 +118,7 @@ public class PlayerNetworkManager : MonoBehaviourPunCallbacks
         int power = Random.Range(7, 12);
         if ((previousLocation - CartController.instance.GetCartLocation).magnitude > 1)
         {
-            Debug.Log("SpawnGem");
+            //Debug.Log("SpawnGem");
             photonView.RPC("SpawnGem", RpcTarget.AllViaServer, power, CartController.instance.GetSpawnLocation, randomVector);
             previousLocation = CartController.instance.GetCartLocation;
         }

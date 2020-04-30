@@ -77316,7 +77316,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 1
   m_Constraints: 84
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
 --- !u!114 &8771026880716645563
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -77333,6 +77333,7 @@ MonoBehaviour:
   walkSpeed: 0.75
   dustParticle: {fileID: 6391363446961557394}
   chillParticle: {fileID: 6686356772858693632}
+  isPlayer: 1
 --- !u!114 &6408241494246960713
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -77389,6 +77390,7 @@ MonoBehaviour:
   playerMovementController: {fileID: 8771026880716645563}
   playerHealthManager: {fileID: 5718202486688299391}
   playerDamageCollider: {fileID: 6921259040233121731}
+  playerModel: {fileID: 0}
   playerUI: {fileID: 8507488124019187080}
   playerBase: {fileID: 5577883137065242401}
   playerShadow: {fileID: 8507488124019186751}
@@ -77411,6 +77413,7 @@ MonoBehaviour:
   - {fileID: 8354191488222300425}
   - {fileID: 3488305534866696470}
   playerMeshRenderers: []
+  isPlayer: 1
 --- !u!114 &5718202486688299391
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -78532,6 +78535,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Dust
+      objectReference: {fileID: 0}
+    - target: {fileID: 632008841367345358, guid: 0051500201f6e874f93dab693b529716,
+        type: 3}
+      propertyPath: looping
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 632008841367345358, guid: 0051500201f6e874f93dab693b529716,
         type: 3}

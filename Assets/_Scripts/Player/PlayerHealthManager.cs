@@ -247,7 +247,8 @@ public class PlayerHealthManager : MonoBehaviourPun
         CancelInvoke("DelayedHealthRegenrationStart");
         CanHeal = false;
         Invoke("DelayedHealthRegenrationStart", 3f);
-        
+
+        if (damageOrigin == GameManager.Instance.GetCurrentPlayerViewID && !GetComponent<PlayerCombatManager>().isPlayer) ShowFloatingCombatText(_damage);
         photonView.RPC("UpdateHealth", RpcTarget.All, playerhealth, damageOrigin, false);
     }
 
@@ -292,7 +293,7 @@ public class PlayerHealthManager : MonoBehaviourPun
     {
         healthGenerationTimer = 0;
 
-        if(_damageOrigin != 0 && !_isFrostbite)
+        if (_damageOrigin != 0 && !_isFrostbite)
         {
             EnableExplosionParticle();
         }
@@ -319,7 +320,8 @@ public class PlayerHealthManager : MonoBehaviourPun
         }
 
         UpdateHealthBar();
-        if (_damageOrigin == GameManager.Instance.GetCurrentPlayerViewID) ShowFloatingCombatText(damage);
+
+        if (_damageOrigin == GameManager.Instance.GetCurrentPlayerViewID && GetComponent<PlayerCombatManager>().isPlayer) ShowFloatingCombatText(damage);
 
         if((playerhealth / playerMaxHealth <= PlayFabDataStore.playerBaseStats.RageStartRate) && isRage && !GetComponent<PlayerCombatManager>().IsDead)
         {
@@ -507,6 +509,7 @@ public class PlayerHealthManager : MonoBehaviourPun
     void ShowFloatingCombatText(float amount)
     {
         GameObject obj = ObjectPooler.Instance.GetFloatingCombatTextPrefab();
+        //Debug.Log("Damage amount " + amount);
         if(amount == 0)
         {
             obj.GetComponent<TextMeshPro>().text = "BLOCK";
@@ -540,5 +543,13 @@ public class PlayerHealthManager : MonoBehaviourPun
     public void SwitchFrostbiteVisibility(bool value)
     {
         if (isFrostbite) frostbiteParticle.SetActive(value);
+    }
+
+    public float PlayerHealth
+    {
+        get
+        {
+            return playerhealth;
+        }
     }
 }

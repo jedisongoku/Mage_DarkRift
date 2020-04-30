@@ -24,6 +24,7 @@ public class CurrencyAnimation : MonoBehaviour
         }
         timer = 0;
         StartCoroutine(Expand());
+        Handheld.Vibrate();
     }
 
     public void SetAmount(int current, int added)
@@ -82,6 +83,7 @@ public class CurrencyAnimation : MonoBehaviour
         {
             currentAmount += amountAdded / 5;
             HUDManager.Instance.GemCurrencyTextUpdate(currentAmount);
+            Handheld.Vibrate();
             Icons[i].SetActive(false);
         }
 

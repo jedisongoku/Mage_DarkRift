@@ -650,7 +650,7 @@ public class HUDManager : MonoBehaviourPunCallbacks
 
     public void UpdateTotalPlayerCount()
     {
-        totalPlayersText.text = PhotonNetwork.CurrentRoom.PlayerCount + "/" + PhotonNetwork.CurrentRoom.MaxPlayers;
+        totalPlayersText.text = PhotonNetwork.CurrentRoom.PlayerCount + GameManager.Instance.botPlayerCount + "/" + PhotonNetwork.CurrentRoom.MaxPlayers;
     }
 
     IEnumerator GameSceneLoading()

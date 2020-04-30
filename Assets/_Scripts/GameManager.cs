@@ -15,10 +15,13 @@ public class GameManager : MonoBehaviour
     [SerializeField] GameObject botPlayerPrefab;
 
     private static GameObject currentPlayer;
+    private List<GameObject> botPlayerList = new List<GameObject>();
     private static int currentPlayerViewID;
     public static int playerKillCount = 0;
     private int respawnCooldown = 6;
     private bool canRespawn = false;
+    
+    public int botPlayerCount { get; set; }
 
     public int DeadPlayerLevel { get; set; }
 
@@ -53,6 +56,7 @@ public class GameManager : MonoBehaviour
         Instance = this;
         HUDManager.Instance.OnGameLevelLoaded();
         playerKillCount = 0;
+        botPlayerCount = 0;
 
     }
 
@@ -79,7 +83,14 @@ public class GameManager : MonoBehaviour
                 if(PlayFabDataStore.gameMode == "Deathmatch")
                     PlayerRuneManager.Instance.Initialize();
 
-                //InitializeBotPlayer();
+                if(PhotonNetwork.IsMasterClient)
+                {
+                    for(int i = 1; i < PhotonNetwork.CurrentRoom.MaxPlayers - PhotonNetwork.CurrentRoom.PlayerCount; i++)
+                    {
+                        InitializeBotPlayer(i);
+                    }
+                }
+                    
             }
             else
             {
@@ -91,24 +102,18 @@ public class GameManager : MonoBehaviour
         
     }
 
-    public void InitializeBotPlayer()
+    public void InitializeBotPlayer(int index)
     {
         Debug.Log("Bot Init");
         if (PhotonNetwork.IsConnectedAndReady)
         {
             if (botPlayerPrefab != null)
             {
-                int spawnLocationIndex;
-                if (PhotonNetwork.LocalPlayer.ActorNumber <= PhotonNetwork.CurrentRoom.MaxPlayers)
-                {
-                    spawnLocationIndex = PhotonNetwork.LocalPlayer.ActorNumber;
-                }
-                else
-                {
-                    spawnLocationIndex = SpawnLocationIndex;
-                }
+                int spawnLocationIndex = index;
 
-                PhotonNetwork.Instantiate(botPlayerPrefab.name, spawnLocations[spawnLocationIndex].transform.position, Quaternion.identity);
+                GameObject bot = PhotonNetwork.Instantiate(botPlayerPrefab.name, spawnLocations[spawnLocationIndex].transform.position, Quaternion.identity);
+                bot.GetComponent<PlayerAIController>().spawnLocation = spawnLocationIndex;
+                botPlayerCount++;
 
             }
             else
@@ -117,6 +122,8 @@ public class GameManager : MonoBehaviour
             }
 
         }
+
+        HUDManager.Instance.UpdateTotalPlayerCount();
 
         
     }
