@@ -45,10 +45,12 @@ public class BushManager : MonoBehaviour
         if (other.gameObject.layer == 17 && players[bushGroupId].Count > 1)
         {   
             other.transform.parent.gameObject.GetComponent<PlayerCombatManager>().canBeSeen = true;
+            other.transform.parent.gameObject.GetComponent<PlayerCombatManager>().isSearchable = true;
         }
         else if(other.gameObject.layer == 17 && players[bushGroupId].Count <= 1)
         {
             other.transform.parent.gameObject.GetComponent<PlayerCombatManager>().canBeSeen = false;
+            other.transform.parent.gameObject.GetComponent<PlayerCombatManager>().isSearchable = false;
         }
     }
 

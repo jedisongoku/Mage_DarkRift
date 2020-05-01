@@ -61,7 +61,9 @@ public class PlayerCombatManager : MonoBehaviourPun
     public bool isTransparent { get; set; }
     public bool isInvisible { get; set; }
     public bool canBeSeen { get; set; }
+    public bool isSearchable { get; set; }
     private int bushCount { get; set; }
+
 
     public bool isInBush { get; set; }
 
@@ -838,6 +840,7 @@ public class PlayerCombatManager : MonoBehaviourPun
             if (!isTransparent)
             {
                 isTransparent = true;
+                isSearchable = false;
                 foreach (var render in playerModel.GetComponent<MeshRenderersInModel>().MeshRenderers)
                 {
                     if(render.transform.name.Equals("Halo"))
@@ -862,6 +865,7 @@ public class PlayerCombatManager : MonoBehaviourPun
             if (!isInvisible && !canBeSeen)
             {
                 isInvisible = true;
+                isSearchable = false;
                 playerModel.SetActive(false);
                 SwitchPlayerElements(false);
             }
@@ -936,6 +940,7 @@ public class PlayerCombatManager : MonoBehaviourPun
                 
                 
                 isTransparent = false;
+                isSearchable = true;
                 foreach (var render in playerModel.GetComponent<MeshRenderersInModel>().MeshRenderers)
                 {
                     if (render.transform.name.Equals("Halo"))
@@ -983,6 +988,7 @@ public class PlayerCombatManager : MonoBehaviourPun
                 playerModel.SetActive(true);
                 isInvisible = false;
                 canBeSeen = false;
+                isSearchable = true;
                 SwitchPlayerElements(true);
                 isInBush = false;
 
@@ -1000,40 +1006,23 @@ public class PlayerCombatManager : MonoBehaviourPun
 
     public void BotPlayerAutoAttack(GameObject targetPlayer)
     {
-        if (!isPlayer && LineOfSight(targetPlayer))
+        
+        if(targetPlayer != null)
         {
-            if (targetPlayer.GetComponent<PhotonView>().IsMine && !targetPlayer.gameObject.GetComponent<PlayerCombatManager>().isTransparent)
+            Debug.Log("Bot Player Auto Attack Target: " + targetPlayer.name);
+            if (!isPlayer && LineOfSight(targetPlayer))
             {
-                if (!targetPlayer.GetComponent<PlayerCombatManager>().isPlayer && !targetPlayer.gameObject.GetComponent<PlayerCombatManager>().isInvisible)
+                if (targetPlayer.gameObject.GetComponent<PlayerCombatManager>().isSearchable)
                 {
                     if (primarySkillCooldownTimer >= primarySkillCooldown && primarySkillCharge > 0)
                     {
                         PrimarySkill(targetPlayer.transform.position);
                     }
                 }
-                else if(primarySkillCooldownTimer >= primarySkillCooldown && primarySkillCharge > 0)
-                {
-                    PrimarySkill(targetPlayer.transform.position);
-                }
 
             }
-            else if (!targetPlayer.GetComponent<PhotonView>().IsMine && !targetPlayer.gameObject.GetComponent<PlayerCombatManager>().isInvisible)
-            {
-                if (primarySkillCooldownTimer >= primarySkillCooldown && primarySkillCharge > 0)
-                {
-                    PrimarySkill(targetPlayer.transform.position);
-                }
-            }  
-            else if (targetPlayer.gameObject.GetComponent<PlayerCombatManager>().canBeSeen)
-            {
-                if (primarySkillCooldownTimer >= primarySkillCooldown && primarySkillCharge > 0)
-                {
-                    PrimarySkill(targetPlayer.transform.position);
-                    Debug.Log("BOT ATTACKING 3!");
-                }
-            }
-                
         }
+        
     }
 
     public void BotPlayerDash()
