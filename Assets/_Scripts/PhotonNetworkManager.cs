@@ -193,5 +193,7 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
         HUDManager.Instance.isContentDownloaded = true;
     }
 
+    
+
     #endregion
 }

@@ -77329,7 +77329,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a478a75282f97947be83320dec1d6fd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  turnSpeed: 8
+  turnSpeed: 5
   walkSpeed: 0.75
   dustParticle: {fileID: 6391363446961557394}
   chillParticle: {fileID: 6686356772858693632}
@@ -77390,6 +77390,7 @@ MonoBehaviour:
   playerMovementController: {fileID: 8771026880716645563}
   playerHealthManager: {fileID: 5718202486688299391}
   playerDamageCollider: {fileID: 6921259040233121731}
+  killFeedName: 
   playerModel: {fileID: 0}
   playerUI: {fileID: 8507488124019187080}
   playerBase: {fileID: 5577883137065242401}

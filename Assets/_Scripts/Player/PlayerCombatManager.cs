@@ -11,6 +11,7 @@ public class PlayerCombatManager : MonoBehaviourPun
     [SerializeField] private PlayerMovementController playerMovementController;
     [SerializeField] private PlayerHealthManager playerHealthManager;
     [SerializeField] private CapsuleCollider playerDamageCollider;
+    public string killFeedName;
     private FloatingJoystick aimJoystick;
   
     Animator m_Animator;
@@ -98,10 +99,8 @@ public class PlayerCombatManager : MonoBehaviourPun
             //playerMovementController.enabled = true;
             aimJoystick = HUDManager.Instance.AimJoystick;
             GameObject.Find("VirtualCamera").GetComponent<CinemachineVirtualCamera>().Follow = this.transform;
+            killFeedName = PhotonNetwork.LocalPlayer.NickName;
             //GetComponent<CapsuleCollider>().radius = 0.75f;
-            
-
-
 
         }
         else
@@ -111,6 +110,8 @@ public class PlayerCombatManager : MonoBehaviourPun
             playerHealthBar.transform.Find("HealthBar").GetComponent<Image>().sprite = enemyHealthBarTexture;
             playerNameText.color = enemyNameColor;
             playerBase.startColor = enemyNameColor;
+            if(isPlayer)
+                killFeedName = PhotonNetwork.GetPhotonView(photonView.ViewID).Owner.NickName;
         }
 
 
@@ -587,7 +588,21 @@ public class PlayerCombatManager : MonoBehaviourPun
                 if (!isPlayer)
                 {
                     GetComponent<PlayerAIController>().OnBotPlayerDeath();
-                    Invoke("RespawnBotPlayer", GameManager.Instance.RespawnCooldown);
+                    if(photonView.IsMine)
+                    {
+                        if (PhotonNetwork.CurrentRoom.MaxPlayers - PhotonNetwork.CurrentRoom.PlayerCount - GameManager.Instance.botPlayerCount >= 0)
+                        {
+                            Invoke("RespawnBotPlayer", GameManager.Instance.RespawnCooldown);
+                        }
+                        else
+                        {
+                            GameManager.Instance.botPlayerCount--;
+                            PhotonNetwork.Destroy(photonView);
+                            HUDManager.Instance.UpdateTotalPlayerCount();
+                        }
+                    }
+                    
+                    
                 }
             }
         }
@@ -1009,6 +1024,8 @@ public class PlayerCombatManager : MonoBehaviourPun
         
         if(targetPlayer != null)
         {
+            PrimarySkill(targetPlayer.transform.position);
+            /*
             Debug.Log("Bot Player Auto Attack Target: " + targetPlayer.name);
             if (!isPlayer && LineOfSight(targetPlayer))
             {
@@ -1020,7 +1037,7 @@ public class PlayerCombatManager : MonoBehaviourPun
                     }
                 }
 
-            }
+            }*/
         }
         
     }
@@ -1043,16 +1060,7 @@ public class PlayerCombatManager : MonoBehaviourPun
 
     void RespawnBotPlayer()
     {
-        if(PhotonNetwork.CurrentRoom.MaxPlayers - PhotonNetwork.CurrentRoom.PlayerCount > 0)
-        {
-            RespawnPlayer();
-        }
-        else
-        {
-            PhotonNetwork.Destroy(photonView);
-        }
-        
-
+        RespawnPlayer();
     }
     #endregion
 

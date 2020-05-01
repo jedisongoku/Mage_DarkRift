@@ -4,7 +4,7 @@ using UnityEngine;
 using Photon.Pun;
 public class PlayerMovementController : MonoBehaviourPun, IPunObservable
 {
-    [SerializeField] private float turnSpeed = 18f;
+    [SerializeField] private float turnSpeed = 15f;
     [SerializeField] private float walkSpeed = 1f;
     private DynamicJoystick joystick;
 

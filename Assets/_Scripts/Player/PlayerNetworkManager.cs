@@ -81,6 +81,7 @@ public class PlayerNetworkManager : MonoBehaviourPunCallbacks
             photonView.RPC("StartCartAnimation", RpcTarget.Others, CartController.instance.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsName("Forward"),
                 CartController.instance.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).normalizedTime, CartController.instance.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).length,
                 PhotonNetwork.ServerTimestamp);
+            SendBotCount();
         }
     }
 
@@ -88,7 +89,18 @@ public class PlayerNetworkManager : MonoBehaviourPunCallbacks
     {
         if (photonView.IsMine)
         {
-            HUDManager.Instance.UpdateTotalPlayerCount();
+            
+            if(PhotonNetwork.IsMasterClient)
+            {
+                if(PhotonNetwork.CurrentRoom.PlayerCount + GameManager.Instance.botPlayerCount < 8)
+                {
+                    GameManager.Instance.InitializeBotPlayer(GameManager.Instance.SpawnLocationIndex);
+                }
+            }
+            else
+            {
+                HUDManager.Instance.UpdateTotalPlayerCount();
+            }
 
         }
     }
@@ -100,6 +112,18 @@ public class PlayerNetworkManager : MonoBehaviourPunCallbacks
         _time += lag / _length;
         if(_animationState) CartController.instance.GetComponent<Animator>().Play("Forward", 0, _time);
         else CartController.instance.GetComponent<Animator>().Play("Backward", 0, _time);
+    }
+
+    public void SendBotCount()
+    {
+        photonView.RPC("BotCount_RPC", RpcTarget.Others, GameManager.Instance.botPlayerCount);
+    }
+
+    [PunRPC]
+    void BotCount_RPC(int count)
+    {
+        GameManager.Instance.botPlayerCount = count;
+        HUDManager.Instance.UpdateTotalPlayerCount();
     }
 
     IEnumerator SpawnGems()

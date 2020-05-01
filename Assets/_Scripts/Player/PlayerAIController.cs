@@ -38,7 +38,7 @@ public class PlayerAIController : MonoBehaviourPun, IPunObservable
     // Start is called before the first frame update
     void Awake()
     {
-        playerNameText.text = "Mage" + Random.Range(1000, 9999);
+        
 
         botController = GetComponent<NavMeshAgent>();
         m_Animator = GetComponent<Animator>();
@@ -48,6 +48,8 @@ public class PlayerAIController : MonoBehaviourPun, IPunObservable
         playersInRange = new List<GameObject>();
         GetComponent<PlayerMovementController>().isPlayer = false;
         playerCombatManager.isPlayer = false;
+        playerNameText.text = "Mage" + Random.Range(1000, 9999);
+        playerCombatManager.killFeedName = playerNameText.text;
 
         StartCoroutine(StateSwitcher(botState.spawn, 0));
         defenseHealthThreshold = Random.Range(30, 60);
@@ -231,7 +233,6 @@ public class PlayerAIController : MonoBehaviourPun, IPunObservable
         {
             if ((m_Rigidbody.position - networkPosition).magnitude > 5f)
             {
-                Debug.Log("Position Correction");
                 m_Rigidbody.position = networkPosition;
             }
 
@@ -267,7 +268,8 @@ public class PlayerAIController : MonoBehaviourPun, IPunObservable
         else
         {
             networkPosition = (Vector3)stream.ReceiveNext();
-            botController.SetDestination((Vector3)stream.ReceiveNext());
+            if(botController.enabled)
+                botController.SetDestination((Vector3)stream.ReceiveNext());
 
             float lag = Mathf.Abs((float)(PhotonNetwork.Time - info.SentServerTime));
             //botController.nextPosition += botController.velocity * lag;
@@ -318,7 +320,7 @@ public class PlayerAIController : MonoBehaviourPun, IPunObservable
 
     private void OnTriggerStay(Collider other)
     {
-        /*
+        
         if (other.gameObject.layer == 8 && PhotonNetwork.IsMasterClient && !playerCombatManager.IsDead)
         {
             if (!playersInRange.Contains(other.gameObject) && !other.GetComponent<PlayerCombatManager>().IsDead)
@@ -330,7 +332,7 @@ public class PlayerAIController : MonoBehaviourPun, IPunObservable
                 playersInRange.Remove(other.gameObject);
                 //RemoveTargetPlayer(other.gameObject);
             }
-        }*/
+        }
 
     }
 
@@ -398,17 +400,21 @@ public class PlayerAIController : MonoBehaviourPun, IPunObservable
 
         foreach (var enemy in playersInRange)
         {
-            if (enemy.gameObject.layer == 8)
+            if(enemy != null)
             {
-                if (!enemy.GetComponent<PlayerCombatManager>().IsDead && LineOfSight(enemy.gameObject) && enemy.GetComponent<PlayerCombatManager>().isSearchable)
+                if (enemy.gameObject.layer == 8)
                 {
-                    if (distance > Vector3.Distance(enemy.gameObject.transform.position, transform.position))
+                    if (!enemy.GetComponent<PlayerCombatManager>().IsDead && LineOfSight(enemy.gameObject) && enemy.GetComponent<PlayerCombatManager>().isSearchable)
                     {
-                        distance = Vector3.Distance(enemy.gameObject.transform.position, transform.position);
-                        closestEnemy = enemy.gameObject;
+                        if (distance > Vector3.Distance(enemy.gameObject.transform.position, transform.position))
+                        {
+                            distance = Vector3.Distance(enemy.gameObject.transform.position, transform.position);
+                            closestEnemy = enemy.gameObject;
+                        }
                     }
                 }
             }
+            
 
         }
         return closestEnemy;

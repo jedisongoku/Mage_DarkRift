@@ -85,7 +85,7 @@ public class GameManager : MonoBehaviour
 
                 if(PhotonNetwork.IsMasterClient)
                 {
-                    for(int i = 1; i < PhotonNetwork.CurrentRoom.MaxPlayers - PhotonNetwork.CurrentRoom.PlayerCount; i++)
+                    for (int i = 1; i < PhotonNetwork.CurrentRoom.MaxPlayers - PhotonNetwork.CurrentRoom.PlayerCount + 1; i++)
                     {
                         InitializeBotPlayer(i);
                     }
@@ -124,7 +124,6 @@ public class GameManager : MonoBehaviour
         }
 
         HUDManager.Instance.UpdateTotalPlayerCount();
-
         
     }
 
@@ -173,7 +172,7 @@ public class GameManager : MonoBehaviour
 
     public void KillFeed(int _playerViewID, GameObject _playerkilled)
     {
-        ScoreManager.Instance.RefreshKillFeed(PhotonNetwork.GetPhotonView(_playerViewID).Owner.NickName, _playerkilled.GetComponent<PhotonView>().Owner.NickName);
+        ScoreManager.Instance.RefreshKillFeed(PhotonNetwork.GetPhotonView(_playerViewID).GetComponent<PlayerCombatManager>().killFeedName, _playerkilled.GetComponent<PlayerCombatManager>().killFeedName);
 
         if(_playerViewID == currentPlayerViewID)
         {
