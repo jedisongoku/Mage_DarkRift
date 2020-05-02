@@ -115,7 +115,7 @@ public class PlayerMovementController : MonoBehaviourPun, IPunObservable
     {
         if (photonView.IsMine && isPlayer)
         {
-            Vector3 desiredForward = Vector3.RotateTowards(transform.forward, _aimLocation, turnSpeed * Time.deltaTime, 0f);
+            Vector3 desiredForward = Vector3.RotateTowards(transform.forward, _aimLocation, turnSpeed * Time.deltaTime, 89f);
             m_Rotation = Quaternion.LookRotation(desiredForward);
             transform.LookAt(_aimLocation);
         }

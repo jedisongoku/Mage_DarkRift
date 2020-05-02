@@ -8,6 +8,8 @@ public class BushManager : MonoBehaviour
     public static Dictionary<int, Dictionary<int,int>> players = new Dictionary<int, Dictionary<int,int>>();
 
     public int bushGroupId = 0;
+    bool canBeSeen = false;
+    bool isInvisible = false;
 
     public static void OnPlayerDeath()
     {
@@ -42,15 +44,17 @@ public class BushManager : MonoBehaviour
 
     private void OnTriggerStay(Collider other)
     {
-        if (other.gameObject.layer == 17 && players[bushGroupId].Count > 1)
-        {   
-            other.transform.parent.gameObject.GetComponent<PlayerCombatManager>().canBeSeen = true;
-            other.transform.parent.gameObject.GetComponent<PlayerCombatManager>().isSearchable = true;
-        }
-        else if(other.gameObject.layer == 17 && players[bushGroupId].Count <= 1)
+        if (other.gameObject.layer == 17 && players[bushGroupId].Count > 1 && !other.transform.parent.gameObject.GetComponent<PlayerCombatManager>().canBeSeen)
         {
-            other.transform.parent.gameObject.GetComponent<PlayerCombatManager>().canBeSeen = false;
-            other.transform.parent.gameObject.GetComponent<PlayerCombatManager>().isSearchable = false;
+            other.transform.parent.gameObject.GetComponent<PlayerCombatManager>().PlayerCanBeSeen();
+            //other.transform.parent.gameObject.GetComponent<PlayerCombatManager>().canBeSeen = true;
+            //other.transform.parent.gameObject.GetComponent<PlayerCombatManager>().isSearchable = true;
+        }
+        else if(other.gameObject.layer == 17 && players[bushGroupId].Count <= 1 && !other.transform.parent.gameObject.GetComponent<PlayerCombatManager>().isInvisible)
+        {
+            other.transform.parent.gameObject.GetComponent<PlayerCombatManager>().PlayerIsInvisible();
+            //other.transform.parent.gameObject.GetComponent<PlayerCombatManager>().canBeSeen = false;
+            //other.transform.parent.gameObject.GetComponent<PlayerCombatManager>().isSearchable = false;
         }
     }
 

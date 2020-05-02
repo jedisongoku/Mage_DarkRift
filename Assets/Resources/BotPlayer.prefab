@@ -10154,7 +10154,7 @@ Transform:
   - {fileID: 7145033057468697278}
   - {fileID: 2722717308948679658}
   - {fileID: 8565447486715584810}
-  - {fileID: 5648004943895533647}
+  - {fileID: 4337476499616666710}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -10281,7 +10281,7 @@ MonoBehaviour:
   playerHealthManager: {fileID: 3203013059034432872}
   playerDamageCollider: {fileID: 226589385992084436}
   killFeedName: 
-  playerModel: {fileID: 5648004943895533605}
+  playerModel: {fileID: 4337476499616940746}
   playerUI: {fileID: 1529230365936607647}
   playerBase: {fileID: 3332908488686482230}
   playerShadow: {fileID: 1529230365936607272}
@@ -10379,7 +10379,9 @@ MonoBehaviour:
   searchCollider: {fileID: 2538454220771347498}
   botPlayerState: 0
   botPlayerCurrentState: 0
+  targetPlayer: {fileID: 0}
   spawnLocation: 0
+  playersInRange: []
 --- !u!1 &1529230365936607725
 GameObject:
   m_ObjectHideFlags: 0
@@ -69306,13 +69308,13 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5f68a14429977414198a20ae72616650, type: 3}
---- !u!1 &5648004943895533605 stripped
+--- !u!1 &4337476499616940746 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8237208475714640577, guid: 5f68a14429977414198a20ae72616650,
     type: 3}
   m_PrefabInstance: {fileID: 5648004943895533579}
   m_PrefabAsset: {fileID: 0}
---- !u!4 &5648004943895533647 stripped
+--- !u!4 &4337476499616666710 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8237208475714358365, guid: 5f68a14429977414198a20ae72616650,
     type: 3}

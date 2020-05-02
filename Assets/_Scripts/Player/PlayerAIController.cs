@@ -244,9 +244,13 @@ public class PlayerAIController : MonoBehaviourPun, IPunObservable
 
     IEnumerator SanityCheck()
     {
-        if(targetPlayer != null)
+        if (targetPlayer != null)
             if (targetPlayer.GetComponent<PlayerCombatManager>().IsDead && playersInRange.Contains(targetPlayer))
                 playersInRange.Remove(targetPlayer);
+            else
+            if (Vector3.Distance(targetPlayer.transform.position, transform.position) > 10) targetPlayer = null;
+
+
         yield return new WaitForSeconds(1);
         
         if(botController.velocity.magnitude < 3 && playersInRange.Count == 0)

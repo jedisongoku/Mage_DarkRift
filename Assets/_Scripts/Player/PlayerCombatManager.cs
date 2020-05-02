@@ -419,8 +419,12 @@ public class PlayerCombatManager : MonoBehaviourPun
     void UseSecondarySkill()
     {
         m_Animator.SetTrigger("Dashing");
-        dashTrail.SetActive(false);
-        dashTrail.SetActive(true);
+        if(!isInBush)
+        {
+            dashTrail.SetActive(false);
+            dashTrail.SetActive(true);
+        }
+        
     }
 
     [PunRPC]
@@ -484,6 +488,7 @@ public class PlayerCombatManager : MonoBehaviourPun
         }
 
         isSecondChance = false;
+        isSearchable = true;
 
         //Games played statistic added
         PlayFabApiCalls.instance.UpdateStatistics("Games Played", 1);
@@ -835,7 +840,7 @@ public class PlayerCombatManager : MonoBehaviourPun
         
         if (!photonView.IsMine || !isPlayer)
         {
-            dashTrail.SetActive(value);
+            //dashTrail.SetActive(value);
             playerHealthManager.SwitchShieldVisibility(value);
             playerHealthManager.SwitchRageVisibility(value);
             playerHealthManager.SwitchStrongHearthVisibility(value);
@@ -888,6 +893,77 @@ public class PlayerCombatManager : MonoBehaviourPun
 
     }
 
+    public void PlayerCanBeSeen()
+    {
+        canBeSeen = true;
+        isSearchable = true;
+        ApplyBushChanges();
+
+    }
+
+    public void PlayerIsInvisible()
+    {
+        canBeSeen = false;
+        isSearchable = false;
+        ApplyBushChanges();
+    }
+
+    void ApplyBushChanges()
+    {
+        if (!photonView.IsMine && canBeSeen && isInvisible && isPlayer)
+        {
+            foreach (var render in playerModel.GetComponent<MeshRenderersInModel>().MeshRenderers)
+            {
+                if (render.transform.name.Equals("Halo"))
+                {
+                    render.enabled = false;
+                }
+                else
+                {
+                    render.material.shader = transparentShader;
+                }
+
+            }
+            foreach (var render in playerModel.GetComponent<MeshRenderersInModel>().SkinnedMeshRenderers)
+            {
+                render.material.shader = transparentShader;
+            }
+            playerUI.SetActive(true);
+            playerModel.SetActive(true);
+        }
+        else if (!photonView.IsMine && !canBeSeen && isInvisible)
+        {
+            playerModel.SetActive(false);
+            playerUI.SetActive(false);
+        }
+        else if (photonView.IsMine && canBeSeen && isInvisible && !isPlayer)
+        {
+            foreach (var render in playerModel.GetComponent<MeshRenderersInModel>().MeshRenderers)
+            {
+                if (render.transform.name.Equals("Halo"))
+                {
+                    render.enabled = false;
+                }
+                else
+                {
+                    render.material.shader = transparentShader;
+                }
+
+            }
+            foreach (var render in playerModel.GetComponent<MeshRenderersInModel>().SkinnedMeshRenderers)
+            {
+                render.material.shader = transparentShader;
+            }
+            playerUI.SetActive(true);
+            playerModel.SetActive(true);
+        }
+        else if (photonView.IsMine && !canBeSeen && isInvisible && !isPlayer)
+        {
+            playerModel.SetActive(false);
+            playerUI.SetActive(false);
+        }
+    }
+    /*
     private void OnTriggerStay(Collider other)
     {
         if(!photonView.IsMine && canBeSeen && isInvisible && isPlayer)
@@ -942,7 +1018,7 @@ public class PlayerCombatManager : MonoBehaviourPun
             playerModel.SetActive(false);
             playerUI.SetActive(false);
         }
-    }
+    }*/
 
     private void OnTriggerExit(Collider other)
     {
