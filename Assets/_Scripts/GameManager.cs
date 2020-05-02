@@ -111,7 +111,7 @@ public class GameManager : MonoBehaviour
             {
                 int spawnLocationIndex = index;
 
-                GameObject bot = PhotonNetwork.Instantiate(botPlayerPrefab.name, spawnLocations[spawnLocationIndex].transform.position, Quaternion.identity);
+                GameObject bot = PhotonNetwork.InstantiateSceneObject(botPlayerPrefab.name, spawnLocations[spawnLocationIndex].transform.position, Quaternion.identity);
                 bot.GetComponent<PlayerAIController>().spawnLocation = spawnLocationIndex;
                 botPlayerCount++;
 

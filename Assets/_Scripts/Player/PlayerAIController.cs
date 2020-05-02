@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using Photon.Pun;
 using TMPro;
+using System.Linq;
 
 public class PlayerAIController : MonoBehaviourPun, IPunObservable
 {
@@ -69,12 +70,173 @@ public class PlayerAIController : MonoBehaviourPun, IPunObservable
         yield return new WaitForSeconds(time);
 
         botPlayerState = newState;
+        switch (botPlayerState)
+        {
+            case botState.spawn:
+                if(botPlayerCurrentState != botState.spawn)
+                    StartCoroutine(Spawn());
+                break;
+            case botState.patrol:
+                if (botPlayerCurrentState != botState.patrol)
+                    StartCoroutine(Patrol());
+                break;
+            case botState.attack:
+                if (botPlayerCurrentState != botState.attack)
+                    StartCoroutine(Attack());
+                break;
+            case botState.flank:
+                if (botPlayerCurrentState != botState.flank)
+                    StartCoroutine(Flank());
+                break;
+            case botState.defense:
+                if (botPlayerCurrentState != botState.defense)
+                    StartCoroutine(Defense());
+                break;
+
+        }
     }
 
+    IEnumerator Spawn()
+    {
+        botPlayerCurrentState = botState.spawn;
 
+        yield return new WaitForSeconds(1);
+
+        StartCoroutine(StateSwitcher(botState.patrol, 0));
+    }
+
+    IEnumerator Patrol()
+    {
+        if (botPlayerCurrentState != botState.patrol || Vector3.Distance(transform.position, botController.destination) < botController.stoppingDistance)
+        {
+            botPlayerCurrentState = botState.patrol;
+            if (botController.enabled)
+                botController.SetDestination(GetPatrolDestionation());
+        }
+
+        targetPlayer = ClosestBotPlayer(targetPlayer);
+        if (targetPlayer != null) StartCoroutine(StateSwitcher(botState.attack, 0));
+
+        yield return new WaitForSeconds(Random.Range(0.5f, 2f));
+
+        if (botPlayerState == botState.patrol) StartCoroutine(Patrol());
+    }
+
+    IEnumerator Attack()
+    {
+        botPlayerCurrentState = botState.attack;
+
+        targetPlayer = ClosestBotPlayer(targetPlayer);
+        playerCombatManager.BotPlayerAutoAttack(targetPlayer);
+
+        if (targetPlayer != null)
+        {
+            if (Vector3.Distance(targetPlayer.transform.position, transform.position) > 6f && botController.enabled)
+            {
+                botController.SetDestination(targetPlayer.transform.position);
+
+            }
+            else if (botController.velocity.magnitude < botController.speed)
+            {
+                StartCoroutine(StateSwitcher(botState.flank, Random.Range(0.2f, 1f)));
+            }
+        }
+        else
+        {
+            StartCoroutine(StateSwitcher(botState.patrol, 0));
+        }
+
+        if (playerHealthManager.PlayerHealth < defenseHealthThreshold)
+        {
+            if (playerCombatManager.BotPlayerPrimarySkillCharge() == 0)
+            {
+                StartCoroutine(StateSwitcher(botState.defense, Random.Range(0.1f, 0.5f)));
+            }
+        }
+
+        yield return new WaitForSeconds(0.2f);
+
+        if (botPlayerState == botState.attack) StartCoroutine(Attack());
+    }
+
+    IEnumerator Flank()
+    {
+        if (botPlayerCurrentState != botState.flank)
+        {
+            botPlayerCurrentState = botState.flank;
+            if(botController.enabled)
+                botController.SetDestination(GetPatrolDestionation());
+        }
+
+        targetPlayer = ClosestBotPlayer(targetPlayer);
+        playerCombatManager.BotPlayerAutoAttack(targetPlayer);
+
+        if (targetPlayer != null)
+        {
+            if (Vector3.Distance(transform.position, targetPlayer.transform.position) > 6f)
+            {
+                StartCoroutine(StateSwitcher(botState.attack, 0));
+            }
+        }
+        else
+        {
+            StartCoroutine(StateSwitcher(botState.patrol, 0));
+        }
+
+        yield return new WaitForSeconds(1);
+
+        if (botPlayerState == botState.flank) StartCoroutine(Flank());
+    }
+
+    IEnumerator Defense()
+    {
+        if (botPlayerCurrentState != botState.defense)
+        {
+            botPlayerCurrentState = botState.defense;
+
+            if (targetPlayer != null)
+            {
+                for (int i = 0; i < 8; i++)
+                {
+                    if (Vector3.Distance(targetPlayer.transform.position, GameManager.Instance.SpawnLocation(i)) > Vector3.Distance(transform.position, GameManager.Instance.SpawnLocation(i)))
+                    {
+                        if (botController.enabled)
+                            botController.SetDestination(GameManager.Instance.SpawnLocation(i));
+                        //RemoveTargetPlayer(targetPlayer);
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                StartCoroutine(StateSwitcher(botState.patrol, 0));
+            }
+
+
+            if (playerCombatManager.BotPlayerSecondarySkillAvailable())
+            {
+                StartCoroutine(Dash());
+            }
+        }
+        else
+        {
+            targetPlayer = ClosestBotPlayer(targetPlayer);
+            playerCombatManager.BotPlayerAutoAttack(targetPlayer);
+
+            if (GetComponent<PlayerHealthManager>().PlayerHealth > 80 || botController.velocity.magnitude < botController.speed)
+            {
+                StartCoroutine(StateSwitcher(botState.patrol, Random.Range(0.2f, 1f)));
+            }
+        }
+
+        yield return new WaitForSeconds(0.2f);
+
+        if (botPlayerState == botState.defense) StartCoroutine(Defense());
+    }
+
+    /*
     void Update()
     {
-     
         if(PhotonNetwork.IsMasterClient && !playerCombatManager.IsDead && botController.enabled)
         {
             switch (botPlayerState)
@@ -200,7 +362,7 @@ public class PlayerAIController : MonoBehaviourPun, IPunObservable
             }
         }
         
-    }
+    }*/
 
     IEnumerator Dash()
     {
@@ -359,6 +521,7 @@ public class PlayerAIController : MonoBehaviourPun, IPunObservable
 
     public void OnBotPlayerDeath()
     {
+        StopAllCoroutines();
         playersInRange.Clear();
         targetPlayer = null;
         botController.enabled = false;
@@ -439,5 +602,13 @@ public class PlayerAIController : MonoBehaviourPun, IPunObservable
         {
             return false;
         }
+    }
+
+    PlayerCombatManager FindTarget()
+    {
+        return Object.FindObjectsOfType<PlayerCombatManager>()
+            .OrderBy(p => Vector3.Distance(transform.position, p.transform.position))
+            .Where(p => p.isSearchable)
+            .FirstOrDefault();
     }
 }
