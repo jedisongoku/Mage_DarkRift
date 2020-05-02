@@ -1022,22 +1022,9 @@ public class PlayerCombatManager : MonoBehaviourPun
     public void BotPlayerAutoAttack(GameObject targetPlayer)
     {
         
-        if(targetPlayer != null)
+        if(targetPlayer != null && !isDead)
         {
             PrimarySkill(targetPlayer.transform.position);
-            /*
-            Debug.Log("Bot Player Auto Attack Target: " + targetPlayer.name);
-            if (!isPlayer && LineOfSight(targetPlayer))
-            {
-                if (targetPlayer.gameObject.GetComponent<PlayerCombatManager>().isSearchable)
-                {
-                    if (primarySkillCooldownTimer >= primarySkillCooldown && primarySkillCharge > 0)
-                    {
-                        PrimarySkill(targetPlayer.transform.position);
-                    }
-                }
-
-            }*/
         }
         
     }
