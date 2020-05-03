@@ -20,6 +20,7 @@ public class GameManager : MonoBehaviour
     public static int playerKillCount = 0;
     private int respawnCooldown = 6;
     private bool canRespawn = false;
+    private int lastSpawnLocation;
     
     public int botPlayerCount { get; set; }
 
@@ -145,7 +146,21 @@ public class GameManager : MonoBehaviour
     {
         get
         {
-            return Random.Range(0, PhotonNetwork.CurrentRoom.MaxPlayers);
+            if(PhotonNetwork.IsMasterClient)
+            {
+                int index;
+                do
+                {
+                    index = Random.Range(0, PhotonNetwork.CurrentRoom.MaxPlayers);
+                } while (index == lastSpawnLocation);
+                lastSpawnLocation = index;
+                return lastSpawnLocation;
+            }
+            else
+            {
+                return Random.Range(0, PhotonNetwork.CurrentRoom.MaxPlayers);
+            }
+            
         }
     }
 

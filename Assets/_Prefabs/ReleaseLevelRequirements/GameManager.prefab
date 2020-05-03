@@ -46,7 +46,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 54f899a593b71434fadd7094d4499f5a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  killFeedPrefab: {fileID: 363110811150405181, guid: 0cbab976d2f46f346a893922881bcab3,
+  killFeedPrefab: {fileID: 5566542993149333237, guid: 0cbab976d2f46f346a893922881bcab3,
     type: 3}
   killFeedPrefabPooledAmount: 5
 --- !u!114 &9061829322974117681
@@ -81,10 +81,13 @@ MonoBehaviour:
     type: 3}
   gemPrefab: {fileID: 3957507473756178075, guid: e22854538ff2b164cb7f8bf3bde6aa9b,
     type: 3}
+  floationCombatTextPrefab: {fileID: 9073732434634707500, guid: 54421378e55c2c44887af487a48db86a,
+    type: 3}
   primarySkillPrefabPooledAmount: 3
   primarySkillExplosionPrefabPooledAmount: 3
   primarySkillEnvironmentExplosionPrefabPooledAmount: 3
   gemPrefabPooledAmount: 10
+  floationCombatTextPrefabPooledAmount: 10
 --- !u!114 &9061829322974117683
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -108,3 +111,5 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
+  botPlayerPrefab: {fileID: 1529230365936607689, guid: 681384a9c815b3e4ca12c99373547549,
+    type: 3}

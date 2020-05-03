@@ -115,8 +115,8 @@ public class PlayerMovementController : MonoBehaviourPun, IPunObservable
     {
         if (photonView.IsMine && isPlayer)
         {
-            Vector3 desiredForward = Vector3.RotateTowards(transform.forward, _aimLocation, turnSpeed * Time.deltaTime, 0f);
-            m_Rotation = Quaternion.LookRotation(desiredForward);
+            //Vector3 desiredForward = Vector3.RotateTowards(transform.forward, _aimLocation, turnSpeed * Time.deltaTime, 0f);
+            //m_Rotation = Quaternion.LookRotation(desiredForward);
             transform.LookAt(_aimLocation);
         }
 
@@ -195,6 +195,7 @@ public class PlayerMovementController : MonoBehaviourPun, IPunObservable
     {
         if(isPlayer)
         {
+            Debug.Log("For Movement Bug - movement: " + m_Movement + " velocity: " + m_Rigidbody.velocity);
             m_Rigidbody.MovePosition(m_Rigidbody.position + m_Movement * m_Animator.deltaPosition.magnitude * walkSpeed);
             if (fireTimer > 0.2f)
             {

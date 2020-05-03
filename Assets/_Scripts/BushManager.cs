@@ -17,11 +17,6 @@ public class BushManager : MonoBehaviour
         if (!isLocalInTheBush.ContainsKey(bushGroupId)) isLocalInTheBush.Add(bushGroupId, false);
     }
 
-    public static void OnPlayerDeath()
-    {
-        //players = new Dictionary<int, Dictionary<int, int>>();
-    }
-
     private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.layer == 17 )
@@ -53,13 +48,15 @@ public class BushManager : MonoBehaviour
     {
         if (other.gameObject.layer == 17 && players[bushGroupId].Count > 1 && isLocalInTheBush[bushGroupId] && !other.transform.parent.gameObject.GetComponent<PlayerCombatManager>().canBeSeen)
         {
-            other.transform.parent.gameObject.GetComponent<PlayerCombatManager>().PlayerCanBeSeen();
+            if (!other.transform.parent.gameObject.GetComponent<PlayerCombatManager>().IsDead)
+                other.transform.parent.gameObject.GetComponent<PlayerCombatManager>().PlayerCanBeSeen();
             //other.transform.parent.gameObject.GetComponent<PlayerCombatManager>().canBeSeen = true;
             //other.transform.parent.gameObject.GetComponent<PlayerCombatManager>().isSearchable = true;
         }
         else if(other.gameObject.layer == 17 && players[bushGroupId].Count <= 1 && !isLocalInTheBush[bushGroupId] && other.transform.parent.gameObject.GetComponent<PlayerCombatManager>().canBeSeen)
         {
-            other.transform.parent.gameObject.GetComponent<PlayerCombatManager>().PlayerIsInvisible();
+            if(!other.transform.parent.gameObject.GetComponent<PlayerCombatManager>().IsDead)
+                other.transform.parent.gameObject.GetComponent<PlayerCombatManager>().PlayerIsInvisible();
             //other.transform.parent.gameObject.GetComponent<PlayerCombatManager>().canBeSeen = false;
             //other.transform.parent.gameObject.GetComponent<PlayerCombatManager>().isSearchable = false;
         }

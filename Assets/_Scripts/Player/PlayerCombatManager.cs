@@ -257,7 +257,8 @@ public class PlayerCombatManager : MonoBehaviourPun
         
         if (targetEnemy != null)
         {
-            if (!targetEnemy.GetComponent<PlayerCombatManager>().IsDead && (targetEnemy.GetComponent<PlayerCombatManager>().canBeSeen || !targetEnemy.GetComponent<PlayerCombatManager>().isInvisible) && distance > Vector3.Distance(targetEnemy.transform.position, transform.position))
+            if (!targetEnemy.GetComponent<PlayerCombatManager>().IsDead && LineOfSight(targetEnemy) &&
+                targetEnemy.GetComponent<PlayerCombatManager>().isSearchable && distance > Vector3.Distance(targetEnemy.transform.position, transform.position))
             {
                 //Debug.Log("Attack same enemy");
                 return targetEnemy;
@@ -270,7 +271,7 @@ public class PlayerCombatManager : MonoBehaviourPun
             if(enemy.gameObject.layer == 8)
             {
                 if (enemy.ViewID != photonView.ViewID && !enemy.GetComponent<PlayerCombatManager>().IsDead && LineOfSight(enemy.gameObject) &&
-                (enemy.GetComponent<PlayerCombatManager>().canBeSeen || !enemy.GetComponent<PlayerCombatManager>().isInvisible))
+                enemy.GetComponent<PlayerCombatManager>().isSearchable)
                 {
                     if (distance > Vector3.Distance(enemy.gameObject.transform.position, transform.position))
                     {
@@ -536,7 +537,6 @@ public class PlayerCombatManager : MonoBehaviourPun
         playerUI.SetActive(true);
         playerModel.SetActive(true);
         playerBase.gameObject.SetActive(true);
-        BushManager.OnPlayerDeath();
         if (!isPlayer)
         {
             GetComponent<PlayerAIController>().RespawnBotPlayer();

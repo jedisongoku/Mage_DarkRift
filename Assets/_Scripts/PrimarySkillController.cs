@@ -111,7 +111,7 @@ public class PrimarySkillController : MonoBehaviour
                     Destroy(other.transform.parent.gameObject);
                 }
             }
-            else if (other.gameObject.layer == 11)
+            else if (other.gameObject.layer == 11 || other.gameObject.layer == 21)
             {
                 isHit = true;
                 isPlayer = false;
