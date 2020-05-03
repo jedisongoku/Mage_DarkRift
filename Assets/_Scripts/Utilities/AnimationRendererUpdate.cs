@@ -16,14 +16,12 @@ public class AnimationRendererUpdate : MonoBehaviour
 
     private void OnBecameVisible()
     {
-        Debug.Log("VISIBLE");
         visible = true;
         m_Animator.enabled = true;
     }
 
     private void OnBecameInvisible()
     {
-        Debug.Log("IN - VISIBLE");
         visible = false;
         m_Animator.enabled = false;
     }

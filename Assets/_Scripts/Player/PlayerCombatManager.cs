@@ -253,7 +253,7 @@ public class PlayerCombatManager : MonoBehaviourPun
         GameObject closestEnemy = null;
         float distance = 10;
         
-        /*
+        
         if (targetEnemy != null)
         {
             if (!targetEnemy.GetComponent<PlayerCombatManager>().IsDead && (targetEnemy.GetComponent<PlayerCombatManager>().canBeSeen || !targetEnemy.GetComponent<PlayerCombatManager>().isInvisible) && distance > Vector3.Distance(targetEnemy.transform.position, transform.position))
@@ -261,7 +261,7 @@ public class PlayerCombatManager : MonoBehaviourPun
                 //Debug.Log("Attack same enemy");
                 return targetEnemy;
             }
-        }*/
+        }
         //Debug.Log("Attack different enemy");
 
         foreach (var enemy in PhotonNetwork.PhotonViews)

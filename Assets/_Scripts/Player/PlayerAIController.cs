@@ -113,6 +113,12 @@ public class PlayerAIController : MonoBehaviourPun, IPunObservable
                 botController.SetDestination(GetPatrolDestionation());
         }
 
+        if(!searchCollider.enabled)
+        {
+            searchCollider.enabled = true;
+            StartCoroutine(SanityCheck());
+        }
+
         yield return new WaitForSeconds(0.1f);
 
         if (targetPlayer != null) StartCoroutine(StateSwitcher(botState.attack, 0));

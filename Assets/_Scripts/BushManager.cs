@@ -57,7 +57,7 @@ public class BushManager : MonoBehaviour
             //other.transform.parent.gameObject.GetComponent<PlayerCombatManager>().canBeSeen = true;
             //other.transform.parent.gameObject.GetComponent<PlayerCombatManager>().isSearchable = true;
         }
-        else if(other.gameObject.layer == 17 && players[bushGroupId].Count <= 1 && !isLocalInTheBush[bushGroupId] && !other.transform.parent.gameObject.GetComponent<PlayerCombatManager>().isInvisible)
+        else if(other.gameObject.layer == 17 && players[bushGroupId].Count <= 1 && !isLocalInTheBush[bushGroupId] && other.transform.parent.gameObject.GetComponent<PlayerCombatManager>().canBeSeen)
         {
             other.transform.parent.gameObject.GetComponent<PlayerCombatManager>().PlayerIsInvisible();
             //other.transform.parent.gameObject.GetComponent<PlayerCombatManager>().canBeSeen = false;
