@@ -120,6 +120,7 @@ public class HUDManager : MonoBehaviourPunCallbacks
     public Button continueButton;
     private float continueGemMultiplier = 1.5f;
     private int continueGemCost = 2;
+    public bool runeSelected;
 
 
     [Header("Level")]
@@ -779,6 +780,17 @@ public class HUDManager : MonoBehaviourPunCallbacks
         StartCoroutine(Applaunch());
     }
 
+    public void RuneUISelection()
+    {
+        runeSelected = true;
+        Invoke("DelayedRuneUIRelease", 0.1f);
+    }
+
+    void DelayedRuneUIRelease()
+    {
+        runeSelected = false;
+    }
+
     public void EnergyCurrencyTextUpdate(int amount)
     {
         shopEnergyCurrencyText.text = amount + "/50";
@@ -787,6 +799,11 @@ public class HUDManager : MonoBehaviourPunCallbacks
     public void GemCurrencyTextUpdate(int amount)
     {
         shopGemsCurrencyText.text = amount.ToString();
+    }
+
+    public void CoinCurrencyTextUpdate(int amount)
+    {
+        shopCoinsCurrencyText.text = amount.ToString();
     }
     public void PlayEnergyAnimation(int id, int currentAmount, int amountAdded)
     {

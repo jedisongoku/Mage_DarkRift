@@ -245,12 +245,25 @@ public class PlayerAIController : MonoBehaviourPun, IPunObservable
     IEnumerator SanityCheck()
     {
         if (targetPlayer != null)
+        {
             if (targetPlayer.GetComponent<PlayerCombatManager>().IsDead && playersInRange.Contains(targetPlayer))
                 playersInRange.Remove(targetPlayer);
-            else
-            if (Vector3.Distance(targetPlayer.transform.position, transform.position) > 10) targetPlayer = null;
-
-
+        }    
+        else
+        {
+            if(playersInRange.Count > 0)
+            {
+                if (Vector3.Distance(playersInRange[0].transform.position, transform.position) < 10)
+                {
+                    targetPlayer = playersInRange[0];
+                }
+                else
+                {
+                    playersInRange.RemoveAt(0);
+                }
+            }
+        }
+            
         yield return new WaitForSeconds(1);
         
         if(botController.velocity.magnitude < 3 && playersInRange.Count == 0)
@@ -327,33 +340,11 @@ public class PlayerAIController : MonoBehaviourPun, IPunObservable
         botController.isStopped = true;
     }
 
-    IEnumerator SearchPlayer()
-    {
-        //targetPlayer =  FindPlayer();
-        if (Vector3.Distance(targetPlayer.transform.position, transform.position) > 10) targetPlayer = null;
-
-        yield return new WaitForSeconds(1);
-
-        if (playersInRange.Count > 0)
-            StartCoroutine(SearchPlayer());
-    }
-    /*
-    GameObject FindPlayer()
-    {
-        return Object.FindObjectsOfType<PlayerCombatManager>()
-            .OrderBy(p => Vector3.Distance(transform.position, p.transform.position))
-            .Where(p => p.isSearchable)
-            .Where(p => !p.IsDead)
-            //.Where(p => LineOfSight(p.gameObject))
-            .FirstOrDefault().gameObject;
-    }*/
-
     private void OnTriggerEnter(Collider other)
     {
         
         if(other.gameObject.layer == 8 && PhotonNetwork.IsMasterClient)
         {
-            //if (playersInRange.Count == 0) StartCoroutine(SearchPlayer());
 
             playersInRange.Add(other.gameObject);
 
@@ -400,14 +391,6 @@ public class PlayerAIController : MonoBehaviourPun, IPunObservable
 
         StartCoroutine(StateSwitcher(botState.spawn, 0));
         Debug.Log("Bot Respawned");
-    }
-
-    public GameObject TargetPlayer
-    {
-        get
-        {
-            return targetPlayer;
-        }
     }
 
     bool LineOfSight(GameObject enemy)

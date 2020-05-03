@@ -6,7 +6,7 @@ public class MeshRenderersInModel : MonoBehaviour
 {
     [SerializeField] private SkinnedMeshRenderer[] skinnedRMeshenderers;
     [SerializeField] private MeshRenderer[] meshrenderers;
-    // Start is called before the first frame update
+    
     public SkinnedMeshRenderer[] SkinnedMeshRenderers
     {
         get
@@ -22,5 +22,7 @@ public class MeshRenderersInModel : MonoBehaviour
             return meshrenderers;
         }
     }
+
+
 
 }

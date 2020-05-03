@@ -24,7 +24,7 @@ public class CurrencyAnimation : MonoBehaviour
         }
         timer = 0;
         StartCoroutine(Expand());
-        Handheld.Vibrate();
+        //Handheld.Vibrate();
     }
 
     public void SetAmount(int current, int added)
@@ -82,8 +82,9 @@ public class CurrencyAnimation : MonoBehaviour
         else
         {
             currentAmount += amountAdded / 5;
-            HUDManager.Instance.GemCurrencyTextUpdate(currentAmount);
-            Handheld.Vibrate();
+            if (gameObject.name == "EnergyAnimation") HUDManager.Instance.EnergyCurrencyTextUpdate(currentAmount);
+            else if (gameObject.name == "GemAnimation") HUDManager.Instance.GemCurrencyTextUpdate(currentAmount);
+            else HUDManager.Instance.CoinCurrencyTextUpdate(currentAmount);
             Icons[i].SetActive(false);
         }
 
@@ -91,6 +92,7 @@ public class CurrencyAnimation : MonoBehaviour
 
     void AutoDisable()
     {
+        HUDManager.Instance.UpdateCurrencies();
         gameObject.SetActive(false);
     }
 }

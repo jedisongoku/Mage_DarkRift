@@ -182,7 +182,6 @@ public class PlayerMovementController : MonoBehaviourPun, IPunObservable
             int anim_y = movement.y < 0 ? -1 : movement.y > 0 ? 1 : 0;
             m_Animator.SetFloat("Horizontal", anim_x);
             m_Animator.SetFloat("Vertical", anim_y);
-            //Debug.Log("Speed" + m_Rigidbody.velocity.magnitude);
 
             if (GetComponent<PlayerCombatManager>().IsDead)
             {
@@ -209,14 +208,12 @@ public class PlayerMovementController : MonoBehaviourPun, IPunObservable
         if (stream.IsWriting)
         {
             stream.SendNext(m_Rigidbody.position);
-            //stream.SendNext(m_Rigidbody.rotation);
             stream.SendNext(m_Rigidbody.velocity);
             stream.SendNext(movement);
         }
         else
         {
             networkPosition = (Vector3)stream.ReceiveNext();
-            //networkRotation = (Quaternion)stream.ReceiveNext();
             m_Rigidbody.velocity = (Vector3)stream.ReceiveNext();
             newMovement = (Vector2)stream.ReceiveNext();
 
@@ -256,4 +253,6 @@ public class PlayerMovementController : MonoBehaviourPun, IPunObservable
     {
         if (isChill) chillParticle.SetActive(value);
     }
+
+    
 }

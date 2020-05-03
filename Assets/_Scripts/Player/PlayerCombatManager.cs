@@ -135,24 +135,16 @@ public class PlayerCombatManager : MonoBehaviourPun
                 
                 if (Input.GetTouch(0).phase == TouchPhase.Moved || Input.GetTouch(0).phase == TouchPhase.Stationary)
                 {
-                    if (Input.GetTouch(0).position.x < Screen.width / 2)
-                    {
-                        //Left side of the screen 
-                    }
-                    else
+                    if (Input.GetTouch(0).position.x > Screen.width / 2)
                     {
                         //Right side of the screen
                         DrawAimLine();
                     }
 
                 }
-                else if (Input.GetTouch(0).phase == TouchPhase.Ended)
+                else if (Input.GetTouch(0).phase == TouchPhase.Ended && !HUDManager.Instance.runeSelected)
                 {
-                    if (Input.GetTouch(0).position.x < Screen.width / 2)
-                    {
-                        //Left side of the screen 
-                    }
-                    else
+                    if (Input.GetTouch(0).position.x > Screen.width / 2)
                     {
                         //Right side of the screen
                         if (canShoot)
@@ -177,9 +169,7 @@ public class PlayerCombatManager : MonoBehaviourPun
 
                             aimAssist.SetPosition(1, aimAssist.GetPosition(0));
                         }
-                        
-                        
-                        
+
                     }
 
                 }
@@ -190,24 +180,15 @@ public class PlayerCombatManager : MonoBehaviourPun
             {
                 if (Input.GetTouch(1).phase == TouchPhase.Moved || Input.GetTouch(1).phase == TouchPhase.Stationary)
                 {
-                    if (Input.GetTouch(1).position.x < Screen.width / 2)
-                    {
-                        //Left side of the screen 
-                    }
-                    else
+                    if (Input.GetTouch(1).position.x > Screen.width / 2)
                     {
                         //Right side of the screen
                         DrawAimLine();
                     }
-
                 }
-                else if (Input.GetTouch(1).phase == TouchPhase.Ended)
+                else if (Input.GetTouch(1).phase == TouchPhase.Ended && !HUDManager.Instance.runeSelected)
                 {
-                    if (Input.GetTouch(1).position.x < Screen.width / 2)
-                    {
-                        //Left side of the screen 
-                    }
-                    else
+                    if (Input.GetTouch(1).position.x > Screen.width / 2)
                     {
                         //Right side of the screen
                         if (canShoot)
@@ -232,13 +213,7 @@ public class PlayerCombatManager : MonoBehaviourPun
 
                             aimAssist.SetPosition(1, aimAssist.GetPosition(0));
                         }
-                        
-                        /*
-                        aimAssist.SetPosition(1, aimAssist.GetPosition(0));
-                        //Get Player Fire Direction
-                        PrimarySkill(aimLocation);*/
                     }
-
                 }
             }
             
@@ -276,8 +251,9 @@ public class PlayerCombatManager : MonoBehaviourPun
     GameObject ClosestEnemy(GameObject targetEnemy)
     {
         GameObject closestEnemy = null;
-        float distance = 15;
+        float distance = 10;
         
+        /*
         if (targetEnemy != null)
         {
             if (!targetEnemy.GetComponent<PlayerCombatManager>().IsDead && (targetEnemy.GetComponent<PlayerCombatManager>().canBeSeen || !targetEnemy.GetComponent<PlayerCombatManager>().isInvisible) && distance > Vector3.Distance(targetEnemy.transform.position, transform.position))
@@ -285,7 +261,7 @@ public class PlayerCombatManager : MonoBehaviourPun
                 //Debug.Log("Attack same enemy");
                 return targetEnemy;
             }
-        }
+        }*/
         //Debug.Log("Attack different enemy");
 
         foreach (var enemy in PhotonNetwork.PhotonViews)
