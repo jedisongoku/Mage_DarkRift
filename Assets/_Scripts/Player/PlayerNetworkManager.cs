@@ -42,6 +42,8 @@ public class PlayerNetworkManager : MonoBehaviourPunCallbacks
             previousLocation = CartController.instance.GetCartLocation;
             //GameManager.Instance.InitializeBotPlayer();
         }
+
+        
     }
 
     void SetPlayerUI()

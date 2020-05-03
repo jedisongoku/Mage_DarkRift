@@ -115,8 +115,9 @@ public class PlayerCombatManager : MonoBehaviourPun
         }
 
 
-        
-        
+        playerModel.GetComponent<MeshRenderersInModel>().AddAnimationRendererUpdate();
+
+
     }
 
     // Update is called once per frame

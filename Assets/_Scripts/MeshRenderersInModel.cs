@@ -23,6 +23,11 @@ public class MeshRenderersInModel : MonoBehaviour
         }
     }
 
+    public void AddAnimationRendererUpdate()
+    {
+        skinnedRMeshenderers[0].gameObject.AddComponent<AnimationRendererUpdate>();
+    }
+
 
 
 }

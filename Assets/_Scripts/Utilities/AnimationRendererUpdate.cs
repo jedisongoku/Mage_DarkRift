@@ -11,18 +11,24 @@ public class AnimationRendererUpdate : MonoBehaviour
 
     private void Awake()
     {
-        m_Animator = transform.parent.parent.GetComponent<Animator>();
+        if(transform.parent.parent.GetComponent<Animator>() != null)
+        {
+            m_Animator = transform.parent.parent.GetComponent<Animator>();
+        }
+        
     }
 
     private void OnBecameVisible()
     {
         visible = true;
-        m_Animator.enabled = true;
+        if(m_Animator != null)
+            m_Animator.enabled = true;
     }
 
     private void OnBecameInvisible()
     {
         visible = false;
-        m_Animator.enabled = false;
+        if (m_Animator != null)
+            m_Animator.enabled = false;
     }
 }
