@@ -195,7 +195,6 @@ public class PlayerMovementController : MonoBehaviourPun, IPunObservable
     {
         if(isPlayer)
         {
-            Debug.Log("For Movement Bug - movement: " + m_Movement + " velocity: " + m_Rigidbody.velocity);
             m_Rigidbody.MovePosition(m_Rigidbody.position + m_Movement * m_Animator.deltaPosition.magnitude * walkSpeed);
             if (fireTimer > 0.2f)
             {

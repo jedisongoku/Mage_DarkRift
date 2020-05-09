@@ -75,14 +75,16 @@ public class PlayerNetworkManager : MonoBehaviourPunCallbacks
         {
             photonView.RPC("SelectSkin", newPlayer, PlayFabDataStore.playerProfile.skinName, GetComponent<PlayerCombatManager>().IsDead);
             HUDManager.Instance.UpdateTotalPlayerCount();
+            photonView.RPC("ScoreboardStats", newPlayer, ScoreManager.Instance.playerScoreList);
 
         }
 
         if(photonView.IsMine && PhotonNetwork.IsMasterClient)
         {
-            photonView.RPC("StartCartAnimation", RpcTarget.Others, CartController.instance.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsName("Forward"),
+            photonView.RPC("StartCartAnimation", newPlayer, CartController.instance.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsName("Forward"),
                 CartController.instance.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).normalizedTime, CartController.instance.GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).length,
                 PhotonNetwork.ServerTimestamp);
+
             SendBotCount();
         }
     }
@@ -105,6 +107,14 @@ public class PlayerNetworkManager : MonoBehaviourPunCallbacks
             }
 
         }
+    }
+
+    [PunRPC]
+
+    void ScoreboardStats(Dictionary<string, int> dict)
+    {
+        ScoreManager.Instance.playerScoreList = dict;
+        ScoreManager.Instance.RefreshScoreboard();
     }
 
     [PunRPC]

@@ -12,6 +12,7 @@ public class PlayerCombatManager : MonoBehaviourPun
     [SerializeField] private PlayerHealthManager playerHealthManager;
     [SerializeField] private CapsuleCollider playerDamageCollider;
     public string killFeedName;
+    public int totalKills = 0;
     private FloatingJoystick aimJoystick;
   
     Animator m_Animator;
@@ -84,7 +85,7 @@ public class PlayerCombatManager : MonoBehaviourPun
     #region Private Methods
     private void Awake()
     {
-        SetPlayerBaseStats();
+        
         m_Animator = GetComponent<Animator>();
     }
     // Start is called before the first frame update
@@ -112,10 +113,13 @@ public class PlayerCombatManager : MonoBehaviourPun
             playerBase.startColor = enemyNameColor;
             if(isPlayer)
                 killFeedName = PhotonNetwork.GetPhotonView(photonView.ViewID).Owner.NickName;
+            else
+                playerModel.GetComponent<MeshRenderersInModel>().AddAnimationRendererUpdate();
         }
 
-
-        playerModel.GetComponent<MeshRenderersInModel>().AddAnimationRendererUpdate();
+        ScoreManager.Instance.StartScoreboard(killFeedName);
+        SetPlayerBaseStats();
+        
 
 
     }
@@ -252,9 +256,9 @@ public class PlayerCombatManager : MonoBehaviourPun
     GameObject ClosestEnemy(GameObject targetEnemy)
     {
         GameObject closestEnemy = null;
-        float distance = 10;
+        float distance = 12;
         
-        
+        /*
         if (targetEnemy != null)
         {
             if (!targetEnemy.GetComponent<PlayerCombatManager>().IsDead && LineOfSight(targetEnemy) &&
@@ -263,7 +267,7 @@ public class PlayerCombatManager : MonoBehaviourPun
                 //Debug.Log("Attack same enemy");
                 return targetEnemy;
             }
-        }
+        }*/
         //Debug.Log("Attack different enemy");
 
         foreach (var enemy in PhotonNetwork.PhotonViews)
@@ -462,16 +466,17 @@ public class PlayerCombatManager : MonoBehaviourPun
             isFrostNova = false;
 
 
-            if (photonView.IsMine) HUDManager.Instance.ResetContinueGemCost();
+            if (photonView.IsMine && isPlayer) HUDManager.Instance.ResetContinueGemCost();
         }
 
         isSecondChance = false;
         isSearchable = true;
 
         //Games played statistic added
-        PlayFabApiCalls.instance.UpdateStatistics("Games Played", 1);
+        if(isPlayer)
+            PlayFabApiCalls.instance.UpdateStatistics("Games Played", 1);
 
-
+        secondarySkillCooldownTimer = secondarySkillCooldown;
     }
 
     public void RespawnPlayer()
@@ -629,8 +634,7 @@ public class PlayerCombatManager : MonoBehaviourPun
         set
         {
             playerModel = value;
-            //playerMeshRenderers = playerModel.GetComponentsInChildren<SkinnedMeshRenderer>();
-            //Debug.Log("Player has " + playerMeshRenderers.Length + " renderers");
+            playerModel.GetComponent<MeshRenderersInModel>().AddAnimationRendererUpdate();
         }
     }
 
@@ -808,6 +812,8 @@ public class PlayerCombatManager : MonoBehaviourPun
             render.enabled = true;
             render.material.shader = standardShader;
         }
+
+        playerModel.SetActive(true);
     }
 
     void SwitchPlayerElements(bool value)
@@ -874,6 +880,7 @@ public class PlayerCombatManager : MonoBehaviourPun
     {
         canBeSeen = true;
         isSearchable = true;
+        Debug.Log("Player can be seen");
         ApplyBushChanges();
 
     }
@@ -882,6 +889,7 @@ public class PlayerCombatManager : MonoBehaviourPun
     {
         canBeSeen = false;
         isSearchable = false;
+        Debug.Log("Player is invisible");
         ApplyBushChanges();
     }
 
@@ -940,62 +948,6 @@ public class PlayerCombatManager : MonoBehaviourPun
             playerUI.SetActive(false);
         }
     }
-    /*
-    private void OnTriggerStay(Collider other)
-    {
-        if(!photonView.IsMine && canBeSeen && isInvisible && isPlayer)
-        {
-            foreach (var render in playerModel.GetComponent<MeshRenderersInModel>().MeshRenderers)
-            {
-                if (render.transform.name.Equals("Halo"))
-                {
-                    render.enabled = false;
-                }
-                else
-                {
-                    render.material.shader = transparentShader;
-                }
-                
-            }
-            foreach (var render in playerModel.GetComponent<MeshRenderersInModel>().SkinnedMeshRenderers)
-            {
-                render.material.shader = transparentShader;
-            }
-            playerUI.SetActive(true);
-            playerModel.SetActive(true);
-        }
-        else if(!photonView.IsMine && !canBeSeen && isInvisible)
-        {
-            playerModel.SetActive(false);
-            playerUI.SetActive(false);
-        }
-        else if (photonView.IsMine && canBeSeen && isInvisible && !isPlayer)
-        {
-            foreach (var render in playerModel.GetComponent<MeshRenderersInModel>().MeshRenderers)
-            {
-                if (render.transform.name.Equals("Halo"))
-                {
-                    render.enabled = false;
-                }
-                else
-                {
-                    render.material.shader = transparentShader;
-                }
-
-            }
-            foreach (var render in playerModel.GetComponent<MeshRenderersInModel>().SkinnedMeshRenderers)
-            {
-                render.material.shader = transparentShader;
-            }
-            playerUI.SetActive(true);
-            playerModel.SetActive(true);
-        }
-        else if (photonView.IsMine && !canBeSeen && isInvisible && !isPlayer)
-        {
-            playerModel.SetActive(false);
-            playerUI.SetActive(false);
-        }
-    }*/
 
     private void OnTriggerExit(Collider other)
     {
@@ -1075,7 +1027,7 @@ public class PlayerCombatManager : MonoBehaviourPun
     public void BotPlayerAutoAttack(GameObject targetPlayer)
     {
         
-        if(targetPlayer != null && !isDead)
+        if(targetPlayer != null && !isDead && LineOfSight(targetPlayer))
         {
             PrimarySkill(targetPlayer.transform.position);
         }
@@ -1101,6 +1053,18 @@ public class PlayerCombatManager : MonoBehaviourPun
     void RespawnBotPlayer()
     {
         RespawnPlayer();
+    }
+
+
+    public void UpdateTotalKills()
+    {
+        photonView.RPC("UpdateTotalKills_RPC", RpcTarget.Others, totalKills);
+    }
+
+    [PunRPC]
+    void UpdateTotalKills_RPC(int _totalKills)
+    {
+        totalKills = _totalKills;
     }
     #endregion
 

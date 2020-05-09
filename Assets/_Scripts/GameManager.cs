@@ -18,6 +18,7 @@ public class GameManager : MonoBehaviour
     private List<GameObject> botPlayerList = new List<GameObject>();
     private static int currentPlayerViewID;
     public static int playerKillCount = 0;
+    public static int playerTotalKillCount = 0;
     private int respawnCooldown = 6;
     private bool canRespawn = false;
     private int lastSpawnLocation;
@@ -57,7 +58,9 @@ public class GameManager : MonoBehaviour
         Instance = this;
         HUDManager.Instance.OnGameLevelLoaded();
         playerKillCount = 0;
+        playerTotalKillCount = 0;
         botPlayerCount = 0;
+        HUDManager.Instance.UpdateTotalKillsScoreText(playerTotalKillCount);
 
     }
 
@@ -187,13 +190,22 @@ public class GameManager : MonoBehaviour
 
     public void KillFeed(int _playerViewID, GameObject _playerkilled)
     {
-        ScoreManager.Instance.RefreshKillFeed(PhotonNetwork.GetPhotonView(_playerViewID).GetComponent<PlayerCombatManager>().killFeedName, _playerkilled.GetComponent<PlayerCombatManager>().killFeedName);
+        string killerName = PhotonNetwork.GetPhotonView(_playerViewID).GetComponent<PlayerCombatManager>().killFeedName;
+        string victimName = _playerkilled.GetComponent<PlayerCombatManager>().killFeedName;
+        
 
-        if(_playerViewID == currentPlayerViewID)
+        ScoreManager.Instance.RefreshKillFeed(killerName, victimName);
+
+        ScoreManager.Instance.UpdateScore(killerName);
+
+        if (_playerViewID == currentPlayerViewID)
         {
+            
             DeadPlayerLevel = _playerkilled.GetComponent<PlayerLevelManager>().GetPlayerLevel();
             Debug.Log("Dead player level " + DeadPlayerLevel);
             playerKillCount++;
+            playerTotalKillCount++;
+            HUDManager.Instance.UpdateTotalKillsScoreText(playerTotalKillCount);
 
             if(OnPlayerKill != null)
             {

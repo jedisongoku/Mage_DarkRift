@@ -16,8 +16,9 @@ public class ScoreManager : MonoBehaviour
     List<GameObject> killFeedPrefabList;
     GameObject killFeedParent;
 
-    ExitGames.Client.Photon.Hashtable playerProperties = new ExitGames.Client.Photon.Hashtable();
-    private List<ScorePlayer> playersList;    
+    public Dictionary<string, int> playerScoreList = new Dictionary<string, int>();
+
+    //public List<ScorePlayer> playersList;    
 
     private List<KillFeed> killFeed;
     private int score;
@@ -27,7 +28,7 @@ public class ScoreManager : MonoBehaviour
     {
         Instance = this;
         killFeed = new List<KillFeed>();
-        playersList = new List<ScorePlayer>();
+        //playersList = new List<ScorePlayer>();
 
         killFeedPrefabList = new List<GameObject>();
 
@@ -49,6 +50,55 @@ public class ScoreManager : MonoBehaviour
             Destroy(feed);
         }
     }
+
+    #region scoreboard
+
+    public void StartScoreboard(string name)
+    {
+        //playersList.Add(new ScorePlayer(name, 0));
+        if (!playerScoreList.ContainsKey(name))
+            playerScoreList.Add(name, 0);
+    }
+
+
+    public void UpdateScore(string name)
+    {
+        Debug.Log("Updating Score");
+        if (playerScoreList.ContainsKey(name))
+            playerScoreList[name]++;
+
+        RefreshScoreboard();
+
+    }
+
+    public void RefreshScoreboard()
+    {
+        var scoreList = playerScoreList.OrderByDescending(p => p.Value).ToArray();
+
+        for (int i = 0; i < HUDManager.Instance.ScoreboardItems.Length; i++)
+        {
+            if(scoreList[i].Value == 0)
+                HUDManager.Instance.ScoreboardItems[i].SetActive(false);
+            else
+                HUDManager.Instance.ScoreboardItems[i].SetActive(true);
+            HUDManager.Instance.ScoreboardItems[i].transform.Find("KillFeed").GetComponent<Text>().text = scoreList[i].Key + " - " + scoreList[i].Value + " kills";
+        }
+
+
+    }
+
+    void OnPhotonPlayerPropertiesChanged(object[] playerAndUpdatedProps)
+    {
+        RefreshScoreboard();
+        //Redo client score here
+    }
+
+    void OnPhotonCustomRoomPropertiesChanged(ExitGames.Client.Photon.Hashtable propertiesThatChanged)
+    {
+        Debug.Log("Custom room property changed");
+    }
+    #endregion
+
 
     public GameObject GetKillFeedPrefab()
     {

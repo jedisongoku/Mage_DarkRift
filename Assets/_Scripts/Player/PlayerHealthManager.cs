@@ -60,7 +60,7 @@ public class PlayerHealthManager : MonoBehaviourPun
         
         if (photonView.IsMine)
         {
-            StartCoroutine(HealhtRegeneration());
+            StartCoroutine(HealthRegeneration());
             
         }
         
@@ -109,7 +109,7 @@ public class PlayerHealthManager : MonoBehaviourPun
         respawnParticle.SetActive(false);
     }
 
-    IEnumerator HealhtRegeneration()
+    IEnumerator HealthRegeneration()
     {
         yield return new WaitForSeconds(1f);
         if (playerhealth < playerMaxHealth)
@@ -126,7 +126,7 @@ public class PlayerHealthManager : MonoBehaviourPun
             }
             
         }
-        StartCoroutine(HealhtRegeneration());
+        StartCoroutine(HealthRegeneration());
 
     }
 
@@ -205,8 +205,18 @@ public class PlayerHealthManager : MonoBehaviourPun
             {
                 playerhealth += bloodthirstHealAmount;
             }
-            photonView.RPC("UpdateHealth", RpcTarget.All, playerhealth, 0, false);
+            photonView.RPC("Bloodthirst_UpdateHealth", RpcTarget.All, playerhealth);
         }
+    }
+
+    [PunRPC]
+    void Bloodthirst_UpdateHealth(float _health)
+    {
+        playerhealth = _health;
+        healingParticle.SetActive(false);
+        healingParticle.SetActive(true);
+
+        UpdateHealthBar();
     }
 
     public bool CanTakeDamage()
@@ -366,7 +376,7 @@ public class PlayerHealthManager : MonoBehaviourPun
         if (photonView.IsMine)
         {
             photonView.RPC("UpdateHealth", RpcTarget.All, playerMaxHealth, 0, false);
-            StartCoroutine(HealhtRegeneration());
+            StartCoroutine(HealthRegeneration());
         }
     }
 
@@ -536,7 +546,7 @@ public class PlayerHealthManager : MonoBehaviourPun
 
     public void SwitchStrongHearthVisibility(bool value)
     {
-        Debug.Log("hearth particle " + value);
+
         if (isStrongHeart) strongHeartParticle.SetActive(value);
     }
 

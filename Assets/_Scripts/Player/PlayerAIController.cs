@@ -5,8 +5,9 @@ using UnityEngine.AI;
 using Photon.Pun;
 using TMPro;
 using System.Linq;
+using Photon.Realtime;
 
-public class PlayerAIController : MonoBehaviourPun, IPunObservable
+public class PlayerAIController : MonoBehaviourPunCallbacks, IPunObservable
 {
     [SerializeField] private TextMeshProUGUI playerNameText;
     [SerializeField] CapsuleCollider searchCollider;
@@ -29,6 +30,7 @@ public class PlayerAIController : MonoBehaviourPun, IPunObservable
 
 
     public List<GameObject> playersInRange;
+    public List<GameObject> nullPlayersRemoved;
     Vector3 networkPosition;
     Vector2 newMovement;
     Vector2 movement;
@@ -48,8 +50,7 @@ public class PlayerAIController : MonoBehaviourPun, IPunObservable
         playersInRange = new List<GameObject>();
         GetComponent<PlayerMovementController>().isPlayer = false;
         playerCombatManager.isPlayer = false;
-        playerNameText.text = "Mage" + Random.Range(1000, 9999);
-        playerCombatManager.killFeedName = playerNameText.text;
+        
 
         StartCoroutine(StateSwitcher(botState.spawn, 0));
         defenseHealthThreshold = Random.Range(30, 60);
@@ -58,14 +59,30 @@ public class PlayerAIController : MonoBehaviourPun, IPunObservable
         {
             searchCollider.enabled = true;
             StartCoroutine(SanityCheck());
+
+            playerNameText.text = "Mage" + Random.Range(1000, 9999);
+            playerCombatManager.killFeedName = playerNameText.text;
         }
             
 
     }
 
+    [PunRPC]
+    void SetName(string _name)
+    {
+        Debug.Log("Bot Name Set " + _name);
+        playerNameText.text = _name;
+        playerCombatManager.killFeedName = _name;
+    }
+
+    public override void OnPlayerEnteredRoom(Player newPlayer)
+    {
+        photonView.RPC("SetName", newPlayer, playerNameText.text);
+    }
+
     IEnumerator StateSwitcher(botState newState, float time)
     {
-        Debug.Log("State Switcher " + newState);
+        //Debug.Log("State Switcher " + newState);
         yield return new WaitForSeconds(time);
 
         botPlayerState = newState;
@@ -121,10 +138,17 @@ public class PlayerAIController : MonoBehaviourPun, IPunObservable
 
         yield return new WaitForSeconds(0.1f);
 
-        if (targetPlayer != null) StartCoroutine(StateSwitcher(botState.attack, 0));
+        if (targetPlayer != null)
+            StartCoroutine(StateSwitcher(botState.attack, 0));
         else
         {
-            if (botPlayerState == botState.patrol) StartCoroutine(Patrol());
+            if(playersInRange.Count > 0)
+            {
+                targetPlayer = playersInRange[0];
+                StartCoroutine(StateSwitcher(botState.attack, 0));
+            }    
+            else
+                if (botPlayerState == botState.patrol) StartCoroutine(Patrol());
         }  
     }
 
@@ -134,7 +158,13 @@ public class PlayerAIController : MonoBehaviourPun, IPunObservable
 
         if (targetPlayer != null)
         {
-            playerCombatManager.BotPlayerAutoAttack(targetPlayer);
+            if(!targetPlayer.GetComponent<PlayerCombatManager>().IsDead)
+                playerCombatManager.BotPlayerAutoAttack(targetPlayer);
+            else
+            {
+                playersInRange.Remove(targetPlayer);
+                if (playersInRange.Count > 0) targetPlayer = playersInRange[0];
+            }
 
             if (playerHealthManager.PlayerHealth < defenseHealthThreshold)
             {
@@ -159,7 +189,7 @@ public class PlayerAIController : MonoBehaviourPun, IPunObservable
         }
 
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
-        yield return new WaitForSeconds(0.1f);
+        yield return new WaitForSeconds(0.25f);
 
         if (botPlayerState == botState.attack) StartCoroutine(Attack());
     }
@@ -178,7 +208,7 @@ public class PlayerAIController : MonoBehaviourPun, IPunObservable
             playerCombatManager.BotPlayerAutoAttack(targetPlayer);
         }
 
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(Random.Range(2f,3f));
 
         if(targetPlayer != null)
         {
@@ -186,13 +216,16 @@ public class PlayerAIController : MonoBehaviourPun, IPunObservable
             {
                 StartCoroutine(StateSwitcher(botState.attack, 0));
             }
+            else
+            {
+                StartCoroutine(StateSwitcher(botState.patrol, 0));
+            }
         }
         else
         {
             StartCoroutine(StateSwitcher(botState.patrol, 0));
         }
-        
-        if (botPlayerState == botState.flank) StartCoroutine(Flank());
+       
     }
 
     IEnumerator Defense()
@@ -237,7 +270,7 @@ public class PlayerAIController : MonoBehaviourPun, IPunObservable
                 StartCoroutine(StateSwitcher(botState.patrol, Random.Range(0.5f, 1f)));
             }
         }
-        if (botPlayerState == botState.defense) StartCoroutine(Defense());
+        //if (botPlayerState == botState.defense) StartCoroutine(Defense());
     }
 
     IEnumerator Dash()
@@ -250,27 +283,52 @@ public class PlayerAIController : MonoBehaviourPun, IPunObservable
 
     IEnumerator SanityCheck()
     {
+        /*
         if (targetPlayer != null)
         {
             if (targetPlayer.GetComponent<PlayerCombatManager>().IsDead && playersInRange.Contains(targetPlayer))
+            {
                 playersInRange.Remove(targetPlayer);
+
+                if (playersInRange.Count > 0)
+                {
+                    foreach (var player in playersInRange)
+                    {
+                        if(player != null)
+                        {
+                            if (player.GetComponent<PlayerCombatManager>().isSearchable && !player.GetComponent<PlayerCombatManager>().IsDead && LineOfSight(player))
+                            {
+                                targetPlayer = player;
+                                break;
+                            }
+                            nullPlayersRemoved.Add(player);
+                        }
+                        
+                    }
+
+                    playersInRange = nullPlayersRemoved;
+                    nullPlayersRemoved.Clear();
+                }
+            }
+            
+                
         }    
         else
         {
             if(playersInRange.Count > 0)
             {
-                if (Vector3.Distance(playersInRange[0].transform.position, transform.position) < 10)
+                foreach (var player in playersInRange)
                 {
-                    targetPlayer = playersInRange[0];
-                }
-                else
-                {
-                    playersInRange.RemoveAt(0);
+                    if (player.GetComponent<PlayerCombatManager>().isSearchable && !player.GetComponent<PlayerCombatManager>().IsDead && LineOfSight(player))
+                    {
+                        targetPlayer = player;
+                        break;
+                    }
                 }
             }
-        }
+        }*/
             
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(3);
         
         if(botController.velocity.magnitude < 3 && playersInRange.Count == 0)
         {
@@ -353,15 +411,9 @@ public class PlayerAIController : MonoBehaviourPun, IPunObservable
         {
 
             playersInRange.Add(other.gameObject);
-
-            foreach(var player in playersInRange)
-            {
-                if (player.GetComponent<PlayerCombatManager>().isSearchable && !player.GetComponent<PlayerCombatManager>().IsDead && LineOfSight(player))
-                {
-                    targetPlayer = player;
-                    break;
-                }
-            }
+            if (other.gameObject.GetComponent<PlayerCombatManager>().isPlayer && targetPlayer == null)
+                targetPlayer = other.gameObject;
+                   
             StartCoroutine(StateSwitcher(botState.attack, 0));
 
         }
@@ -377,6 +429,10 @@ public class PlayerAIController : MonoBehaviourPun, IPunObservable
             {
                 targetPlayer = null;
                 StartCoroutine(StateSwitcher(botState.patrol, 0));
+            }
+            else
+            {
+                targetPlayer = playersInRange[0];
             }
         }
     }

@@ -98,6 +98,7 @@ public class HUDManager : MonoBehaviourPunCallbacks
     [SerializeField] public GameObject[] playerUIList;
     [SerializeField] public GameObject[] killFeed;
     [SerializeField] public GameObject runeInfoPanel;
+    [SerializeField] public Text totalKillsScoreText;
     public GameObject[] scoreboardItems;
     public GameObject gamePanel;
     public GameObject exitGameButton;
@@ -572,6 +573,7 @@ public class HUDManager : MonoBehaviourPunCallbacks
 
             PlayFabApiCalls.instance.SubtractVirtualCurrency(continueGemCost, "GM");
             continueGemCost = Mathf.CeilToInt(continueGemCost * continueGemMultiplier);
+            Debug.Log("continue gem cost " + continueGemCost);
         }
 
     }
@@ -627,6 +629,7 @@ public class HUDManager : MonoBehaviourPunCallbacks
 
     public void ResetContinueGemCost()
     {
+        Debug.Log("Continue Gem Reset");
         continueGemCost = 2;
     }
 
@@ -644,8 +647,10 @@ public class HUDManager : MonoBehaviourPunCallbacks
         runesPanel.SetActive(false);
         deathPanel.SetActive(false);
         playerControllerPanel.SetActive(true);
+        foreach (var item in scoreboardItems)
+            item.SetActive(false);
         UpdateTotalPlayerCount();
-        //StartCoroutine(GameSceneLoading());
+
 
     }
 
@@ -868,6 +873,11 @@ public class HUDManager : MonoBehaviourPunCallbacks
 
         }
         coinAnimation.SetActive(true);
+    }
+
+    public void UpdateTotalKillsScoreText(int score)
+    {
+        totalKillsScoreText.text = score.ToString();
     }
     #endregion
 }
