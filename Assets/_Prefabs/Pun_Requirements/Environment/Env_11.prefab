@@ -232,6 +232,122 @@ Transform:
   m_Father: {fileID: 3280136523774745630}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1778101651853066963
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 9051246559699783097}
+  - component: {fileID: 3386301529567561854}
+  - component: {fileID: 76632082203414262}
+  m_Layer: 15
+  m_Name: BushCollider
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 4294967295
+  m_IsActive: 1
+--- !u!4 &9051246559699783097
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1778101651853066963}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 3.5, y: 0, z: -5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4884916001271970482}
+  m_RootOrder: 14
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &3386301529567561854
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1778101651853066963}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1.5, y: 1, z: 0.5}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &76632082203414262
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1778101651853066963}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54f85e1ce613bf04cb4f2a5b6122b6e3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  bushGroupId: 1101
+--- !u!1 &5424405505706777668
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5279507941731174361}
+  - component: {fileID: 5686907145154799374}
+  - component: {fileID: 7789066990010274365}
+  m_Layer: 15
+  m_Name: BushCollider (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 4294967295
+  m_IsActive: 1
+--- !u!4 &5279507941731174361
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5424405505706777668}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 4.5, y: 0, z: -5.5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4884916001271970482}
+  m_RootOrder: 15
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &5686907145154799374
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5424405505706777668}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1.5, y: 1, z: 1.5}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &7789066990010274365
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5424405505706777668}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54f85e1ce613bf04cb4f2a5b6122b6e3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  bushGroupId: 1101
 --- !u!1 &6163127815527272284
 GameObject:
   m_ObjectHideFlags: 0
@@ -273,6 +389,8 @@ Transform:
   - {fileID: 5204427369300329503}
   - {fileID: 426521115337320833}
   - {fileID: 1732039570665971629}
+  - {fileID: 9051246559699783097}
+  - {fileID: 5279507941731174361}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -528,6 +646,11 @@ PrefabInstance:
         type: 3}
       propertyPath: bushGroupId
       value: 1101
+      objectReference: {fileID: 0}
+    - target: {fileID: -5650179222222671709, guid: 60460876bb45c79418c6abd9daaa1edf,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 60460876bb45c79418c6abd9daaa1edf, type: 3}
@@ -822,6 +945,11 @@ PrefabInstance:
       propertyPath: bushGroupId
       value: 1101
       objectReference: {fileID: 0}
+    - target: {fileID: -5650179222222671709, guid: 60460876bb45c79418c6abd9daaa1edf,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 60460876bb45c79418c6abd9daaa1edf, type: 3}
 --- !u!4 &426521115337320833 stripped
@@ -901,6 +1029,11 @@ PrefabInstance:
         type: 3}
       propertyPath: bushGroupId
       value: 1101
+      objectReference: {fileID: 0}
+    - target: {fileID: -5650179222222671709, guid: 60460876bb45c79418c6abd9daaa1edf,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 60460876bb45c79418c6abd9daaa1edf, type: 3}
@@ -1158,6 +1291,11 @@ PrefabInstance:
       propertyPath: bushGroupId
       value: 1101
       objectReference: {fileID: 0}
+    - target: {fileID: -5650179222222671709, guid: 60460876bb45c79418c6abd9daaa1edf,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 60460876bb45c79418c6abd9daaa1edf, type: 3}
 --- !u!4 &2641965886042531741 stripped
@@ -1391,6 +1529,11 @@ PrefabInstance:
         type: 3}
       propertyPath: bushGroupId
       value: 1101
+      objectReference: {fileID: 0}
+    - target: {fileID: -5650179222222671709, guid: 60460876bb45c79418c6abd9daaa1edf,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 60460876bb45c79418c6abd9daaa1edf, type: 3}

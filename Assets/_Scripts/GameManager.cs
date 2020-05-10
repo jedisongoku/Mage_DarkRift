@@ -219,5 +219,37 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    private void OnApplicationQuit()
+    {
+        if(PhotonNetwork.IsMasterClient)
+            SwitchMaster();
+    }
+
+    private void OnApplicationPause(bool paused)
+    {
+        if (paused && PhotonNetwork.IsMasterClient)
+        {
+            SwitchMaster();
+        }
+    }
+
+    private void OnApplicationFocus(bool focused)
+    {
+        if (!focused && PhotonNetwork.IsMasterClient)
+        {
+            SwitchMaster();
+        }
+    }
+
+    void SwitchMaster()
+    {
+        if (PhotonNetwork.IsMasterClient)
+            if (PhotonNetwork.MasterClient.GetNext() != null)
+            {
+                PhotonNetwork.SetMasterClient(PhotonNetwork.MasterClient.GetNext());
+                PhotonNetwork.SendAllOutgoingCommands();
+            }
+                
+    }
 
 }

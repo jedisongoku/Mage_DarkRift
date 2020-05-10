@@ -10,13 +10,12 @@ GameObject:
   m_Component:
   - component: {fileID: 980884217281950556}
   - component: {fileID: -5650179222222671709}
-  - component: {fileID: 3537626436360971537}
   m_Layer: 15
   m_Name: GrassBush
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
 --- !u!4 &980884217281950556
 Transform:
@@ -49,19 +48,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bushGroupId: 0
---- !u!65 &3537626436360971537
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5969964716610580401}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1.15, y: 1, z: 1.15}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1001 &3726876931923622511
 PrefabInstance:
   m_ObjectHideFlags: 0

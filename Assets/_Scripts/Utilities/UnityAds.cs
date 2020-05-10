@@ -16,6 +16,7 @@ public class UnityAds : MonoBehaviour, IUnityAdsListener
 
     void Start()
     {
+        Application.runInBackground = true;
         instance = this;
         // Initialize the Ads listener and service:
         Advertisement.AddListener(this);

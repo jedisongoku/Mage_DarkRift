@@ -378,7 +378,7 @@ public class PlayerCombatManager : MonoBehaviourPun
     {
         if (primarySkillCooldownTimer >= primarySkillCooldown && primarySkillCharge > 0)
         {
-            playerMovementController.SetFireDirection(_aimLocation);
+            //playerMovementController.SetFireDirection(_aimLocation);
             primarySkillCooldownTimer = 0f;
             StopAllCoroutines();
             StartCoroutine(PrimarySkillChargerReady(primarySkillCharge));
@@ -400,7 +400,8 @@ public class PlayerCombatManager : MonoBehaviourPun
     [PunRPC]
     void UseSecondarySkill()
     {
-        m_Animator.SetTrigger("Dashing");
+        if(!IsDead)
+            m_Animator.SetTrigger("Dashing");
         if(!isInBush)
         {
             dashTrail.SetActive(false);

@@ -72,16 +72,6 @@ public class PlayerMovementController : MonoBehaviourPun, IPunObservable
         
     }
 
-    void Update()
-    {
-        if(attack)
-        {
-            attack = false;
-            fireTimer = 0f;
-        }
-        
-    }
-
     public void StartChill(float _duration)
     {
         if(!isChill)
@@ -110,17 +100,17 @@ public class PlayerMovementController : MonoBehaviourPun, IPunObservable
         walkSpeed = PlayFabDataStore.playerBaseStats.WalkSpeed;
 
     }
-
+    /*
     public void SetFireDirection(Vector3 _aimLocation)
     {
         if (photonView.IsMine && isPlayer)
         {
             //Vector3 desiredForward = Vector3.RotateTowards(transform.forward, _aimLocation, turnSpeed * Time.deltaTime, 0f);
             //m_Rotation = Quaternion.LookRotation(desiredForward);
-            transform.LookAt(_aimLocation);
+            //transform.LookAt(_aimLocation);
         }
 
-    }
+    }*/
 
     public Vector3 AimLocation
     {
@@ -226,7 +216,7 @@ public class PlayerMovementController : MonoBehaviourPun, IPunObservable
     {
         set
         {
-            attack = value;
+            fireTimer = 0;
         }
     }
 

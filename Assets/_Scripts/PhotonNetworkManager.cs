@@ -37,17 +37,6 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
     {
         PhotonNetwork.UseAlternativeUdpPorts = true;
 
-        /*
-        if (PlayFabDataStore.playerName != null)
-        {
-            PhotonNetwork.LocalPlayer.NickName = PlayFabDataStore.playerName;
-            PhotonNetwork.ConnectUsingSettings();
-        }
-        else
-        {
-            Debug.Log("Player Nickname is invalid!");
-        }*/
-
         PhotonNetwork.ConnectUsingSettings();
         
         PhotonNetwork.AutomaticallySyncScene = true;
@@ -122,19 +111,6 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
         isGamePaused = pause;
     }
 
-    private void OnApplicationFocus(bool focus)
-    {
-        if(focus && isGamePaused && !PhotonNetwork.IsConnected)
-        {
-            /*
-            Debug.Log("Not Connected");
-            HUDManager.Instance.StartAppLaunch();
-            SceneManager.LoadScene(0);
-            ConnectToPhoton();*/
-        }
-    }
-
-
     public override void OnCreatedRoom()
     {
         Debug.Log(PhotonNetwork.CurrentRoom.Name + " is created.");
@@ -155,20 +131,14 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
         {
             OnPlayerEnteredRoomEvent();
         }
-        /*
-        if (PhotonNetwork.CurrentRoom.PlayerCount == PhotonNetwork.CurrentRoom.MaxPlayers && PhotonNetwork.IsMasterClient)
-        {
-            
-            //ActivatePanels(loadingPanel.name);
-            //Invoke("ActivateGamePanel", 2f);
-            PhotonNetwork.LoadLevel(PersistData.instance.GameData.GameMode);
-        }*/
     }
 
     public override void OnLeftRoom()
     {
         Debug.Log("Left Room");
         PhotonNetwork.KeepAliveInBackground = 60;
+        //SceneManager.LoadScene(0);
+        
 #if (!UNITY_EDITOR)
         SceneManager.LoadScene(0);
 #endif
