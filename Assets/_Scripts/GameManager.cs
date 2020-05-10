@@ -198,6 +198,11 @@ public class GameManager : MonoBehaviour
 
         ScoreManager.Instance.UpdateScore(killerName);
 
+        if(!PhotonNetwork.GetPhotonView(_playerViewID).GetComponent<PlayerLevelManager>().isPlayer)
+        {
+            PhotonNetwork.GetPhotonView(_playerViewID).GetComponent<PlayerLevelManager>().RewardXP();
+        }
+
         if (_playerViewID == currentPlayerViewID)
         {
             

@@ -15,6 +15,7 @@ public class PlayerLevelManager : MonoBehaviourPunCallbacks
     private float killXPCoefficient = 1.2f;
 
     public float SmartMultiplier { get; set; }
+    public bool isPlayer = true;
 
     [SerializeField] private GameObject levelStar;
     [SerializeField] private TextMeshProUGUI levelText;
@@ -25,7 +26,7 @@ public class PlayerLevelManager : MonoBehaviourPunCallbacks
 
     void Start()
     {
-        if (photonView.IsMine)
+        if (photonView.IsMine && isPlayer)
         {
             levelStar.SetActive(false);
             HUDManager.Instance.UpdatePlayerLevel(currentLevel, currentXP, NextLevelInXP());
@@ -35,7 +36,7 @@ public class PlayerLevelManager : MonoBehaviourPunCallbacks
     }
     void OnEnable()
     {
-        if(photonView.IsMine)
+        if(photonView.IsMine && isPlayer)
         {
             GameManager.OnPlayerKill += RewardXP;
         }
@@ -45,7 +46,7 @@ public class PlayerLevelManager : MonoBehaviourPunCallbacks
     // Update is called once per frame
     void OnDisable()
     {
-        if(photonView.IsMine)
+        if(photonView.IsMine && isPlayer)
         {
             GameManager.OnPlayerKill -= RewardXP;
         }
@@ -67,27 +68,29 @@ public class PlayerLevelManager : MonoBehaviourPunCallbacks
         if(photonView.IsMine)
         {
             Debug.Log("xp earned :" + _xp + "current level " + currentLevel);
-            ShowFloatingCombatText(Mathf.RoundToInt(_xp * SmartMultiplier));
+            if(isPlayer) ShowFloatingCombatText(Mathf.RoundToInt(_xp * SmartMultiplier));
             currentXP += Mathf.RoundToInt(_xp * SmartMultiplier);
             if (currentXP >= Mathf.FloorToInt(firstLevelXP * Mathf.Pow(levelCoefficient, currentLevel)))
             {
                 currentXP -= NextLevelInXP();
                 currentLevel++;
+                levelText.text = currentLevel.ToString();
                 levelUpParticle.SetActive(false);
                 levelUpParticle.SetActive(true);
-                HUDManager.Instance.DisplayRunes();
+                if (isPlayer) HUDManager.Instance.DisplayRunes();
+                else GetComponent<PlayerAIRuneManager>().SelectRune(currentLevel - 2);
                 photonView.RPC("UpdateLevel", RpcTarget.OthersBuffered, currentLevel);
                 if (currentXP > NextLevelInXP()) currentXP = NextLevelInXP() - 5;
 
             }
 
-            HUDManager.Instance.UpdatePlayerLevel(currentLevel, currentXP, NextLevelInXP());
+            if(isPlayer) HUDManager.Instance.UpdatePlayerLevel(currentLevel, currentXP, NextLevelInXP());
         }
         
 
     }
 
-    void RewardXP()
+    public void RewardXP()
     {
         Debug.Log("REWARDS XP");
         AddXP(Mathf.FloorToInt(killXP * Mathf.Pow(killXPCoefficient, GameManager.Instance.DeadPlayerLevel)));
@@ -112,7 +115,9 @@ public class PlayerLevelManager : MonoBehaviourPunCallbacks
         currentXP = 0;
         currentLevel = 1;
         SmartMultiplier = 1;
-        HUDManager.Instance.UpdatePlayerLevel(currentLevel, currentXP, NextLevelInXP());
+        levelText.text = currentLevel.ToString();
+        if (isPlayer) HUDManager.Instance.UpdatePlayerLevel(currentLevel, currentXP, NextLevelInXP());
+        else GetComponent<PlayerAIRuneManager>().RestartPlayerRunes();
         photonView.RPC("UpdateLevel", RpcTarget.Others, currentLevel);    
 
     }

@@ -492,6 +492,10 @@ public class PlayerCombatManager : MonoBehaviourPun
                 PlayerRuneManager.Instance.RestartPlayerRunes();
             }
         }
+        else
+        {
+            GetComponent<PlayerLevelManager>().ResetOnRespawn();
+        }
         
 
 

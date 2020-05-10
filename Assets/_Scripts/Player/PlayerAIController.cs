@@ -49,6 +49,7 @@ public class PlayerAIController : MonoBehaviourPunCallbacks, IPunObservable
         playerCombatManager = GetComponent<PlayerCombatManager>();
         playersInRange = new List<GameObject>();
         GetComponent<PlayerMovementController>().isPlayer = false;
+        GetComponent<PlayerLevelManager>().isPlayer = false;
         playerCombatManager.isPlayer = false;
         
 
