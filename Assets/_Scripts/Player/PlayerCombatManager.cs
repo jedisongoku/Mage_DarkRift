@@ -837,11 +837,6 @@ public class PlayerCombatManager : MonoBehaviourPun
 
     }
 
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.gameObject.layer == 12)
-            Debug.Log("Particle Hit Player");
-    }
     /*
     private void OnTriggerEnter(Collider other)
     {

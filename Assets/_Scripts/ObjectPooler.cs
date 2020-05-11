@@ -43,7 +43,7 @@ public class ObjectPooler : MonoBehaviour
 
 
         //Primary Skill Particle Instantiation 
-        for (int i = 0; i < primarySkillPrefabPooledAmount * PhotonNetwork.CurrentRoom.PlayerCount; i++)
+        for (int i = 0; i < primarySkillPrefabPooledAmount; i++)
         {
             GameObject obj = (GameObject)Instantiate(primarySkillPrefab);
             obj.SetActive(false);
@@ -51,7 +51,7 @@ public class ObjectPooler : MonoBehaviour
         }
 
         //Primary Skill OnHit Particle Instantiation 
-        for (int i = 0; i < primarySkillExplosionPrefabPooledAmount * PhotonNetwork.CurrentRoom.PlayerCount; i++)
+        for (int i = 0; i < primarySkillExplosionPrefabPooledAmount; i++)
         {
             GameObject obj = (GameObject)Instantiate(primarySkillExplosionPrefab);
             obj.SetActive(false);
@@ -59,7 +59,7 @@ public class ObjectPooler : MonoBehaviour
         }
 
         //Primary Skill OnHit FrostNova Particle Instantiation 
-        for (int i = 0; i < primarySkillEnvironmentExplosionPrefabPooledAmount * PhotonNetwork.CurrentRoom.PlayerCount; i++)
+        for (int i = 0; i < primarySkillEnvironmentExplosionPrefabPooledAmount; i++)
         {
             GameObject obj = (GameObject)Instantiate(primarySkillEnvironmentExplosionPrefab);
             obj.SetActive(false);
