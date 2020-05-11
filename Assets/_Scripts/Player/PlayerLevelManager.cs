@@ -75,7 +75,6 @@ public class PlayerLevelManager : MonoBehaviourPunCallbacks
                 currentXP -= NextLevelInXP();
                 currentLevel++;
                 levelText.text = currentLevel.ToString();
-                Debug.Log("Adding XP to " + gameObject.name);
                 levelUpParticle.SetActive(false);
                 levelUpParticle.SetActive(true);
                 if (isPlayer) HUDManager.Instance.DisplayRunes();

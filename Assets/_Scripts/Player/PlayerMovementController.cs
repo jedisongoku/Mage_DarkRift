@@ -77,7 +77,6 @@ public class PlayerMovementController : MonoBehaviourPun, IPunObservable
         if(!isChill)
         {
             isChill = true;
-            Debug.Log("Starting Chill...");
             photonView.RPC("StartChill_RPC", RpcTarget.All, _duration);
         }
     }
@@ -185,8 +184,9 @@ public class PlayerMovementController : MonoBehaviourPun, IPunObservable
     {
         if(isPlayer)
         {
+            Debug.Log("MMOvement " + m_Movement);
             m_Rigidbody.MovePosition(m_Rigidbody.position + m_Movement * m_Animator.deltaPosition.magnitude * walkSpeed);
-            if (fireTimer > 0.2f)
+            if (fireTimer > 0.3f)
             {
                 m_Rigidbody.MoveRotation(m_Rotation);
             }

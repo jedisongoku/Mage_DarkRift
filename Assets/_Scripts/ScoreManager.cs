@@ -58,6 +58,8 @@ public class ScoreManager : MonoBehaviour
         //playersList.Add(new ScorePlayer(name, 0));
         if (!playerScoreList.ContainsKey(name))
             playerScoreList.Add(name, 0);
+
+        RefreshScoreboard();
     }
 
 
@@ -74,14 +76,13 @@ public class ScoreManager : MonoBehaviour
     {
         var scoreList = playerScoreList.OrderByDescending(p => p.Value).ToArray();
 
-        for (int i = 0; i < HUDManager.Instance.ScoreboardItems.Length; i++)
+        if(scoreList.Length > 2)
         {
-            if(scoreList[i].Value == 0)
-                HUDManager.Instance.ScoreboardItems[i].SetActive(false);
-            else
-                HUDManager.Instance.ScoreboardItems[i].SetActive(true);
-            HUDManager.Instance.ScoreboardItems[i].transform.Find("KillFeed").GetComponent<Text>().text = scoreList[i].Key + " - " + scoreList[i].Value + " kills";
+            HUDManager.Instance.ScoreboardItems[0].transform.Find("KillFeed").GetComponent<Text>().text = scoreList[0].Key + " - " + scoreList[0].Value + " kills";
+            HUDManager.Instance.ScoreboardItems[1].transform.Find("KillFeed").GetComponent<Text>().text = scoreList[1].Key + " - " + scoreList[1].Value + " kills";
+            HUDManager.Instance.ScoreboardItems[2].transform.Find("KillFeed").GetComponent<Text>().text = scoreList[2].Key + " - " + scoreList[2].Value + " kills";
         }
+        
 
 
     }

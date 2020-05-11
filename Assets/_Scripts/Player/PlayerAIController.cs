@@ -36,6 +36,7 @@ public class PlayerAIController : MonoBehaviourPunCallbacks, IPunObservable
     Vector2 movement;
 
     int defenseHealthThreshold;
+    private float fireTimer;
 
     // Start is called before the first frame update
     void Awake()
@@ -151,6 +152,14 @@ public class PlayerAIController : MonoBehaviourPunCallbacks, IPunObservable
             else
                 if (botPlayerState == botState.patrol) StartCoroutine(Patrol());
         }  
+    }
+
+    public bool AttackTimer
+    {
+        set
+        {
+            fireTimer = 0;
+        }
     }
 
     IEnumerator Attack()
@@ -284,50 +293,6 @@ public class PlayerAIController : MonoBehaviourPunCallbacks, IPunObservable
 
     IEnumerator SanityCheck()
     {
-        /*
-        if (targetPlayer != null)
-        {
-            if (targetPlayer.GetComponent<PlayerCombatManager>().IsDead && playersInRange.Contains(targetPlayer))
-            {
-                playersInRange.Remove(targetPlayer);
-
-                if (playersInRange.Count > 0)
-                {
-                    foreach (var player in playersInRange)
-                    {
-                        if(player != null)
-                        {
-                            if (player.GetComponent<PlayerCombatManager>().isSearchable && !player.GetComponent<PlayerCombatManager>().IsDead && LineOfSight(player))
-                            {
-                                targetPlayer = player;
-                                break;
-                            }
-                            nullPlayersRemoved.Add(player);
-                        }
-                        
-                    }
-
-                    playersInRange = nullPlayersRemoved;
-                    nullPlayersRemoved.Clear();
-                }
-            }
-            
-                
-        }    
-        else
-        {
-            if(playersInRange.Count > 0)
-            {
-                foreach (var player in playersInRange)
-                {
-                    if (player.GetComponent<PlayerCombatManager>().isSearchable && !player.GetComponent<PlayerCombatManager>().IsDead && LineOfSight(player))
-                    {
-                        targetPlayer = player;
-                        break;
-                    }
-                }
-            }
-        }*/
             
         yield return new WaitForSeconds(3);
         
@@ -340,8 +305,10 @@ public class PlayerAIController : MonoBehaviourPunCallbacks, IPunObservable
 
     // Update is called once per frame
     void FixedUpdate()
-    {    
-        if(!photonView.IsMine)
+    {
+        fireTimer += Time.fixedDeltaTime;
+
+        if (!photonView.IsMine)
         {
             if ((m_Rigidbody.position - networkPosition).magnitude > 5f)
             {
@@ -367,7 +334,10 @@ public class PlayerAIController : MonoBehaviourPunCallbacks, IPunObservable
             m_Rigidbody.MovePosition(m_Rigidbody.position + botController.velocity.normalized * m_Animator.deltaPosition.magnitude);
         }
 
-        m_Rigidbody.MoveRotation(m_Rotation);
+        if (fireTimer > 0.3f)
+        {
+            m_Rigidbody.MoveRotation(m_Rotation);
+        }
     }
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)

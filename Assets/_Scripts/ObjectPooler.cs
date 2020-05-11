@@ -81,6 +81,8 @@ public class ObjectPooler : MonoBehaviour
             obj.SetActive(false);
             floationCombatTextPrefabList.Add(obj);
         }
+
+        GetFloatingCombatTextPrefab().SetActive(true);
     }
 
     public GameObject GetPrimarySkillPrefab()

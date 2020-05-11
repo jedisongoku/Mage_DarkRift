@@ -458,7 +458,6 @@ public class PlayerHealthManager : MonoBehaviourPun
                 }
                 photonView.RPC("HpBoost_RPC", RpcTarget.AllBuffered, playerhealth, playerMaxHealth);
             }
-            Debug.Log(value);
         }
     }
 

@@ -194,9 +194,9 @@ public class GameManager : MonoBehaviour
         string victimName = _playerkilled.GetComponent<PlayerCombatManager>().killFeedName;
         
 
-        //ScoreManager.Instance.RefreshKillFeed(killerName, victimName);
+        ScoreManager.Instance.RefreshKillFeed(killerName, victimName);
 
-        //ScoreManager.Instance.UpdateScore(killerName);
+        ScoreManager.Instance.UpdateScore(killerName);
 
         if(!PhotonNetwork.GetPhotonView(_playerViewID).GetComponent<PlayerLevelManager>().isPlayer)
         {
@@ -207,7 +207,6 @@ public class GameManager : MonoBehaviour
         {
             
             DeadPlayerLevel = _playerkilled.GetComponent<PlayerLevelManager>().GetPlayerLevel();
-            Debug.Log("Dead player level " + DeadPlayerLevel);
             playerKillCount++;
             playerTotalKillCount++;
             HUDManager.Instance.UpdateTotalKillsScoreText(playerTotalKillCount);

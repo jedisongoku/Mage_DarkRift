@@ -112,7 +112,6 @@ public class HUDManager : MonoBehaviourPunCallbacks
     public GameObject scoreboardPlayerPref;
     public GameObject runeSelection;
     public Button[] runeOptions;
-    public GameObject coinReward;
     public Text fps;
     public Text respawnEnergyText;
     public Text totalPlayersText;
@@ -541,11 +540,11 @@ public class HUDManager : MonoBehaviourPunCallbacks
         StartCoroutine(RespawnCooldown(GameManager.Instance.RespawnCooldown));
         runeSelection.SetActive(false);
 
-        coinReward.SetActive(false);
+        //coinReward.SetActive(false);
         if (GameManager.playerKillCount > 0)
         {
-            coinReward.transform.Find("CoinText").GetComponent<Text>().text = GameManager.Instance.GetRewardAmount().ToString();
-            coinReward.SetActive(true);
+            //coinReward.transform.Find("CoinText").GetComponent<Text>().text = GameManager.Instance.GetRewardAmount().ToString();
+            //coinReward.SetActive(true);
 
             PlayFabApiCalls.instance.UpdateStatistics("Lifetime Kills", GameManager.playerKillCount);
             PlayFabApiCalls.instance.UpdateStatistics("Kill Streak", GameManager.playerKillCount);
@@ -647,8 +646,6 @@ public class HUDManager : MonoBehaviourPunCallbacks
         runesPanel.SetActive(false);
         deathPanel.SetActive(false);
         playerControllerPanel.SetActive(true);
-        foreach (var item in scoreboardItems)
-            item.SetActive(false);
         UpdateTotalPlayerCount();
 
 

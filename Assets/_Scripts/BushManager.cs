@@ -118,16 +118,20 @@ public class BushManager : MonoBehaviour
 
     private void OnTriggerStay(Collider other)
     {
-        if (other.gameObject.layer == 17 && isLocalInTheBush[bushGroupId] && players[bushGroupId].Count > 1 && !other.transform.parent.gameObject.GetComponent<PlayerCombatManager>().canBeSeen)
+        if(other.transform.parent.gameObject.GetComponent<PhotonView>().ViewID != GameManager.Instance.GetCurrentPlayerViewID)
         {
-            if (!other.transform.parent.gameObject.GetComponent<PlayerCombatManager>().IsDead)
-                other.transform.parent.gameObject.GetComponent<PlayerCombatManager>().PlayerCanBeSeen();
+            if (other.gameObject.layer == 17 && isLocalInTheBush[bushGroupId] && players[bushGroupId].Count > 1 && !other.transform.parent.gameObject.GetComponent<PlayerCombatManager>().canBeSeen)
+            {
+                if (!other.transform.parent.gameObject.GetComponent<PlayerCombatManager>().IsDead)
+                    other.transform.parent.gameObject.GetComponent<PlayerCombatManager>().PlayerCanBeSeen();
+            }
+            else if (other.gameObject.layer == 17 && !isLocalInTheBush[bushGroupId] && other.transform.parent.gameObject.GetComponent<PlayerCombatManager>().canBeSeen)
+            {
+                if (!other.transform.parent.gameObject.GetComponent<PlayerCombatManager>().IsDead)
+                    other.transform.parent.gameObject.GetComponent<PlayerCombatManager>().PlayerIsInvisible();
+            }
         }
-        else if (other.gameObject.layer == 17 && !isLocalInTheBush[bushGroupId] && players[bushGroupId].Count > 1 && other.transform.parent.gameObject.GetComponent<PlayerCombatManager>().canBeSeen)
-        {
-            if (!other.transform.parent.gameObject.GetComponent<PlayerCombatManager>().IsDead)
-                other.transform.parent.gameObject.GetComponent<PlayerCombatManager>().PlayerIsInvisible();
-        }
+        
     }
 
     private void OnTriggerExit(Collider other)
@@ -142,7 +146,7 @@ public class BushManager : MonoBehaviour
                     if(players[bushGroupId][other.transform.parent.gameObject.GetComponent<PhotonView>().ViewID] == 0)
                     {
                         other.transform.parent.gameObject.GetComponent<PlayerCombatManager>().BushExited();
-
+                        players[bushGroupId].Remove(other.transform.parent.gameObject.GetComponent<PhotonView>().ViewID);
                         if (other.transform.parent.gameObject.GetComponent<PlayerCombatManager>().isPlayer) isLocalInTheBush[bushGroupId] = false;
                     }
                         
