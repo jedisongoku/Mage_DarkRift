@@ -155,7 +155,6 @@ public class PlayFabLoginManager : MonoBehaviour
     public void IncrementCallCounter()
     {
         callCounter++;
-        Debug.Log("Counter :" + callCounter);
     }
 
     private void OnEnable()

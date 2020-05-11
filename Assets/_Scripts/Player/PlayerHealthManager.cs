@@ -136,7 +136,6 @@ public class PlayerHealthManager : MonoBehaviourPun
     {
         if(!isFrostbite)
         {
-            Debug.Log("Starting Frostbite...");
             isFrostbite = true;
             photonView.RPC("StartFrostbite_RPC", RpcTarget.All, _damageOrigin);
         }
@@ -485,7 +484,6 @@ public class PlayerHealthManager : MonoBehaviourPun
     [PunRPC]
     void SetShieldGuard()
     {
-        Debug.Log("This isa buffered message");
         isShieldGuard = true;
         shieldGuardParticle.SetActive(true);
     }

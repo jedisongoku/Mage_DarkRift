@@ -5,7 +5,7 @@ using Photon.Pun;
 
 public class BushManager : MonoBehaviour
 {
-    public static Dictionary<int, Dictionary<int,bool>> players = new Dictionary<int, Dictionary<int,bool>>();
+    public static Dictionary<int, Dictionary<int,int>> players = new Dictionary<int, Dictionary<int,int>>();
     public static Dictionary<int, bool> isLocalInTheBush = new Dictionary<int, bool>();
 
     public int bushGroupId = 0;
@@ -89,24 +89,28 @@ public class BushManager : MonoBehaviour
     {
         if (other.gameObject.layer == 17)
         {
-            other.transform.parent.gameObject.GetComponent<PlayerCombatManager>().isInBush = true;
-            if (other.transform.parent.gameObject.GetComponent<PlayerCombatManager>().isPlayer) isLocalInTheBush[bushGroupId] = true;
+            if(!other.transform.parent.gameObject.GetComponent<PlayerCombatManager>().isInBush)
+            {
+                other.transform.parent.gameObject.GetComponent<PlayerCombatManager>().BushEntered();
+                if (other.transform.parent.gameObject.GetComponent<PlayerCombatManager>().isPlayer) isLocalInTheBush[bushGroupId] = true;
+            }
+                
 
             if (!players.ContainsKey(bushGroupId))
             {
-                var temp = new Dictionary<int, bool>();
-                temp.Add(other.transform.parent.gameObject.GetComponent<PhotonView>().ViewID, true);
+                var temp = new Dictionary<int, int>();
+                temp.Add(other.transform.parent.gameObject.GetComponent<PhotonView>().ViewID, 1);
                 players.Add(bushGroupId, temp);
             }
             else
             {
                 if (!players[bushGroupId].ContainsKey(other.transform.parent.gameObject.GetComponent<PhotonView>().ViewID))
                 {
-                    players[bushGroupId].Add(other.transform.parent.gameObject.GetComponent<PhotonView>().ViewID, true);
+                    players[bushGroupId].Add(other.transform.parent.gameObject.GetComponent<PhotonView>().ViewID, 1);
                 }
                 else
                 {
-                    players[bushGroupId][other.transform.parent.gameObject.GetComponent<PhotonView>().ViewID] = true;
+                    players[bushGroupId][other.transform.parent.gameObject.GetComponent<PhotonView>().ViewID]++;
                 }
             }
         }
@@ -114,24 +118,15 @@ public class BushManager : MonoBehaviour
 
     private void OnTriggerStay(Collider other)
     {
-        if (players[bushGroupId][other.transform.parent.gameObject.GetComponent<PhotonView>().ViewID] == false)
-        {
-            players[bushGroupId][other.transform.parent.gameObject.GetComponent<PhotonView>().ViewID] = true;
-        }
-
-        if (other.gameObject.layer == 17 && players[bushGroupId].Count > 1 && isLocalInTheBush[bushGroupId] && !other.transform.parent.gameObject.GetComponent<PlayerCombatManager>().canBeSeen)
+        if (other.gameObject.layer == 17 && isLocalInTheBush[bushGroupId] && players[bushGroupId].Count > 1 && !other.transform.parent.gameObject.GetComponent<PlayerCombatManager>().canBeSeen)
         {
             if (!other.transform.parent.gameObject.GetComponent<PlayerCombatManager>().IsDead)
                 other.transform.parent.gameObject.GetComponent<PlayerCombatManager>().PlayerCanBeSeen();
-            //other.transform.parent.gameObject.GetComponent<PlayerCombatManager>().canBeSeen = true;
-            //other.transform.parent.gameObject.GetComponent<PlayerCombatManager>().isSearchable = true;
         }
-        else if (other.gameObject.layer == 17 && players[bushGroupId].Count <= 1 && !isLocalInTheBush[bushGroupId] && other.transform.parent.gameObject.GetComponent<PlayerCombatManager>().canBeSeen)
+        else if (other.gameObject.layer == 17 && !isLocalInTheBush[bushGroupId] && players[bushGroupId].Count > 1 && other.transform.parent.gameObject.GetComponent<PlayerCombatManager>().canBeSeen)
         {
             if (!other.transform.parent.gameObject.GetComponent<PlayerCombatManager>().IsDead)
                 other.transform.parent.gameObject.GetComponent<PlayerCombatManager>().PlayerIsInvisible();
-            //other.transform.parent.gameObject.GetComponent<PlayerCombatManager>().canBeSeen = false;
-            //other.transform.parent.gameObject.GetComponent<PlayerCombatManager>().isSearchable = false;
         }
     }
 
@@ -141,32 +136,37 @@ public class BushManager : MonoBehaviour
         {
             if (players.ContainsKey(bushGroupId))
             {
-                if (other.transform.parent.gameObject.GetComponent<PlayerCombatManager>().isPlayer) isLocalInTheBush[bushGroupId] = false;
-
-                if (players[bushGroupId].ContainsKey(other.transform.parent.gameObject.GetComponent<PhotonView>().ViewID) && players[bushGroupId][other.transform.parent.gameObject.GetComponent<PhotonView>().ViewID] == true)
+                if (players[bushGroupId].ContainsKey(other.transform.parent.gameObject.GetComponent<PhotonView>().ViewID))
                 {
-                    players[bushGroupId][other.transform.parent.gameObject.GetComponent<PhotonView>().ViewID] = false;
-                    StartCoroutine(RemovePlayerFromBush(other));
+                    players[bushGroupId][other.transform.parent.gameObject.GetComponent<PhotonView>().ViewID]--;
+                    if(players[bushGroupId][other.transform.parent.gameObject.GetComponent<PhotonView>().ViewID] == 0)
+                    {
+                        other.transform.parent.gameObject.GetComponent<PlayerCombatManager>().BushExited();
+
+                        if (other.transform.parent.gameObject.GetComponent<PlayerCombatManager>().isPlayer) isLocalInTheBush[bushGroupId] = false;
+                    }
+                        
                 }
             }
-
-            //other.GetComponent<PlayerCombatManager>().BushExited();
         }
     }
-
+    /*
     IEnumerator RemovePlayerFromBush(Collider other)
     {
-        yield return new WaitForSeconds(0.2f);
+        yield return new WaitForSeconds(0);
 
         if (players[bushGroupId].ContainsKey(other.transform.parent.gameObject.GetComponent<PhotonView>().ViewID))
         {
             if (players[bushGroupId][other.transform.parent.gameObject.GetComponent<PhotonView>().ViewID] == false)
             {
                 players[bushGroupId].Remove(other.transform.parent.gameObject.GetComponent<PhotonView>().ViewID);
+                other.transform.parent.gameObject.GetComponent<PlayerCombatManager>().BushExited();
             }
+
+            if (other.transform.parent.gameObject.GetComponent<PlayerCombatManager>().isPlayer) isLocalInTheBush[bushGroupId] = false;
         }
 
-    }
+    }*/
     #endregion
 
 }

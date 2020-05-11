@@ -62,7 +62,6 @@ public class PlayerAIRuneManager : MonoBehaviour
     public void SelectRune(int index)
     {
         Invoke(playerRuneList[index].FunctionName, 0);
-        Debug.Log("Bot Selected Rune: " + playerRuneList[index].FunctionName);
     }
 
 

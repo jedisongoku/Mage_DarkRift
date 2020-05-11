@@ -34,10 +34,11 @@ public class PlayerLevelManager : MonoBehaviourPunCallbacks
         SmartMultiplier = 1;
         
     }
-    void OnEnable()
+    public void RegisterOnKill()
     {
         if(photonView.IsMine && isPlayer)
         {
+            Debug.Log("Registering to onkill");
             GameManager.OnPlayerKill += RewardXP;
         }
         
@@ -74,6 +75,7 @@ public class PlayerLevelManager : MonoBehaviourPunCallbacks
                 currentXP -= NextLevelInXP();
                 currentLevel++;
                 levelText.text = currentLevel.ToString();
+                Debug.Log("Adding XP to " + gameObject.name);
                 levelUpParticle.SetActive(false);
                 levelUpParticle.SetActive(true);
                 if (isPlayer) HUDManager.Instance.DisplayRunes();

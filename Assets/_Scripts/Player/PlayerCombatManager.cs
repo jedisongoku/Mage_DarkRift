@@ -102,6 +102,7 @@ public class PlayerCombatManager : MonoBehaviourPun
             GameObject.Find("VirtualCamera").GetComponent<CinemachineVirtualCamera>().Follow = this.transform;
             killFeedName = PhotonNetwork.LocalPlayer.NickName;
             //GetComponent<CapsuleCollider>().radius = 0.75f;
+            GetComponent<PlayerLevelManager>().RegisterOnKill();
 
         }
         else
@@ -707,7 +708,6 @@ public class PlayerCombatManager : MonoBehaviourPun
         {
             isFrostbite = value;
             if(isFrostbite) photonView.RPC("Frostbite_RPC", RpcTarget.AllBuffered);
-            Debug.Log(value);
         }
     }
 
@@ -839,6 +839,12 @@ public class PlayerCombatManager : MonoBehaviourPun
 
     private void OnTriggerEnter(Collider other)
     {
+        if (other.gameObject.layer == 12)
+            Debug.Log("Particle Hit Player");
+    }
+    /*
+    private void OnTriggerEnter(Collider other)
+    {
         if(other.gameObject.layer == 15)
         {
             if (photonView.IsMine && isInBush && isPlayer)
@@ -880,7 +886,7 @@ public class PlayerCombatManager : MonoBehaviourPun
         }
         
 
-    }
+    }*/
 
     public void PlayerCanBeSeen()
     {
@@ -897,6 +903,92 @@ public class PlayerCombatManager : MonoBehaviourPun
         isSearchable = false;
         Debug.Log("Player is invisible");
         ApplyBushChanges();
+    }
+    public void BushEntered()
+    {
+        if (photonView.IsMine && isPlayer)
+        {
+            isInBush = true;
+            isTransparent = true;
+            isSearchable = false;
+            foreach (var render in playerModel.GetComponent<MeshRenderersInModel>().MeshRenderers)
+            {
+                if (render.transform.name.Equals("Halo"))
+                {
+                    render.enabled = false;
+                }
+                else
+                {
+                    render.material.shader = transparentShader;
+                }
+
+            }
+            foreach (var render in playerModel.GetComponent<MeshRenderersInModel>().SkinnedMeshRenderers)
+            {
+                render.material.shader = transparentShader;
+            }
+        }
+        else
+        {
+            isInBush = true;
+            isInvisible = true;
+            isSearchable = false;
+            playerModel.SetActive(false);
+            SwitchPlayerElements(false);
+        }
+    }
+
+    public void BushExited()
+    {
+        if (photonView.IsMine && isPlayer)
+        {
+            isInBush = false;
+            isTransparent = false;
+            isSearchable = true;
+            foreach (var render in playerModel.GetComponent<MeshRenderersInModel>().MeshRenderers)
+            {
+                if (render.transform.name.Equals("Halo"))
+                {
+                    render.enabled = true;
+                }
+                else
+                {
+                    render.material.shader = standardShader;
+                }
+
+            }
+            foreach (var render in playerModel.GetComponent<MeshRenderersInModel>().SkinnedMeshRenderers)
+            {
+                render.material.shader = standardShader;
+            }
+
+        }
+        else
+        {
+            foreach (var render in playerModel.GetComponent<MeshRenderersInModel>().MeshRenderers)
+            {
+                if (render.transform.name.Equals("Halo"))
+                {
+                    render.enabled = true;
+                }
+                else
+                {
+                    render.material.shader = standardShader;
+                }
+
+            }
+            foreach (var render in playerModel.GetComponent<MeshRenderersInModel>().SkinnedMeshRenderers)
+            {
+                render.material.shader = standardShader;
+            }
+
+            isInvisible = false;
+            canBeSeen = false;
+            isSearchable = true;
+            isInBush = false;
+            playerModel.SetActive(true);
+            SwitchPlayerElements(true);
+        }
     }
 
     void ApplyBushChanges()
@@ -954,7 +1046,7 @@ public class PlayerCombatManager : MonoBehaviourPun
             playerUI.SetActive(false);
         }
     }
-
+    /*
     private void OnTriggerExit(Collider other)
     {
         if(other.gameObject.layer == 15)
@@ -1023,7 +1115,7 @@ public class PlayerCombatManager : MonoBehaviourPun
             }
         }
     }
-
+    */
 
     #endregion
 
