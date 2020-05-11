@@ -147,7 +147,6 @@ public class PlayerHealthManager : MonoBehaviourPun
     [PunRPC]
     void StartFrostbite_RPC(int _damageOrigin)
     {
-        Debug.Log("Frostbite Everywhere");
         frostbiteDurationTick = 0;
         frostbiteParticle.SetActive(true);
         StartCoroutine(Frostbite(_damageOrigin));
@@ -161,8 +160,9 @@ public class PlayerHealthManager : MonoBehaviourPun
         {
             if(photonView.IsMine)
             {
-                playerhealth -= (playerMaxHealth * PlayFabDataStore.playerBaseStats.FrostbiteDamageRate) / PlayFabDataStore.playerBaseStats.FrostbiteDuration;
-                photonView.RPC("UpdateHealth", RpcTarget.All, playerhealth, damageOrigin, true);
+                TakeDamage((PlayFabDataStore.playerBaseStats.PrimarySkillDamage * PlayFabDataStore.playerBaseStats.FrostbiteDamageRate) / PlayFabDataStore.playerBaseStats.FrostbiteDuration);
+                //playerhealth -= (PlayFabDataStore.playerBaseStats.PrimarySkillDamage * PlayFabDataStore.playerBaseStats.FrostbiteDamageRate) / PlayFabDataStore.playerBaseStats.FrostbiteDuration;
+                //photonView.RPC("UpdateHealth", RpcTarget.All, playerhealth, damageOrigin, true);
             }
             frostbiteDurationTick++;
             
@@ -259,7 +259,8 @@ public class PlayerHealthManager : MonoBehaviourPun
         Invoke("DelayedHealthRegenrationStart", 3f);
 
         if (damageOrigin == GameManager.Instance.GetCurrentPlayerViewID && !GetComponent<PlayerCombatManager>().isPlayer) ShowFloatingCombatText(_damage);
-        photonView.RPC("UpdateHealth", RpcTarget.All, playerhealth, damageOrigin, false);
+        bool frostbite = _damage < 5 ? true : false;
+        photonView.RPC("UpdateHealth", RpcTarget.All, playerhealth, damageOrigin, frostbite);
     }
 
     void DelayedHealthRegenrationStart()
@@ -331,7 +332,11 @@ public class PlayerHealthManager : MonoBehaviourPun
 
         UpdateHealthBar();
 
-        if (_damageOrigin == GameManager.Instance.GetCurrentPlayerViewID && GetComponent<PlayerCombatManager>().isPlayer) ShowFloatingCombatText(damage);
+        if (_damageOrigin == GameManager.Instance.GetCurrentPlayerViewID && _isFrostbite)
+        {
+            //Debug.Log("Forstbite Text " + damage);
+            //ShowFloatingCombatText(damage);
+        }
 
         if((playerhealth / playerMaxHealth <= PlayFabDataStore.playerBaseStats.RageStartRate) && isRage && !GetComponent<PlayerCombatManager>().IsDead)
         {

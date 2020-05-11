@@ -67,7 +67,6 @@ public class PlayerLevelManager : MonoBehaviourPunCallbacks
     {
         if(photonView.IsMine)
         {
-            Debug.Log("xp earned :" + _xp + "current level " + currentLevel);
             if(isPlayer) ShowFloatingCombatText(Mathf.RoundToInt(_xp * SmartMultiplier));
             currentXP += Mathf.RoundToInt(_xp * SmartMultiplier);
             if (currentXP >= Mathf.FloorToInt(firstLevelXP * Mathf.Pow(levelCoefficient, currentLevel)))
@@ -92,7 +91,6 @@ public class PlayerLevelManager : MonoBehaviourPunCallbacks
 
     public void RewardXP()
     {
-        Debug.Log("REWARDS XP");
         AddXP(Mathf.FloorToInt(killXP * Mathf.Pow(killXPCoefficient, GameManager.Instance.DeadPlayerLevel)));
     }
 

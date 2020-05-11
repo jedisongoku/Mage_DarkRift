@@ -63,7 +63,6 @@ public class ScoreManager : MonoBehaviour
 
     public void UpdateScore(string name)
     {
-        Debug.Log("Updating Score");
         if (playerScoreList.ContainsKey(name))
             playerScoreList[name]++;
 

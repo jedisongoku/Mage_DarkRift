@@ -877,7 +877,7 @@ public class HUDManager : MonoBehaviourPunCallbacks
 
     public void UpdateTotalKillsScoreText(int score)
     {
-        totalKillsScoreText.text = score.ToString();
+        totalKillsScoreText.text = score + "/20";
     }
     #endregion
 }

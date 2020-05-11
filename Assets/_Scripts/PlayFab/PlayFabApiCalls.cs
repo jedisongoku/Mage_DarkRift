@@ -499,7 +499,6 @@ public class PlayFabApiCalls : MonoBehaviour
         PlayFabClientAPI.ExecuteCloudScript(request, (result) =>
         {
             //Result
-            Debug.Log("Statistics Updated");
         }, (error) =>
         {
             OnPlayFabError(error);

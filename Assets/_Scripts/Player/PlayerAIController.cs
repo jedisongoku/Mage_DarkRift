@@ -117,7 +117,7 @@ public class PlayerAIController : MonoBehaviourPunCallbacks, IPunObservable
     {
         botPlayerCurrentState = botState.spawn;
 
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(2);
 
         StartCoroutine(StateSwitcher(botState.patrol, 0));
     }
@@ -453,7 +453,6 @@ public class PlayerAIController : MonoBehaviourPunCallbacks, IPunObservable
         botController.ResetPath();
 
         StartCoroutine(StateSwitcher(botState.spawn, 0));
-        Debug.Log("Bot Respawned");
     }
 
     bool LineOfSight(GameObject enemy)

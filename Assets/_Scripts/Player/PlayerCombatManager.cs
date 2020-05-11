@@ -393,7 +393,6 @@ public class PlayerCombatManager : MonoBehaviourPun
         {
             secondarySkillCooldownTimer = 0f;
             photonView.RPC("UseSecondarySkill", RpcTarget.AllViaServer);
-            Debug.Log("DASHING THROUGH THE SNOW");
         }
     }
 
@@ -567,7 +566,6 @@ public class PlayerCombatManager : MonoBehaviourPun
             if(IsDead)
             {
                 TurnOnNormalShader();
-                Debug.Log("DEAD");
                 DisablePlayer();
                 //Deaths statistic added
                 if (isPlayer)
@@ -671,7 +669,6 @@ public class PlayerCombatManager : MonoBehaviourPun
         set
         {
             primarySkillRecharge = value;
-            Debug.Log(value);
         }
     }
     public float PrimarySkillCooldown
@@ -842,42 +839,46 @@ public class PlayerCombatManager : MonoBehaviourPun
 
     private void OnTriggerEnter(Collider other)
     {
-        if(photonView.IsMine && other.gameObject.layer == 15 && isInBush && isPlayer)
+        if(other.gameObject.layer == 15)
         {
-            bushCount++;
-            if (!isTransparent)
+            if (photonView.IsMine && isInBush && isPlayer)
             {
-                isTransparent = true;
-                isSearchable = false;
-                foreach (var render in playerModel.GetComponent<MeshRenderersInModel>().MeshRenderers)
+                bushCount++;
+                if (!isTransparent)
                 {
-                    if(render.transform.name.Equals("Halo"))
+                    isTransparent = true;
+                    isSearchable = false;
+                    foreach (var render in playerModel.GetComponent<MeshRenderersInModel>().MeshRenderers)
                     {
-                        render.enabled = false;
+                        if (render.transform.name.Equals("Halo"))
+                        {
+                            render.enabled = false;
+                        }
+                        else
+                        {
+                            render.material.shader = transparentShader;
+                        }
+
                     }
-                    else
+                    foreach (var render in playerModel.GetComponent<MeshRenderersInModel>().SkinnedMeshRenderers)
                     {
                         render.material.shader = transparentShader;
                     }
-                    
-                }
-                foreach (var render in playerModel.GetComponent<MeshRenderersInModel>().SkinnedMeshRenderers)
-                {
-                    render.material.shader = transparentShader;
                 }
             }
-        }
-        else if (other.gameObject.layer == 15 && isInBush)
-        {
-            bushCount++;
-            if (!isInvisible && !canBeSeen)
+            else if (isInBush)
             {
-                isInvisible = true;
-                isSearchable = false;
-                playerModel.SetActive(false);
-                SwitchPlayerElements(false);
+                bushCount++;
+                if (!isInvisible && !canBeSeen)
+                {
+                    isInvisible = true;
+                    isSearchable = false;
+                    playerModel.SetActive(false);
+                    SwitchPlayerElements(false);
+                }
             }
         }
+        
 
     }
 
@@ -956,72 +957,71 @@ public class PlayerCombatManager : MonoBehaviourPun
 
     private void OnTriggerExit(Collider other)
     {
-        
-        if(photonView.IsMine && other.gameObject.layer == 15 && isInBush && isPlayer)
+        if(other.gameObject.layer == 15)
         {
-            bushCount--;
-            if (isTransparent && bushCount == 0)
+            if (photonView.IsMine && isInBush && isPlayer)
             {
-                
-                
-                isTransparent = false;
-                isSearchable = true;
-                foreach (var render in playerModel.GetComponent<MeshRenderersInModel>().MeshRenderers)
+                bushCount--;
+                if (isTransparent && bushCount == 0)
                 {
-                    if (render.transform.name.Equals("Halo"))
+                    isTransparent = false;
+                    isSearchable = true;
+                    foreach (var render in playerModel.GetComponent<MeshRenderersInModel>().MeshRenderers)
                     {
-                        render.enabled = true;
+                        if (render.transform.name.Equals("Halo"))
+                        {
+                            render.enabled = true;
+                        }
+                        else
+                        {
+                            render.material.shader = standardShader;
+                        }
+
                     }
-                    else
+                    foreach (var render in playerModel.GetComponent<MeshRenderersInModel>().SkinnedMeshRenderers)
+                    {
+                        render.material.shader = standardShader;
+                    }
+
+                    //playerBase.gameObject.SetActive(true);
+                    isInBush = false;
+
+                }
+
+            }
+            else if (isInBush)
+            {
+                bushCount--;
+                if (isInvisible && bushCount == 0)
+                {
+                    foreach (var render in playerModel.GetComponent<MeshRenderersInModel>().MeshRenderers)
+                    {
+                        if (render.transform.name.Equals("Halo"))
+                        {
+                            render.enabled = true;
+                        }
+                        else
+                        {
+                            render.material.shader = standardShader;
+                        }
+
+                    }
+                    foreach (var render in playerModel.GetComponent<MeshRenderersInModel>().SkinnedMeshRenderers)
                     {
                         render.material.shader = standardShader;
                     }
                     
-                }
-                foreach (var render in playerModel.GetComponent<MeshRenderersInModel>().SkinnedMeshRenderers)
-                {
-                    render.material.shader = standardShader;
-                }
-
-                //playerBase.gameObject.SetActive(true);
-                isInBush = false;
-
-            }
-            
-        }
-        else if(other.gameObject.layer == 15 && isInBush)
-        {
-            bushCount--;
-            if (isInvisible && bushCount == 0)
-            {
-                foreach (var render in playerModel.GetComponent<MeshRenderersInModel>().MeshRenderers)
-                {
-                    if (render.transform.name.Equals("Halo"))
-                    {
-                        render.enabled = true;
-                    }
-                    else
-                    {
-                        render.material.shader = standardShader;
-                    }
+                    isInvisible = false;
+                    canBeSeen = false;
+                    isSearchable = true;
+                    isInBush = false;
+                    playerModel.SetActive(true);
+                    SwitchPlayerElements(true);
                     
-                }
-                foreach (var render in playerModel.GetComponent<MeshRenderersInModel>().SkinnedMeshRenderers)
-                {
-                    render.material.shader = standardShader;
-                }
-                playerModel.SetActive(true);
-                isInvisible = false;
-                canBeSeen = false;
-                isSearchable = true;
-                SwitchPlayerElements(true);
-                isInBush = false;
 
+                }
             }
         }
-        
-
-
     }
 
 

@@ -102,7 +102,7 @@ public class PrimarySkillController : MonoBehaviour
             if (other.gameObject.layer == 16 && other.transform.parent.gameObject.GetComponent<PhotonView>() != null)
             {
                 //Debug.Log("Collided with :" + other.gameObject.name);
-                if (other.transform.parent.gameObject.GetComponent<PhotonView>().ViewID != PlayerViewID && !isHit)
+                if (other.transform.parent.gameObject.GetComponent<PhotonView>().ViewID != PlayerViewID)
                 {
                     if (other.transform.parent.gameObject.GetComponent<PlayerHealthManager>().CanTakeDamage()) DamageOrigin.GetComponent<PlayerCombatManager>().ApplyDamageToEnemy(other.transform.parent.gameObject);
 
@@ -126,7 +126,7 @@ public class PrimarySkillController : MonoBehaviour
         GameObject obj;
         if (!isPlayer)
         {
-            Debug.Log("Not hittin anyhting");
+            //Debug.Log("Not hittin anyhting");
             obj = ObjectPooler.Instance.GetPrimarySkillEnvironmentExplosionPrefab();
             obj.transform.position = transform.position;
             obj.SetActive(true);
