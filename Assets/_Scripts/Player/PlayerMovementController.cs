@@ -99,17 +99,6 @@ public class PlayerMovementController : MonoBehaviourPun, IPunObservable
         walkSpeed = PlayFabDataStore.playerBaseStats.WalkSpeed;
 
     }
-    /*
-    public void SetFireDirection(Vector3 _aimLocation)
-    {
-        if (photonView.IsMine && isPlayer)
-        {
-            //Vector3 desiredForward = Vector3.RotateTowards(transform.forward, _aimLocation, turnSpeed * Time.deltaTime, 0f);
-            //m_Rotation = Quaternion.LookRotation(desiredForward);
-            //transform.LookAt(_aimLocation);
-        }
-
-    }*/
 
     public Vector3 AimLocation
     {
@@ -160,12 +149,13 @@ public class PlayerMovementController : MonoBehaviourPun, IPunObservable
             if (movement == Vector2.zero)
             {
                 m_Rigidbody.velocity = Vector3.zero;
+                
             }
             m_Movement.Set(movement.x, 0f, movement.y);
             m_Movement.Normalize();
             //Debug.Log("Movement " + m_Movement);
 
-            Vector3 desiredForward = Vector3.RotateTowards(transform.forward, m_Movement, turnSpeed * Time.deltaTime, 0f);
+            Vector3 desiredForward = Vector3.RotateTowards(transform.forward, m_Movement, turnSpeed * Time.fixedDeltaTime, 0f);
             m_Rotation = Quaternion.LookRotation(desiredForward);
             int anim_x = movement.x < 0 ? -1 : movement.x > 0 ? 1 : 0;
             int anim_y = movement.y < 0 ? -1 : movement.y > 0 ? 1 : 0;
@@ -184,7 +174,6 @@ public class PlayerMovementController : MonoBehaviourPun, IPunObservable
     {
         if(isPlayer)
         {
-            Debug.Log("MMOvement " + m_Movement);
             m_Rigidbody.MovePosition(m_Rigidbody.position + m_Movement * m_Animator.deltaPosition.magnitude * walkSpeed);
             if (fireTimer > 0.3f)
             {
@@ -242,6 +231,11 @@ public class PlayerMovementController : MonoBehaviourPun, IPunObservable
     public void SwitchChillVisibility(bool value)
     {
         if (isChill) chillParticle.SetActive(value);
+    }
+
+    public void GameOver()
+    {
+        joystick.OnPointerUp(null);
     }
 
     

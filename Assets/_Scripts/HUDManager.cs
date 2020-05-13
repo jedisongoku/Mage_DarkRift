@@ -77,6 +77,7 @@ public class HUDManager : MonoBehaviourPunCallbacks
     [Header("Leaderboard Panel")]
     [SerializeField] public GameObject leaderboardPanel;
     [SerializeField] public GameObject leaderboardContent;
+    [SerializeField] public Toggle killLeaderboardToggle;
 
     [Header("Profile Panel")]
     [SerializeField] public GameObject profilePanel;
@@ -84,6 +85,7 @@ public class HUDManager : MonoBehaviourPunCallbacks
     [SerializeField] public Text totalKillsText;
     [SerializeField] public Text totalDeathsText;
     [SerializeField] public Text killStreakText;
+    [SerializeField] public Text deathmatchWinText;
     [SerializeField] public Text kdText;
     [SerializeField] public Text rankText;
     [SerializeField] private Text profilePlayerName;
@@ -99,6 +101,7 @@ public class HUDManager : MonoBehaviourPunCallbacks
     [SerializeField] public GameObject[] killFeed;
     [SerializeField] public GameObject runeInfoPanel;
     [SerializeField] public Text totalKillsScoreText;
+    [SerializeField] private Text winnerText;
     public GameObject[] scoreboardItems;
     public GameObject gamePanel;
     public GameObject exitGameButton;
@@ -121,6 +124,7 @@ public class HUDManager : MonoBehaviourPunCallbacks
     private float continueGemMultiplier = 1.5f;
     private int continueGemCost = 2;
     public bool runeSelected;
+    public bool isGameOver = false;
 
 
     [Header("Level")]
@@ -151,8 +155,10 @@ public class HUDManager : MonoBehaviourPunCallbacks
 
         Application.targetFrameRate = 9999;
         QualitySettings.vSyncCount = 0;
-        
 
+        killLeaderboardToggle.onValueChanged.AddListener(delegate { 
+            LeaderboardToggleValueChanged(killLeaderboardToggle);
+        });
         //ActivatePanels(menuPanel.name);   
         StartCoroutine(Applaunch());
     }
@@ -324,6 +330,7 @@ public class HUDManager : MonoBehaviourPunCallbacks
 
         if (PlayFabDataStore.vc_energy >= 5)
         {
+            Time.timeScale = 1;
             ExitGames.Client.Photon.Hashtable roomPropterties = new ExitGames.Client.Photon.Hashtable();
             roomPropterties.Add("Level", gameMode);
             PhotonNetwork.JoinRandomRoom(roomPropterties, 0);
@@ -396,11 +403,12 @@ public class HUDManager : MonoBehaviourPunCallbacks
     public void RefreshProfileStatistics()
     {
         gamesPlayedText.text = PlayFabDataStore.playerStatistics["Games Played"].ToString();
-        totalKillsText.text = PlayFabDataStore.playerStatistics["Total Kills"].ToString();
-        totalDeathsText.text = PlayFabDataStore.playerStatistics["Total Deaths"].ToString();
+        totalKillsText.text = PlayFabDataStore.playerStatistics["Lifetime Kills"].ToString();
+        totalDeathsText.text = PlayFabDataStore.playerStatistics["Deaths"].ToString();
         killStreakText.text = PlayFabDataStore.playerStatistics["Kill Streak"].ToString();
-        if (PlayFabDataStore.playerStatistics["Total Kills"] > 0)
-            kdText.text = (PlayFabDataStore.playerStatistics["Total Kills"] / PlayFabDataStore.playerStatistics["Total Deaths"]).ToString();
+        deathmatchWinText.text = PlayFabDataStore.playerStatistics["Deathmatch Win"].ToString();
+        if (PlayFabDataStore.playerStatistics["Lifetime Kills"] > 0)
+            kdText.text = ((float)PlayFabDataStore.playerStatistics["Lifetime Kills"] / (float)PlayFabDataStore.playerStatistics["Deaths"]).ToString("F2");
         else kdText.text = "0";
     }
 
@@ -546,7 +554,7 @@ public class HUDManager : MonoBehaviourPunCallbacks
             //coinReward.transform.Find("CoinText").GetComponent<Text>().text = GameManager.Instance.GetRewardAmount().ToString();
             //coinReward.SetActive(true);
 
-            PlayFabApiCalls.instance.UpdateStatistics("Lifetime Kills", GameManager.playerKillCount);
+            
             PlayFabApiCalls.instance.UpdateStatistics("Kill Streak", GameManager.playerKillCount);
             PlayFabApiCalls.instance.AddVirtualCurrency(GameManager.Instance.GetRewardAmount(), "CO");
             //Make api calls
@@ -641,6 +649,7 @@ public class HUDManager : MonoBehaviourPunCallbacks
     public void OnGameLevelLoaded()
     {
         //ActivatePanels(loadingPanel.name);
+        winnerText.gameObject.SetActive(false);
         Debug.Log("Game Level Loaded");
         loadingBar.fillAmount = 0.95f;
         runesPanel.SetActive(false);
@@ -675,7 +684,7 @@ public class HUDManager : MonoBehaviourPunCallbacks
         {
             GameManager.Instance.InitializePlayer();
             Invoke("ActivateGamePanel", 0.2f);
-            SoundManager.Instance.SwitchSound(false);
+            //SoundManager.Instance.SwitchSound(false);
         }
     }
 
@@ -709,7 +718,7 @@ public class HUDManager : MonoBehaviourPunCallbacks
     {
         GetComponent<Canvas>().worldCamera = Camera.main;
     }
-
+    
     public GameObject[] ScoreboardItems
     {
         get
@@ -876,5 +885,38 @@ public class HUDManager : MonoBehaviourPunCallbacks
     {
         totalKillsScoreText.text = score + "/20";
     }
+
+    public void GameOver(string name)
+    {
+        isGameOver = true;
+        Time.timeScale = 0.3f;
+        winnerText.text = name.ToUpper() + " WINS";
+        playerControllerPanel.SetActive(false);
+        runeSelection.SetActive(false);
+        winnerText.gameObject.SetActive(true);
+        
+        Invoke("OnExitButtonClicked", 2f);
+    }
+
+    void LeaderboardToggleValueChanged(Toggle change)
+    {
+        if (killLeaderboardToggle.isOn)
+        {
+            LeaderboardManager.Instance.RefreshLeaderboard("Lifetime Kills");
+            LeaderboardManager.Instance.RefreshPlayerRank("Lifetime Kills");
+        }  
+        else
+        {
+            LeaderboardManager.Instance.RefreshLeaderboard("Deathmatch Win");
+            LeaderboardManager.Instance.RefreshPlayerRank("Deathmatch Win");
+        }
+            
+    }
+
+    public void TurnOffUI()
+    {
+        gamePanel.SetActive(false);
+    }
+
     #endregion
 }

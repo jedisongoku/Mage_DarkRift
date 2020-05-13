@@ -82,6 +82,11 @@ public class ScoreManager : MonoBehaviour
             HUDManager.Instance.ScoreboardItems[1].transform.Find("KillFeed").GetComponent<Text>().text = scoreList[1].Key + " - " + scoreList[1].Value + " kills";
             HUDManager.Instance.ScoreboardItems[2].transform.Find("KillFeed").GetComponent<Text>().text = scoreList[2].Key + " - " + scoreList[2].Value + " kills";
         }
+
+        if(scoreList[0].Value == PlayFabDataStore.deathmatchFinalScore)
+        {
+            GameManager.Instance.GetCurrentPlayer.GetComponent<PlayerNetworkManager>().WinGame(scoreList[0].Key.ToString());
+        }
         
 
 

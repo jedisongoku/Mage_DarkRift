@@ -104,6 +104,7 @@ public class PlayerCombatManager : MonoBehaviourPun
             killFeedName = PhotonNetwork.LocalPlayer.NickName;
             //GetComponent<CapsuleCollider>().radius = 0.75f;
             GetComponent<PlayerLevelManager>().RegisterOnKill();
+            GameManager.OnGameOver += GameOver;
 
         }
         else
@@ -114,7 +115,11 @@ public class PlayerCombatManager : MonoBehaviourPun
             playerNameText.color = enemyNameColor;
             playerBase.startColor = enemyNameColor;
             if(isPlayer)
+            {
                 killFeedName = PhotonNetwork.GetPhotonView(photonView.ViewID).Owner.NickName;
+                PlayFabApiCalls.instance.UpdateStatistics("Games Played", 1);
+            }
+                
             else
             {
                 playerModel.GetComponent<MeshRenderersInModel>().AddAnimationRendererUpdate();
@@ -125,7 +130,7 @@ public class PlayerCombatManager : MonoBehaviourPun
 
         ScoreManager.Instance.StartScoreboard(killFeedName);
         SetPlayerBaseStats();
-        
+            
 
 
     }
@@ -270,11 +275,9 @@ public class PlayerCombatManager : MonoBehaviourPun
             if (!targetEnemy.GetComponent<PlayerCombatManager>().IsDead && LineOfSight(targetEnemy) &&
                 targetEnemy.GetComponent<PlayerCombatManager>().isSearchable && distance > Vector3.Distance(targetEnemy.transform.position, transform.position))
             {
-                //Debug.Log("Attack same enemy");
                 return targetEnemy;
             }
         }*/
-        //Debug.Log("Attack different enemy");
 
         foreach (var enemy in PhotonNetwork.PhotonViews)
         {
@@ -481,8 +484,7 @@ public class PlayerCombatManager : MonoBehaviourPun
         isSearchable = true;
 
         //Games played statistic added
-        if(isPlayer)
-            PlayFabApiCalls.instance.UpdateStatistics("Games Played", 1);
+        
 
         secondarySkillCooldownTimer = secondarySkillCooldown;
     }
@@ -515,7 +517,9 @@ public class PlayerCombatManager : MonoBehaviourPun
     [PunRPC]
     void RespawnClients(int _spawnLocationIndex)
     {
-        if(!photonView.IsMine || !isPlayer)
+        m_Animator.SetTrigger("Respawn");
+
+        if (!photonView.IsMine || !isPlayer)
         {
             playerUI.SetActive(false);
             playerModel.SetActive(false);
@@ -526,7 +530,7 @@ public class PlayerCombatManager : MonoBehaviourPun
         SetPlayerBaseStats();
 
         transform.position = GameManager.Instance.SpawnLocation(_spawnLocationIndex);
-        m_Animator.SetTrigger("Respawn");
+        
         GetComponent<CapsuleCollider>().enabled = true;
         playerDamageCollider.enabled = true;
         playerHealthManager.RespawnPlayer();
@@ -572,6 +576,7 @@ public class PlayerCombatManager : MonoBehaviourPun
         set
         {
             isDead = value;
+            
             if(IsDead)
             {
                 TurnOnNormalShader();
@@ -579,8 +584,8 @@ public class PlayerCombatManager : MonoBehaviourPun
                 //Deaths statistic added
                 if (isPlayer)
                 {
-                    PlayFabApiCalls.instance.UpdateStatistics("Deaths", 1);
-                    PlayFabApiCalls.instance.UpdateStatistics("Max Level", GetComponent<PlayerLevelManager>().GetPlayerLevel());
+                    GameManager.playerTotalDeathCount++;
+                    
                 }
                 //Max Level statistic added
 
@@ -603,6 +608,21 @@ public class PlayerCombatManager : MonoBehaviourPun
                     
                     
                 }
+                
+                if (PhotonNetwork.IsMasterClient)
+                {
+                    int gemCount = GetComponent<PlayerLevelManager>().GetPlayerLevel() * 2;
+
+                    for(int i = 0; i < gemCount; i++)
+                    {
+                        //float random = Random.Range(-1f, 1f);
+                        Vector3 randomVector = new Vector3(Random.Range(-1f, 1f), 0, Random.Range(-1f, 1f));
+                        photonView.RPC("SpawnGemAfterDeath", RpcTarget.AllViaServer, gameObject.transform.position, randomVector);
+                    }
+
+                    
+                }
+                    
             }
         }
     }
@@ -829,26 +849,7 @@ public class PlayerCombatManager : MonoBehaviourPun
 
         playerModel.SetActive(true);
     }
-    /*
-    void SwitchPlayerElements(bool value)
-    {
-        playerUI.SetActive(value);
-        playerUI.transform.Find("Canvas").GetComponent<Canvas>().enabled = value;
-        playerShadow.SetActive(value);
-        
-        if (!photonView.IsMine || !isPlayer)
-        {
-            //dashTrail.SetActive(value);
-            playerHealthManager.SwitchShieldVisibility(value);
-            playerHealthManager.SwitchRageVisibility(value);
-            playerHealthManager.SwitchStrongHearthVisibility(value);
-            playerHealthManager.SwitchFrostbiteVisibility(value);
-            playerMovementController.SwitchChillVisibility(value);
-            playerBase.gameObject.SetActive(value);
-        }
 
-
-    }*/
     void SwitchPlayerElements(bool value)
     {
         playerUI.transform.Find("Canvas").GetComponent<Canvas>().enabled = value;
@@ -867,52 +868,6 @@ public class PlayerCombatManager : MonoBehaviourPun
 
 
     }
-
-    /*
-    private void OnTriggerEnter(Collider other)
-    {
-        if(other.gameObject.layer == 15)
-        {
-            if (photonView.IsMine && isInBush && isPlayer)
-            {
-                bushCount++;
-                if (!isTransparent)
-                {
-                    isTransparent = true;
-                    isSearchable = false;
-                    foreach (var render in playerModel.GetComponent<MeshRenderersInModel>().MeshRenderers)
-                    {
-                        if (render.transform.name.Equals("Halo"))
-                        {
-                            render.enabled = false;
-                        }
-                        else
-                        {
-                            render.material.shader = transparentShader;
-                        }
-
-                    }
-                    foreach (var render in playerModel.GetComponent<MeshRenderersInModel>().SkinnedMeshRenderers)
-                    {
-                        render.material.shader = transparentShader;
-                    }
-                }
-            }
-            else if (isInBush)
-            {
-                bushCount++;
-                if (!isInvisible && !canBeSeen)
-                {
-                    isInvisible = true;
-                    isSearchable = false;
-                    playerModel.SetActive(false);
-                    SwitchPlayerElements(false);
-                }
-            }
-        }
-        
-
-    }*/
 
     
     public void BushEntered()
@@ -1054,76 +1009,16 @@ public class PlayerCombatManager : MonoBehaviourPun
             playerUI.transform.Find("Canvas").GetComponent<Canvas>().enabled = false;
         }
     }
-    /*
-    private void OnTriggerExit(Collider other)
+
+    public void GameOver()
     {
-        if(other.gameObject.layer == 15)
-        {
-            if (photonView.IsMine && isInBush && isPlayer)
-            {
-                bushCount--;
-                if (isTransparent && bushCount == 0)
-                {
-                    isTransparent = false;
-                    isSearchable = true;
-                    foreach (var render in playerModel.GetComponent<MeshRenderersInModel>().MeshRenderers)
-                    {
-                        if (render.transform.name.Equals("Halo"))
-                        {
-                            render.enabled = true;
-                        }
-                        else
-                        {
-                            render.material.shader = standardShader;
-                        }
-
-                    }
-                    foreach (var render in playerModel.GetComponent<MeshRenderersInModel>().SkinnedMeshRenderers)
-                    {
-                        render.material.shader = standardShader;
-                    }
-
-                    //playerBase.gameObject.SetActive(true);
-                    isInBush = false;
-
-                }
-
-            }
-            else if (isInBush)
-            {
-                bushCount--;
-                if (isInvisible && bushCount == 0)
-                {
-                    foreach (var render in playerModel.GetComponent<MeshRenderersInModel>().MeshRenderers)
-                    {
-                        if (render.transform.name.Equals("Halo"))
-                        {
-                            render.enabled = true;
-                        }
-                        else
-                        {
-                            render.material.shader = standardShader;
-                        }
-
-                    }
-                    foreach (var render in playerModel.GetComponent<MeshRenderersInModel>().SkinnedMeshRenderers)
-                    {
-                        render.material.shader = standardShader;
-                    }
-                    
-                    isInvisible = false;
-                    canBeSeen = false;
-                    isSearchable = true;
-                    isInBush = false;
-                    playerModel.SetActive(true);
-                    SwitchPlayerElements(true);
-                    
-
-                }
-            }
-        }
+        playerMovementController.GameOver();
+        playerMovementController.enabled = false;
+        playerDamageCollider.enabled = false;
+        playerUI.SetActive(false);
+        this.enabled = false;
+        
     }
-    */
 
     #endregion
 
@@ -1171,6 +1066,23 @@ public class PlayerCombatManager : MonoBehaviourPun
     {
         totalKills = _totalKills;
     }
+
+    private void OnDestroy()
+    {
+        GameManager.OnGameOver -= GameOver;
+    }
+
+    [PunRPC]
+    void SpawnGemAfterDeath(Vector3 spawnLocation, Vector3 randomVector)
+    {
+
+        GameObject obj = ObjectPooler.Instance.GetGemPrefab();
+        obj.transform.position = spawnLocation + randomVector;
+        obj.SetActive(true);
+
+        obj.GetComponent<Rigidbody>().AddExplosionForce(8, spawnLocation, 1, 0, ForceMode.Impulse);
+    }
+
     #endregion
 
 }

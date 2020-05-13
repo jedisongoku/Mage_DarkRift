@@ -555,18 +555,27 @@ public class PlayFabApiCalls : MonoBehaviour
         
     }
 
-    public void GetLeaderboard()
+    public void GetLeaderboard(string statisticName)
     {
         var request = new GetLeaderboardRequest()
         {
             MaxResultsCount = 100,
-            StatisticName = "Lifetime Kills",
+            StatisticName = statisticName,
             
         };
         PlayFabClientAPI.GetLeaderboard(request, (result) =>
         {
             //Result
-            LeaderboardManager.Instance.RefreshLeaderboard(result.Leaderboard);
+            if(statisticName == "Lifetime Kills")
+            {
+                LeaderboardManager.killLeaderboardList = result.Leaderboard;
+                LeaderboardManager.Instance.RefreshLeaderboard(statisticName);
+            }
+            else
+            {
+                LeaderboardManager.winLeaderboardList = result.Leaderboard;
+            }
+            
             Debug.Log("leaderboard retrieved");
         }, (error) =>
         {
@@ -603,24 +612,41 @@ public class PlayFabApiCalls : MonoBehaviour
 
         });
     }
-    public void GetLeaderboardAroundPlayer()
+    public void GetLeaderboardAroundPlayer(string statisticName)
     {
         var request = new GetLeaderboardAroundPlayerRequest()
         {
-            StatisticName = "Lifetime Kills"
+            StatisticName = statisticName,
+            MaxResultsCount = 2
         };
         PlayFabClientAPI.GetLeaderboardAroundPlayer(request, (result) =>
         {
             //Result
-            foreach(var entry in result.Leaderboard)
+            if (statisticName == "Lifetime Kills")
             {
-                if(entry.PlayFabId == PlayFabDataStore.playFabID)
+                foreach (var entry in result.Leaderboard)
                 {
-                    LeaderboardManager.Instance.RefreshPlayerRank(entry);
+                    if (entry.PlayFabId == PlayFabDataStore.playFabID)
+                    {
+                        LeaderboardManager.killLeaderboardLocalPlayer = entry;
+                    }
+
                 }
-                    
+                LeaderboardManager.Instance.RefreshPlayerRank(statisticName);
             }
-            //LeaderboardManager.Instance.RefreshPlayerRank(result.Leaderboard.);
+            else
+            {
+                foreach (var entry in result.Leaderboard)
+                {
+                    if (entry.PlayFabId == PlayFabDataStore.playFabID)
+                    {
+                        LeaderboardManager.winLeaderboardLocalPlayer = entry;
+                    }
+
+                }
+            }
+            
+            
             Debug.Log("leaderboard retrieved");
         }, (error) =>
         {

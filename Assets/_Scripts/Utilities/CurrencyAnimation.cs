@@ -51,7 +51,7 @@ public class CurrencyAnimation : MonoBehaviour
         {
             timer = 0;
             StartCoroutine(StartMovingToTarget(0));
-            Invoke("AutoDisable", 1.5f);
+            Invoke("AutoDisable", 1.25f);
         }
     }
 

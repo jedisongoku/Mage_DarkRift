@@ -257,7 +257,11 @@ public class PlayerHealthManager : MonoBehaviourPun
         CanHeal = false;
         Invoke("DelayedHealthRegenrationStart", 3f);
 
-        if (damageOrigin == GameManager.Instance.GetCurrentPlayerViewID && !GetComponent<PlayerCombatManager>().isPlayer) ShowFloatingCombatText(_damage);
+        if (damageOrigin == GameManager.Instance.GetCurrentPlayerViewID && !GetComponent<PlayerCombatManager>().isPlayer)
+        {
+            ShowFloatingCombatText(_damage);
+            if (playerhealth == 0) ShowFloatingCombatText(-1);
+        }
         bool frostbite = _damage < 5 ? true : false;
         photonView.RPC("UpdateHealth", RpcTarget.All, playerhealth, damageOrigin, frostbite);
     }
@@ -525,6 +529,11 @@ public class PlayerHealthManager : MonoBehaviourPun
         if(amount == 0)
         {
             obj.GetComponent<TextMeshPro>().text = "BLOCK";
+        }
+        else if(amount == -1)
+        {
+            obj.GetComponent<TextMeshPro>().text = "KILLED!";
+            obj.GetComponent<TextMeshPro>().color = Color.red;
         }
         else
         {

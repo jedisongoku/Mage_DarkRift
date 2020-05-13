@@ -36,6 +36,7 @@ public class SoundManager : MonoBehaviour
         track = GetComponent<AudioSource>();
         //SwitchSound(true);
         Invoke("SetOptionSliders", 2);
+        SwitchSound(true);
 
     }
 

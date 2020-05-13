@@ -10,6 +10,9 @@ public class GameManager : MonoBehaviour
     public delegate void KillEvent();
     public static event KillEvent OnPlayerKill;
 
+    public delegate void GameOverEvent();
+    public static event GameOverEvent OnGameOver;
+
     [SerializeField] GameObject playerPrefab;
     [SerializeField] GameObject[] spawnLocations;
     [SerializeField] GameObject botPlayerPrefab;
@@ -19,9 +22,12 @@ public class GameManager : MonoBehaviour
     private static int currentPlayerViewID;
     public static int playerKillCount = 0;
     public static int playerTotalKillCount = 0;
+    public static int playerTotalDeathCount = 0;
     private int respawnCooldown = 6;
     private bool canRespawn = false;
     private int lastSpawnLocation;
+    public static bool isGameOver = false;
+    public static bool isWinner = false;
     
     public int botPlayerCount { get; set; }
 
@@ -60,6 +66,8 @@ public class GameManager : MonoBehaviour
         playerKillCount = 0;
         playerTotalKillCount = 0;
         botPlayerCount = 0;
+        OnPlayerKill = null;
+        OnPlayerKill = null;
         HUDManager.Instance.UpdateTotalKillsScoreText(playerTotalKillCount);
 
     }
@@ -203,6 +211,8 @@ public class GameManager : MonoBehaviour
             PhotonNetwork.GetPhotonView(_playerViewID).GetComponent<PlayerLevelManager>().RewardXP();
         }
 
+        
+
         if (_playerViewID == currentPlayerViewID)
         {
             
@@ -211,7 +221,10 @@ public class GameManager : MonoBehaviour
             playerTotalKillCount++;
             HUDManager.Instance.UpdateTotalKillsScoreText(playerTotalKillCount);
 
-            if(OnPlayerKill != null)
+            if (playerTotalKillCount == PlayFabDataStore.deathmatchFinalScore) isWinner = true;
+
+
+            if (OnPlayerKill != null)
             {
                 OnPlayerKill();
             }
@@ -249,6 +262,20 @@ public class GameManager : MonoBehaviour
                 PhotonNetwork.SendAllOutgoingCommands();
             }
                 
+    }
+
+    public void GameOver()
+    {
+        if (isWinner)
+            PlayFabApiCalls.instance.UpdateStatistics("Deathmatch Win", 1);
+        PlayFabApiCalls.instance.UpdateStatistics("Deaths", playerTotalDeathCount);
+        PlayFabApiCalls.instance.UpdateStatistics("Lifetime Kills", playerTotalKillCount);
+
+        if (OnGameOver != null)
+        {
+            OnGameOver();
+            isGameOver = true;
+        }
     }
 
 }

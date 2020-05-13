@@ -8,6 +8,7 @@ public class FloatingCombatText : MonoBehaviour
 
     public float DisableTime = 3f;
     public Color defaultColor;
+    public Color killColor;
     public Vector3 Offset = new Vector3(-2, 2, 0);
     public Vector3 RandomizeIntensity = new Vector3(0.5f, 0, 0);
     // Start is called before the first frame update

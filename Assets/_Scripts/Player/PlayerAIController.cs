@@ -64,6 +64,7 @@ public class PlayerAIController : MonoBehaviourPunCallbacks, IPunObservable
 
             playerNameText.text = "Mage" + Random.Range(1000, 9999);
             playerCombatManager.killFeedName = playerNameText.text;
+            GameManager.OnGameOver += GameOver;
         }
             
 
@@ -254,7 +255,7 @@ public class PlayerAIController : MonoBehaviourPunCallbacks, IPunObservable
                         if (botController.enabled)
                             botController.SetDestination(GameManager.Instance.SpawnLocation(i));
 
-                        if (playerCombatManager.BotPlayerSecondarySkillAvailable())
+                        if (playerCombatManager.BotPlayerSecondarySkillAvailable() && !playerCombatManager.IsDead)
                         {
                             StartCoroutine(Dash());
                         }
@@ -372,7 +373,11 @@ public class PlayerAIController : MonoBehaviourPunCallbacks, IPunObservable
     public void OnDeath()
     {
         StopAllCoroutines();
-        botController.isStopped = true;
+        if (botController.enabled)
+        {
+            botController.isStopped = true;
+        }
+        
     }
 
     private void OnTriggerEnter(Collider other)
@@ -382,10 +387,11 @@ public class PlayerAIController : MonoBehaviourPunCallbacks, IPunObservable
         {
 
             playersInRange.Add(other.gameObject);
-            if (other.gameObject.GetComponent<PlayerCombatManager>().isPlayer && targetPlayer == null)
+            if (other.gameObject.GetComponent<PlayerCombatManager>().isPlayer && targetPlayer == null && other.gameObject.GetComponent<PlayerCombatManager>().isSearchable)
                 targetPlayer = other.gameObject;
-                   
-            StartCoroutine(StateSwitcher(botState.attack, 0));
+            
+            if(botPlayerState != botState.spawn)
+                StartCoroutine(StateSwitcher(botState.attack, 0));
 
         }
     }
@@ -410,6 +416,7 @@ public class PlayerAIController : MonoBehaviourPunCallbacks, IPunObservable
 
     public void OnBotPlayerDeath()
     {
+        
         StopAllCoroutines();
         playersInRange.Clear();
         targetPlayer = null;
@@ -446,5 +453,15 @@ public class PlayerAIController : MonoBehaviourPunCallbacks, IPunObservable
         }
     }
 
-    
+    private void OnDestroy()
+    {
+        GameManager.OnGameOver -= GameOver;
+    }
+
+    void GameOver()
+    {
+        StopAllCoroutines();
+        botController.enabled = false;
+        this.enabled = false;
+    }
 }

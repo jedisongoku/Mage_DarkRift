@@ -186,5 +186,19 @@ public class PlayerNetworkManager : MonoBehaviourPunCallbacks
         obj.GetComponent<Rigidbody>().AddExplosionForce(power, spawnLocation, radius, upforce, ForceMode.Impulse);
     }
 
+    public void WinGame(string name)
+    {
+        
+        photonView.RPC("GameOver", RpcTarget.AllViaServer, name);
+    }
+
+    [PunRPC]
+    void GameOver(string name)
+    {
+        if (name == playerNameText.text) GameManager.isWinner = true;
+        GameManager.Instance.GameOver();
+        HUDManager.Instance.GameOver(name);
+    }
+
 
 }
