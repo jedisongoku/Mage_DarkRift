@@ -198,6 +198,7 @@ public class PlayerMovementController : MonoBehaviourPun, IPunObservable
 
             float lag = Mathf.Abs((float)(PhotonNetwork.Time - info.SentServerTime));
             m_Rigidbody.position += m_Rigidbody.velocity * lag;
+            Debug.Log("Serialize");
         }
     }
 

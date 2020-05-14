@@ -7,6 +7,7 @@ public class ScreenshotHandler : MonoBehaviour
     private static ScreenshotHandler instance;
     public Camera myCamera;
     private bool takeScreenshotOnNextFrame;
+    public static int count = 1;
     // Start is called before the first frame update
     void Awake()
     {
@@ -19,6 +20,7 @@ public class ScreenshotHandler : MonoBehaviour
         if(Input.GetKeyDown(KeyCode.K))
         {
             TakeScreenshot(2048 , 2048);
+            count++;
         }
 
         if (Input.GetKeyDown(KeyCode.I))
@@ -50,7 +52,7 @@ public class ScreenshotHandler : MonoBehaviour
             renderResult.ReadPixels(rect, 0, 0);
 
             byte[] byteArray = renderResult.EncodeToPNG();
-            System.IO.File.WriteAllBytes(Application.dataPath + "/_Textures/SkinTextures/" + MenuSkinController.instance.GetSkin().name + "Icon5" +
+            System.IO.File.WriteAllBytes(Application.dataPath + "/_Textures/SkinTextures/" + "SS" + count +
                 ".png", byteArray);
             Debug.Log("Saved " + MenuSkinController.instance.GetSkin().name);
 

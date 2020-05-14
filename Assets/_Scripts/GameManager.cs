@@ -15,7 +15,7 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] GameObject playerPrefab;
     [SerializeField] GameObject[] spawnLocations;
-    [SerializeField] GameObject botPlayerPrefab;
+    [SerializeField] GameObject[] botPlayerPrefab;
 
     private static GameObject currentPlayer;
     private List<GameObject> botPlayerList = new List<GameObject>();
@@ -28,6 +28,8 @@ public class GameManager : MonoBehaviour
     private int lastSpawnLocation;
     public static bool isGameOver = false;
     public static bool isWinner = false;
+
+    int spawn = 0;
     
     public int botPlayerCount { get; set; }
 
@@ -123,9 +125,10 @@ public class GameManager : MonoBehaviour
             {
                 int spawnLocationIndex = index;
 
-                GameObject bot = PhotonNetwork.InstantiateSceneObject(botPlayerPrefab.name, spawnLocations[spawnLocationIndex].transform.position, Quaternion.identity);
+                GameObject bot = PhotonNetwork.InstantiateSceneObject(botPlayerPrefab[spawn].name, spawnLocations[spawnLocationIndex].transform.position, Quaternion.identity);
                 bot.GetComponent<PlayerAIController>().spawnLocation = spawnLocationIndex;
                 botPlayerCount++;
+                spawn++;
 
             }
             else

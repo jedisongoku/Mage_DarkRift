@@ -9,7 +9,7 @@ public class PlayFabDataStore : MonoBehaviour
     //public static string playerName;
     //public static string playerActiveSkin;
     public static string gameMode = "Deathmatch";
-    public static int deathmatchFinalScore = 5;
+    public static int deathmatchFinalScore = 20;
     public static PlayerBaseStats playerBaseStats;
     public static PlayerProfile playerProfile;
     public static Dictionary<string, int> playerStatistics = new Dictionary<string, int>()

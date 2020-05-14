@@ -118,8 +118,7 @@ public class PlayerCombatManager : MonoBehaviourPun
             {
                 killFeedName = PhotonNetwork.GetPhotonView(photonView.ViewID).Owner.NickName;
                 PlayFabApiCalls.instance.UpdateStatistics("Games Played", 1);
-            }
-                
+            }  
             else
             {
                 playerModel.GetComponent<MeshRenderersInModel>().AddAnimationRendererUpdate();
@@ -1077,10 +1076,10 @@ public class PlayerCombatManager : MonoBehaviourPun
     {
 
         GameObject obj = ObjectPooler.Instance.GetGemPrefab();
-        obj.transform.position = spawnLocation + randomVector;
+        obj.transform.position = spawnLocation + randomVector + Vector3.up;
         obj.SetActive(true);
 
-        obj.GetComponent<Rigidbody>().AddExplosionForce(8, spawnLocation, 1, 0, ForceMode.Impulse);
+        obj.GetComponent<Rigidbody>().AddExplosionForce(8, spawnLocation, 1, Random.Range(0.5f, 1), ForceMode.Impulse);
     }
 
     #endregion
