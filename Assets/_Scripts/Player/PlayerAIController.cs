@@ -287,7 +287,7 @@ public class PlayerAIController : MonoBehaviourPunCallbacks, IPunObservable
     IEnumerator Dash()
     {
 
-        yield return new WaitForSeconds(0.2f);
+        yield return new WaitForSeconds(0f);
 
         playerCombatManager.BotPlayerDash();
     }
