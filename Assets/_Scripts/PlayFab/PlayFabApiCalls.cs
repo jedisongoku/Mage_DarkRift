@@ -53,6 +53,7 @@ public class PlayFabApiCalls : MonoBehaviour
          });
     }
 
+#if UNITY_ANDROID
     public void AuthenticateWithGoogle()
     {
         var request = new LoginWithGoogleAccountRequest()
@@ -74,6 +75,7 @@ public class PlayFabApiCalls : MonoBehaviour
             OnPlayFabError(error);
         });
     }
+#endif
 
     public void AuthenticateWithAppleGameCenter()
     {
