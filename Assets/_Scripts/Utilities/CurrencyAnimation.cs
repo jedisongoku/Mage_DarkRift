@@ -51,7 +51,7 @@ public class CurrencyAnimation : MonoBehaviour
         {
             timer = 0;
             StartCoroutine(StartMovingToTarget(0));
-            Invoke("AutoDisable", 1.25f);
+            Invoke("AutoDisable", 1f);
         }
     }
 
@@ -87,6 +87,8 @@ public class CurrencyAnimation : MonoBehaviour
             else HUDManager.Instance.CoinCurrencyTextUpdate(currentAmount);
             Icons[i].SetActive(false);
         }
+
+        //if(i == 4) HUDManager.Instance.UpdateCurrencies();
 
     }
 

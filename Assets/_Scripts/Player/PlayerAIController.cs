@@ -272,13 +272,13 @@ public class PlayerAIController : MonoBehaviourPunCallbacks, IPunObservable
             } 
         }
 
-        yield return new WaitForSeconds(2);
+        yield return new WaitForSeconds(1);
 
         if(botPlayerCurrentState == botState.defense)
         {
             if (GetComponent<PlayerHealthManager>().PlayerHealth > defenseHealthThreshold || botController.velocity.magnitude < botController.speed)
             {
-                StartCoroutine(StateSwitcher(botState.patrol, Random.Range(0.5f, 1f)));
+                StartCoroutine(StateSwitcher(botState.patrol, 0));
             }
         }
         //if (botPlayerState == botState.defense) StartCoroutine(Defense());
@@ -335,7 +335,7 @@ public class PlayerAIController : MonoBehaviourPunCallbacks, IPunObservable
             m_Rigidbody.MovePosition(m_Rigidbody.position + botController.velocity.normalized * m_Animator.deltaPosition.magnitude);
         }
 
-        if (fireTimer > 0.3f)
+        if (fireTimer > 0.15f)
         {
             m_Rigidbody.MoveRotation(m_Rotation);
         }

@@ -13696,8 +13696,8 @@ Transform:
   - {fileID: 1611593959}
   - {fileID: 548327252}
   - {fileID: 2018663319}
-  - {fileID: 1717314367}
   - {fileID: 1204074578}
+  - {fileID: 1717314367}
   - {fileID: 999709512}
   - {fileID: 8638621818299191999}
   - {fileID: 7104490289220640466}
@@ -21431,7 +21431,7 @@ Transform:
   - {fileID: 1342206103}
   - {fileID: 1224576243}
   m_Father: {fileID: 745719891}
-  m_RootOrder: 7
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1205982051
 PrefabInstance:
@@ -25831,11 +25831,6 @@ PrefabInstance:
       propertyPath: m_Center.z
       value: 0.31
       objectReference: {fileID: 0}
-    - target: {fileID: -7167218144267508997, guid: 928204c48bfe18a4d998f2a912b423f9,
-        type: 3}
-      propertyPath: m_Convex
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 23919353226160096, guid: 928204c48bfe18a4d998f2a912b423f9,
         type: 3}
       propertyPath: m_CastShadows
@@ -25844,6 +25839,11 @@ PrefabInstance:
     - target: {fileID: 23919353226160096, guid: 928204c48bfe18a4d998f2a912b423f9,
         type: 3}
       propertyPath: m_ReceiveShadows
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -7167218144267508997, guid: 928204c48bfe18a4d998f2a912b423f9,
+        type: 3}
+      propertyPath: m_Convex
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents:
@@ -44447,6 +44447,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalPosition.z
       value: -1.27
+      objectReference: {fileID: 0}
+    - target: {fileID: 7655384648349084076, guid: e4e8cb316a841d544883b55aa4d26db2,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.05
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e4e8cb316a841d544883b55aa4d26db2, type: 3}

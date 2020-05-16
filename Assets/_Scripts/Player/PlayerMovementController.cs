@@ -175,7 +175,7 @@ public class PlayerMovementController : MonoBehaviourPun, IPunObservable
         if(isPlayer)
         {
             m_Rigidbody.MovePosition(m_Rigidbody.position + m_Movement * m_Animator.deltaPosition.magnitude * walkSpeed);
-            if (fireTimer > 0.3f)
+            if (fireTimer > 0.15f)
             {
                 m_Rigidbody.MoveRotation(m_Rotation);
             }

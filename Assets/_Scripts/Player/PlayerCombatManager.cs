@@ -266,7 +266,7 @@ public class PlayerCombatManager : MonoBehaviourPun
     GameObject ClosestEnemy(GameObject targetEnemy)
     {
         GameObject closestEnemy = null;
-        float distance = 12;
+        float distance = 15;
         
         /*
         if (targetEnemy != null)
@@ -377,9 +377,6 @@ public class PlayerCombatManager : MonoBehaviourPun
             }
         }
     }
-
-
-
 
 
     public void PrimarySkill(Vector3 _aimLocation)
@@ -546,8 +543,6 @@ public class PlayerCombatManager : MonoBehaviourPun
         
 
     }
-
-    
 
     void RespawnFollowCamera()
     {
