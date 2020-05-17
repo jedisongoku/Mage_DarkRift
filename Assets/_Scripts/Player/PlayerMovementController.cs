@@ -215,7 +215,7 @@ public class PlayerMovementController : MonoBehaviourPun, IPunObservable
         StopAllCoroutines();
         chillParticle.SetActive(false);
         isChill = false;
-        joystick.OnPointerUp(null);
+        if(isPlayer) joystick.OnPointerUp(null);
         this.enabled = false;
     }
 

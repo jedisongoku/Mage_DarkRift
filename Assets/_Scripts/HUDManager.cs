@@ -126,6 +126,16 @@ public class HUDManager : MonoBehaviourPunCallbacks
     public bool runeSelected;
     public bool isGameOver = false;
 
+    [Header("Rewards Panel")]
+    [SerializeField] public GameObject rewardsPanel;
+    [SerializeField] public GameObject[] resultsContent;
+    [SerializeField] public Text playerNameText;
+    [SerializeField] public Text playerPlacementText;
+    [SerializeField] public Text rewardsCoinText;
+    [SerializeField] public Text rewardsMaxLevelText;
+    [SerializeField] public Text rewardsKillsText;
+    [SerializeField] public Text rewardsDeathsText;
+    [SerializeField] public Sprite localPlayerSprite;
 
     [Header("Level")]
     [SerializeField] private Text levelText;
@@ -550,16 +560,9 @@ public class HUDManager : MonoBehaviourPunCallbacks
 
         //coinReward.SetActive(false);
         if (GameManager.playerKillCount > 0)
-        {
-            //coinReward.transform.Find("CoinText").GetComponent<Text>().text = GameManager.Instance.GetRewardAmount().ToString();
-            //coinReward.SetActive(true);
-
-            
+        { 
             PlayFabApiCalls.instance.UpdateStatistics("Kill Streak", GameManager.playerKillCount);
-            PlayFabApiCalls.instance.AddVirtualCurrency(GameManager.Instance.GetRewardAmount(), "CO");
-            //Make api calls
         }
-        //respawnButton.SetActive(true);
     }
 
     public void OnContinueButtonClicked()
@@ -693,12 +696,12 @@ public class HUDManager : MonoBehaviourPunCallbacks
         PhotonNetwork.LeaveRoom();
         loadingBar.fillAmount = 0;
         ActivatePanels(loadingPanel.name);
-        StartCoroutine(LobbySceneLoading());
+        StartCoroutine(LobbySceneLoading(menuPanel.name));
         //characterLocation.SetActive(true);
         //Invoke("SetCanvasCamera", 1);
     }
 
-    IEnumerator LobbySceneLoading()
+    IEnumerator LobbySceneLoading(string panelName)
     {
         loadingBar.fillAmount += Time.deltaTime * 2;
         loadingText.text = Mathf.RoundToInt(loadingBar.fillAmount * 100) + "%";
@@ -706,11 +709,11 @@ public class HUDManager : MonoBehaviourPunCallbacks
         yield return new WaitForSeconds(0);
         if (loadingBar.fillAmount < 1)
         {
-            StartCoroutine(LobbySceneLoading());
+            StartCoroutine(LobbySceneLoading(panelName));
         }
         else
         {
-            ActivatePanels(menuPanel.name);
+            ActivatePanels(panelName);
         }
     }
 
@@ -742,11 +745,6 @@ public class HUDManager : MonoBehaviourPunCallbacks
             secondarySkillCooldownImage.fillAmount = value;
         }
     }
-
-    public void UpdateScoreBoard()
-    {
-        
-    }
 #endregion
 
 #region Private Calls
@@ -754,6 +752,11 @@ public class HUDManager : MonoBehaviourPunCallbacks
     void ActivateGamePanel()
     {
         ActivatePanels(gamePanel.name);
+    }
+
+    void ActivateRewardsPanel()
+    {
+        ActivatePanels(rewardsPanel.name);
     }
     void ActivatePanels(string panelToBeActivated)
     {
@@ -767,7 +770,8 @@ public class HUDManager : MonoBehaviourPunCallbacks
         waitingAreaPanel.SetActive(panelToBeActivated.Equals(waitingAreaPanel.name));
         loadingPanel.SetActive(panelToBeActivated.Equals(loadingPanel.name));
         gamePanel.SetActive(panelToBeActivated.Equals(gamePanel.name));
-        if(panelToBeActivated.Equals(menuPanel.name))
+        rewardsPanel.SetActive(panelToBeActivated.Equals(rewardsPanel.name));
+        if (panelToBeActivated.Equals(menuPanel.name))
         {
             characterLocation.SetActive(true);
         }
@@ -895,7 +899,44 @@ public class HUDManager : MonoBehaviourPunCallbacks
         runeSelection.SetActive(false);
         winnerText.gameObject.SetActive(true);
         
-        Invoke("OnExitButtonClicked", 2f);
+        Invoke("AfterGameOver", 2f);
+    }
+
+    public void AfterGameOver()
+    {
+        PhotonNetwork.LeaveRoom();
+        loadingBar.fillAmount = 0;
+        ActivatePanels(loadingPanel.name);
+
+        var scoreList = ScoreManager.Instance.playerScoreList.OrderByDescending(p => p.Value).ToArray();
+
+        for (int i = 0; i < resultsContent.Length; i++)
+        {
+            if(scoreList[i].Key.ToString() == ScoreManager.Instance.localPlayerName)
+            {
+                playerNameText.text = ScoreManager.Instance.localPlayerName;
+                resultsContent[i].GetComponent<Image>().sprite = localPlayerSprite;
+            }
+            resultsContent[i].transform.Find("Placement").GetComponent<Text>().text = (i + 1).ToString();
+            resultsContent[i].transform.Find("PlayerName").GetComponent<Text>().text = scoreList[i].Key.ToString();
+            resultsContent[i].transform.Find("Score/Text").GetComponent<Text>().text = scoreList[i].Value.ToString();
+        }
+
+        rewardsMaxLevelText.text = GameManager.playerMaxLevelReached.ToString();
+        rewardsKillsText.text = GameManager.playerTotalKillCount.ToString();
+        rewardsDeathsText.text = GameManager.playerTotalDeathCount.ToString();
+        int reward = Mathf.RoundToInt(GameManager.playerTotalKillCount * Mathf.Pow(1.35f - GameManager.playerTotalDeathCount / 100, GameManager.playerMaxLevelReached));
+        PlayFabApiCalls.instance.AddVirtualCurrency(reward, "CO");
+        rewardsCoinText.text = reward.ToString();
+        StartCoroutine(LobbySceneLoading(rewardsPanel.name));
+        //characterLocation.SetActive(true);
+        //Invoke("SetCanvasCamera", 1);
+    }
+
+    public void OnRewardsContinueButtonClicked()
+    {
+        ActivatePanels(menuPanel.name);
+        UpdateCurrencies();
     }
 
     void LeaderboardToggleValueChanged(Toggle change)

@@ -17,6 +17,7 @@ public class ScoreManager : MonoBehaviour
     GameObject killFeedParent;
 
     public Dictionary<string, int> playerScoreList = new Dictionary<string, int>();
+    public string localPlayerName;
 
     //public List<ScorePlayer> playersList;    
 

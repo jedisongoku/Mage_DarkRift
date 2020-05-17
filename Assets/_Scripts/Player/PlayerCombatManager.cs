@@ -102,9 +102,11 @@ public class PlayerCombatManager : MonoBehaviourPun
             aimJoystick = HUDManager.Instance.AimJoystick;
             GameObject.Find("VirtualCamera").GetComponent<CinemachineVirtualCamera>().Follow = this.transform;
             killFeedName = PhotonNetwork.LocalPlayer.NickName;
+            ScoreManager.Instance.localPlayerName = killFeedName;
             //GetComponent<CapsuleCollider>().radius = 0.75f;
             GetComponent<PlayerLevelManager>().RegisterOnKill();
             GameManager.OnGameOver += GameOver;
+            PlayFabApiCalls.instance.UpdateStatistics("Games Played", 1);
 
         }
         else
@@ -117,7 +119,6 @@ public class PlayerCombatManager : MonoBehaviourPun
             if(isPlayer)
             {
                 killFeedName = PhotonNetwork.GetPhotonView(photonView.ViewID).Owner.NickName;
-                PlayFabApiCalls.instance.UpdateStatistics("Games Played", 1);
             }  
             else
             {

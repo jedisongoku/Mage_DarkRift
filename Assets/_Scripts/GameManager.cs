@@ -23,9 +23,10 @@ public class GameManager : MonoBehaviour
     public static int playerKillCount = 0;
     public static int playerTotalKillCount = 0;
     public static int playerTotalDeathCount = 0;
+    public static int playerMaxLevelReached = 0;
     private int respawnCooldown = 6;
     private bool canRespawn = false;
-    private int lastSpawnLocation;
+    private int lastSpawnLocation = 0;
     public static bool isGameOver = false;
     public static bool isWinner = false;
 
@@ -163,12 +164,14 @@ public class GameManager : MonoBehaviour
             if(PhotonNetwork.IsMasterClient)
             {
                 int index;
+                /*
                 do
                 {
                     index = Random.Range(0, PhotonNetwork.CurrentRoom.MaxPlayers);
-                } while (index == lastSpawnLocation);
-                lastSpawnLocation = index;
-                return lastSpawnLocation;
+                } while (index == lastSpawnLocation);*/
+                //lastSpawnLocation = index;
+                lastSpawnLocation++;
+                return lastSpawnLocation % PhotonNetwork.CurrentRoom.MaxPlayers;
             }
             else
             {

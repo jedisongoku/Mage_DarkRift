@@ -11,7 +11,7 @@ public class PlayerLevelManager : MonoBehaviourPunCallbacks
     private float levelCoefficient = 1.35f;
     private int currentXP = 0;
     private int currentLevel = 1;
-    private int killXP = 9;
+    private int killXP = 6;
     private float killXPCoefficient = 1.2f;
 
     public float SmartMultiplier { get; set; }
@@ -84,7 +84,11 @@ public class PlayerLevelManager : MonoBehaviourPunCallbacks
 
             }
 
-            if(isPlayer) HUDManager.Instance.UpdatePlayerLevel(currentLevel, currentXP, NextLevelInXP());
+            if (isPlayer)
+            {
+                if (GameManager.playerMaxLevelReached < currentLevel) GameManager.playerMaxLevelReached = currentLevel;
+                HUDManager.Instance.UpdatePlayerLevel(currentLevel, currentXP, NextLevelInXP());
+            }
         }
         
 

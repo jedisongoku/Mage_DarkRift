@@ -257,19 +257,18 @@ public class PlayerAIController : MonoBehaviourPunCallbacks, IPunObservable
 
                         if (playerCombatManager.BotPlayerSecondarySkillAvailable() && !playerCombatManager.IsDead)
                         {
-                            StartCoroutine(Dash());
+                            playerCombatManager.BotPlayerDash();
+                            //StartCoroutine(Dash());
                         }
                         break;
                     }
                 }
             }
         }
-        else
+
+        if (targetPlayer != null)
         {
-            if(targetPlayer != null)
-            {
-                playerCombatManager.BotPlayerAutoAttack(targetPlayer);
-            } 
+            playerCombatManager.BotPlayerAutoAttack(targetPlayer);
         }
 
         yield return new WaitForSeconds(1);
@@ -279,6 +278,10 @@ public class PlayerAIController : MonoBehaviourPunCallbacks, IPunObservable
             if (GetComponent<PlayerHealthManager>().PlayerHealth > defenseHealthThreshold || botController.velocity.magnitude < botController.speed)
             {
                 StartCoroutine(StateSwitcher(botState.patrol, 0));
+            }
+            else
+            {
+                StartCoroutine(Defense());
             }
         }
         //if (botPlayerState == botState.defense) StartCoroutine(Defense());
