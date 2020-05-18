@@ -7,11 +7,11 @@ using Photon.Pun;
 public class PlayerLevelManager : MonoBehaviourPunCallbacks
 {
 
-    private int firstLevelXP= 19;
-    private float levelCoefficient = 1.35f;
+    private int firstLevelXP= 18;
+    private float levelCoefficient = 1.45f;
     private int currentXP = 0;
     private int currentLevel = 1;
-    private int killXP = 6;
+    private int killXP = 9;
     private float killXPCoefficient = 1.2f;
 
     public float SmartMultiplier { get; set; }

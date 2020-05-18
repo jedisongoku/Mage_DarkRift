@@ -66,9 +66,10 @@ public class HUDManager : MonoBehaviourPunCallbacks
 
     [Header("Skin Panel")]
     [SerializeField] public GameObject skinPanel;
+    [SerializeField] public MenuSkinController skinMenuSkinController;
     [SerializeField] public Button buyWithCoinButton;
     [SerializeField] public Button buyWithGemButton;
-    [SerializeField] public Button selectSkinButton;
+    //[SerializeField] public Button selectSkinButton;
 
     [SerializeField] private Text skinCoinsCurrencyText;
     [SerializeField] private Text skinGemsCurrencyText;
@@ -498,6 +499,7 @@ public class HUDManager : MonoBehaviourPunCallbacks
 
     public void MakeSkinActive()
     {
+        skinMenuSkinController.PlaySelectAnimation();
         PlayFabDataStore.playerProfile.skinName = MenuSkinController.instance.activeSkin.name;
         //Update on playfab
         PlayFabApiCalls.instance.UpdateProfile();
@@ -511,6 +513,7 @@ public class HUDManager : MonoBehaviourPunCallbacks
     public void BuySkin()
     {
         Debug.Log(MenuSkinController.instance.activeSkin.name);
+        skinMenuSkinController.PlayUnlockAnimation();
         PlayFabApiCalls.instance.PurchaseItem(PlayFabDataStore.gameSkinCatalog[MenuSkinController.instance.activeSkin.name].itemID, PlayFabDataStore.gameSkinCatalog[MenuSkinController.instance.activeSkin.name].cost,
             PlayFabDataStore.gameSkinCatalog[MenuSkinController.instance.activeSkin.name].currencyType);
     }
@@ -916,6 +919,7 @@ public class HUDManager : MonoBehaviourPunCallbacks
             {
                 playerNameText.text = ScoreManager.Instance.localPlayerName;
                 resultsContent[i].GetComponent<Image>().sprite = localPlayerSprite;
+                MenuSkinController.rewardsPlacement = i + 1;
             }
             resultsContent[i].transform.Find("Placement").GetComponent<Text>().text = (i + 1).ToString();
             resultsContent[i].transform.Find("PlayerName").GetComponent<Text>().text = scoreList[i].Key.ToString();

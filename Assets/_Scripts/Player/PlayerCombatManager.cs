@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Photon.Pun;
 using TMPro;
+using System.Linq;
 
 public class PlayerCombatManager : MonoBehaviourPun
 {
@@ -268,23 +269,12 @@ public class PlayerCombatManager : MonoBehaviourPun
     {
         GameObject closestEnemy = null;
         float distance = 15;
-        
-        /*
-        if (targetEnemy != null)
-        {
-            if (!targetEnemy.GetComponent<PlayerCombatManager>().IsDead && LineOfSight(targetEnemy) &&
-                targetEnemy.GetComponent<PlayerCombatManager>().isSearchable && distance > Vector3.Distance(targetEnemy.transform.position, transform.position))
-            {
-                return targetEnemy;
-            }
-        }*/
 
         foreach (var enemy in PhotonNetwork.PhotonViews)
         {
-            if(enemy.gameObject.layer == 8)
+            if(enemy.gameObject.layer == 8 && LineOfSight(enemy.gameObject))
             {
-                if (enemy.ViewID != photonView.ViewID && !enemy.GetComponent<PlayerCombatManager>().IsDead && LineOfSight(enemy.gameObject) &&
-                enemy.GetComponent<PlayerCombatManager>().isSearchable)
+                if (enemy.ViewID != photonView.ViewID && enemy.GetComponent<PlayerCombatManager>().isSearchable)
                 {
                     if (distance > Vector3.Distance(enemy.gameObject.transform.position, transform.position))
                     {
@@ -318,7 +308,8 @@ public class PlayerCombatManager : MonoBehaviourPun
     bool LineOfSight(GameObject enemy)
     {
         RaycastHit hit;
-        var rayDirection = (enemy.transform.position + transform.up) - (transform.position + transform.up);
+        var rayDirection = (enemy.transform.position + transform.up / 2) - (transform.position + transform.up / 2);
+
         if (Physics.Raycast(transform.position + transform.up, rayDirection, out hit))
         {
             if (hit.transform.gameObject.layer == 8)
@@ -502,7 +493,7 @@ public class PlayerCombatManager : MonoBehaviourPun
         }
         else
         {
-            GetComponent<PlayerLevelManager>().ResetOnRespawn();
+            //GetComponent<PlayerLevelManager>().ResetOnRespawn();
         }
         
 
@@ -587,7 +578,8 @@ public class PlayerCombatManager : MonoBehaviourPun
                 if (!isPlayer)
                 {
                     GetComponent<PlayerAIController>().OnBotPlayerDeath();
-                    if(photonView.IsMine)
+                    isSecondChance = true;
+                    if (photonView.IsMine)
                     {
                         if (PhotonNetwork.CurrentRoom.MaxPlayers - PhotonNetwork.CurrentRoom.PlayerCount - GameManager.Instance.botPlayerCount >= 0)
                         {
@@ -606,9 +598,10 @@ public class PlayerCombatManager : MonoBehaviourPun
                 
                 if (PhotonNetwork.IsMasterClient)
                 {
-                    int gemCount = GetComponent<PlayerLevelManager>().GetPlayerLevel() * 2;
+                    //int gemCount = GetComponent<PlayerLevelManager>().GetPlayerLevel() * 2;
+                    int gemCount = Mathf.RoundToInt(Mathf.Pow(1.35f, GetComponent<PlayerLevelManager>().GetPlayerLevel()));
 
-                    for(int i = 0; i < gemCount; i++)
+                    for (int i = 0; i < gemCount; i++)
                     {
                         //float random = Random.Range(-1f, 1f);
                         Vector3 randomVector = new Vector3(Random.Range(-1f, 1f), 0, Random.Range(-1f, 1f));
@@ -639,11 +632,11 @@ public class PlayerCombatManager : MonoBehaviourPun
         }
         else
         {
-            if (!isPlayer) GetComponent<PlayerAIController>().OnDeath();
+            //if (!isPlayer) GetComponent<PlayerAIController>().OnDeath();
             playerUI.SetActive(false);
 
         }
-
+        isSearchable = false;
         m_Animator.SetTrigger("Dead");
         GetComponent<CapsuleCollider>().enabled = false;
         playerDamageCollider.enabled = false;
@@ -1075,7 +1068,7 @@ public class PlayerCombatManager : MonoBehaviourPun
         obj.transform.position = spawnLocation + randomVector + Vector3.up;
         obj.SetActive(true);
 
-        obj.GetComponent<Rigidbody>().AddExplosionForce(8, spawnLocation, 1, Random.Range(0.5f, 1), ForceMode.Impulse);
+        obj.GetComponent<Rigidbody>().AddExplosionForce(12, spawnLocation, 1, Random.Range(0.5f, 1f), ForceMode.Impulse);
     }
 
     #endregion

@@ -11,6 +11,7 @@ public class PlayerAIController : MonoBehaviourPunCallbacks, IPunObservable
 {
     [SerializeField] private TextMeshProUGUI playerNameText;
     [SerializeField] CapsuleCollider searchCollider;
+    [SerializeField] CapsuleCollider gemCollider;
 
     float turnSpeed = 8;
     public enum botState {patrol, attack, defense, spawn, flank};
@@ -142,7 +143,16 @@ public class PlayerAIController : MonoBehaviourPunCallbacks, IPunObservable
         yield return new WaitForSeconds(0.1f);
 
         if (targetPlayer != null)
-            StartCoroutine(StateSwitcher(botState.attack, 0));
+        {
+            if(Vector3.Distance(targetPlayer.transform.position, transform.position) > 12)
+            {
+                targetPlayer = null;
+            }
+            else
+            {
+                StartCoroutine(StateSwitcher(botState.attack, 0));
+            }          
+        }   
         else
         {
             if(playersInRange.Count > 0)
@@ -169,7 +179,7 @@ public class PlayerAIController : MonoBehaviourPunCallbacks, IPunObservable
 
         if (targetPlayer != null)
         {
-            if(!targetPlayer.GetComponent<PlayerCombatManager>().IsDead)
+            if(targetPlayer.GetComponent<PlayerCombatManager>().isSearchable)
                 playerCombatManager.BotPlayerAutoAttack(targetPlayer);
             else
             {
@@ -187,6 +197,10 @@ public class PlayerAIController : MonoBehaviourPunCallbacks, IPunObservable
             else if (Vector3.Distance(targetPlayer.transform.position, transform.position) > 8f && botController.enabled)
             {
                 botController.SetDestination(targetPlayer.transform.position);
+                if (playerCombatManager.BotPlayerSecondarySkillAvailable() && Random.Range(0f, 1f) < 0.5f)
+                {
+                    playerCombatManager.BotPlayerDash();
+                }
 
             }
             else if (botController.velocity.magnitude < botController.speed)
@@ -202,7 +216,10 @@ public class PlayerAIController : MonoBehaviourPunCallbacks, IPunObservable
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
         yield return new WaitForSeconds(0.25f);
 
-        if (botPlayerState == botState.attack) StartCoroutine(Attack());
+        if (botPlayerState == botState.attack && !playerCombatManager.IsDead)
+        {
+            StartCoroutine(Attack());
+        } 
     }
 
     IEnumerator Flank()
@@ -279,7 +296,7 @@ public class PlayerAIController : MonoBehaviourPunCallbacks, IPunObservable
             {
                 StartCoroutine(StateSwitcher(botState.patrol, 0));
             }
-            else
+            else if(!playerCombatManager.IsDead)
             {
                 StartCoroutine(Defense());
             }
@@ -329,6 +346,11 @@ public class PlayerAIController : MonoBehaviourPunCallbacks, IPunObservable
 
         Vector3 desiredForward = Vector3.RotateTowards(transform.forward, botController.velocity.normalized, turnSpeed * Time.deltaTime, 0f);
         m_Rotation = Quaternion.LookRotation(desiredForward);
+
+        if (fireTimer > 0.15f)
+        {
+            m_Rigidbody.MoveRotation(m_Rotation);
+        }
     }
 
     private void OnAnimatorMove()
@@ -336,11 +358,6 @@ public class PlayerAIController : MonoBehaviourPunCallbacks, IPunObservable
         if(m_Animator.GetCurrentAnimatorStateInfo(0).IsName("Dash With Root Motion"))
         {
             m_Rigidbody.MovePosition(m_Rigidbody.position + botController.velocity.normalized * m_Animator.deltaPosition.magnitude);
-        }
-
-        if (fireTimer > 0.15f)
-        {
-            m_Rigidbody.MoveRotation(m_Rotation);
         }
     }
 
@@ -371,16 +388,6 @@ public class PlayerAIController : MonoBehaviourPunCallbacks, IPunObservable
         } while (index == spawnLocation);
         spawnLocation = index;
         return GameManager.Instance.SpawnLocation(spawnLocation);
-    }
-
-    public void OnDeath()
-    {
-        StopAllCoroutines();
-        if (botController.enabled)
-        {
-            botController.isStopped = true;
-        }
-        
     }
 
     private void OnTriggerEnter(Collider other)
@@ -419,7 +426,8 @@ public class PlayerAIController : MonoBehaviourPunCallbacks, IPunObservable
 
     public void OnBotPlayerDeath()
     {
-        
+        gemCollider.enabled = false;
+        searchCollider.enabled = false;
         StopAllCoroutines();
         playersInRange.Clear();
         targetPlayer = null;
@@ -430,6 +438,8 @@ public class PlayerAIController : MonoBehaviourPunCallbacks, IPunObservable
     {
         defenseHealthThreshold = Random.Range(25, 50);
         botController.enabled = true;
+        gemCollider.enabled = true;
+        searchCollider.enabled = true;
         botController.ResetPath();
 
         StartCoroutine(StateSwitcher(botState.spawn, 0));

@@ -5,6 +5,7 @@ using UnityEngine;
 public class MenuSkinController : MonoBehaviour
 {
     public static MenuSkinController instance;
+    public static int rewardsPlacement = 0;
     [SerializeField] RuntimeAnimatorController controller;
     [SerializeField] Avatar avatar;
 
@@ -45,6 +46,15 @@ public class MenuSkinController : MonoBehaviour
         activeSkin.AddComponent<Animator>();
         activeSkin.GetComponent<Animator>().runtimeAnimatorController = controller;
         activeSkin.GetComponent<Animator>().avatar = avatar;
+        if(rewardsPlacement == 0)
+        {
+            activeSkin.GetComponent<Animator>().SetTrigger("Welcome");
+        }
+        else
+        {
+            PlayRewardsAnimation(rewardsPlacement);
+        }
+        
         //activeSkin.GetComponent<Animator>().Rebind();
     }
 
@@ -69,6 +79,34 @@ public class MenuSkinController : MonoBehaviour
         activeSkin.AddComponent<Animator>();
         activeSkin.GetComponent<Animator>().runtimeAnimatorController = controller;
         activeSkin.GetComponent<Animator>().avatar = avatar;
+        activeSkin.GetComponent<Animator>().SetTrigger("Wave");
+    }
+
+    public void PlaySelectAnimation()
+    {
+        activeSkin.GetComponent<Animator>().SetTrigger("Welcome");
+    }
+
+    public void PlayUnlockAnimation()
+    {
+        activeSkin.GetComponent<Animator>().SetTrigger("Unlock");
+    }
+
+    public void PlayRewardsAnimation(int placement)
+    {
+        if(placement == 1)
+        {
+            activeSkin.GetComponent<Animator>().SetTrigger("Victory");
+        }
+        else if(placement < 4)
+        {
+            activeSkin.GetComponent<Animator>().SetTrigger("Clapping");
+        }
+        else
+        {
+            activeSkin.GetComponent<Animator>().SetTrigger("Crying");
+        }
+        rewardsPlacement = 0;
     }
 
 

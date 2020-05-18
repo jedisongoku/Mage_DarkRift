@@ -166,6 +166,11 @@ public class PlayerMovementController : MonoBehaviourPun, IPunObservable
             {
                 m_Rigidbody.velocity = Vector3.zero;
             }
+
+            if (fireTimer > 0.15f)
+            {
+                m_Rigidbody.MoveRotation(m_Rotation);
+            }
         }
         
     }
@@ -174,11 +179,7 @@ public class PlayerMovementController : MonoBehaviourPun, IPunObservable
     {
         if(isPlayer)
         {
-            m_Rigidbody.MovePosition(m_Rigidbody.position + m_Movement * m_Animator.deltaPosition.magnitude * walkSpeed);
-            if (fireTimer > 0.15f)
-            {
-                m_Rigidbody.MoveRotation(m_Rotation);
-            }
+            m_Rigidbody.MovePosition(m_Rigidbody.position + m_Movement * m_Animator.deltaPosition.magnitude * walkSpeed);  
         }
              
     }

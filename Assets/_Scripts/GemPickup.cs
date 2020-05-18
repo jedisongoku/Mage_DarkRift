@@ -18,9 +18,13 @@ public class GemPickup : MonoBehaviour
         if(other.gameObject.layer == 8 && !isPickedUp)
         {
             isPickedUp = true;
-            //if(other.GetComponent<PlayerCombatManager>().isPlayer) other.gameObject.GetComponent<PlayerLevelManager>().AddXP(4);
             other.gameObject.GetComponent<PlayerLevelManager>().AddXP(4);
-            //if(gemList.ContainsKey(this)) gemList.Remove(this);
+            gameObject.SetActive(false);
+        }
+        else if (other.gameObject.layer == 23 && !isPickedUp)
+        {
+            isPickedUp = true;
+            other.transform.root.gameObject.GetComponent<PlayerLevelManager>().AddXP(4);
             gameObject.SetActive(false);
         }
     }
