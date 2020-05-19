@@ -187,7 +187,7 @@ public class PlayerAIController : MonoBehaviourPunCallbacks, IPunObservable
                 if (playersInRange.Count > 0) targetPlayer = playersInRange[0];
             }
 
-            if (playerHealthManager.PlayerHealth < defenseHealthThreshold)
+            if (playerHealthManager.PlayerHealth < defenseHealthThreshold && !playerCombatManager.IsDead)
             {
                 if (playerCombatManager.BotPlayerPrimarySkillCharge() == 0)
                 {
@@ -271,14 +271,13 @@ public class PlayerAIController : MonoBehaviourPunCallbacks, IPunObservable
                     {
                         if (botController.enabled)
                             botController.SetDestination(GameManager.Instance.SpawnLocation(i));
-
-                        if (playerCombatManager.BotPlayerSecondarySkillAvailable() && !playerCombatManager.IsDead)
-                        {
-                            playerCombatManager.BotPlayerDash();
-                            //StartCoroutine(Dash());
-                        }
                         break;
                     }
+                }
+
+                if (playerCombatManager.BotPlayerSecondarySkillAvailable())
+                {
+                    playerCombatManager.BotPlayerDash();
                 }
             }
         }

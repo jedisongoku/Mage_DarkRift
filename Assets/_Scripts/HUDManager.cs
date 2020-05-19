@@ -139,6 +139,9 @@ public class HUDManager : MonoBehaviourPunCallbacks
     [SerializeField] public Sprite localPlayerSprite;
     [SerializeField] public Sprite defaultPlayerSprite;
 
+    [Header("Settings Panel")]
+    [SerializeField] public GameObject settingsPanel;
+
     [Header("Level")]
     [SerializeField] private Text levelText;
     [SerializeField] private Text xpText;
@@ -393,6 +396,11 @@ public class HUDManager : MonoBehaviourPunCallbacks
     public void OnPanelBackButtonClicked()
     {
         ActivatePanels(menuPanel.name);
+    }
+
+    public void OnSettingsButtonClicked()
+    {
+        ActivatePanels(settingsPanel.name);
     }
 
     public void OnProfileButtonClicked()
@@ -663,6 +671,7 @@ public class HUDManager : MonoBehaviourPunCallbacks
         deathPanel.SetActive(false);
         playerControllerPanel.SetActive(true);
         UpdateTotalPlayerCount();
+        SoundManager.Instance.SwitchSound(false);
 
 
     }
@@ -757,11 +766,11 @@ public class HUDManager : MonoBehaviourPunCallbacks
     {
         ActivatePanels(gamePanel.name);
     }
-
     void ActivateRewardsPanel()
     {
         ActivatePanels(rewardsPanel.name);
     }
+
     void ActivatePanels(string panelToBeActivated)
     {
         launchPanel.SetActive(panelToBeActivated.Equals(launchPanel.name));
@@ -775,6 +784,7 @@ public class HUDManager : MonoBehaviourPunCallbacks
         loadingPanel.SetActive(panelToBeActivated.Equals(loadingPanel.name));
         gamePanel.SetActive(panelToBeActivated.Equals(gamePanel.name));
         rewardsPanel.SetActive(panelToBeActivated.Equals(rewardsPanel.name));
+        settingsPanel.SetActive(panelToBeActivated.Equals(settingsPanel.name));
         if (panelToBeActivated.Equals(menuPanel.name))
         {
             characterLocation.SetActive(true);
@@ -932,7 +942,7 @@ public class HUDManager : MonoBehaviourPunCallbacks
         rewardsMaxLevelText.text = GameManager.playerMaxLevelReached.ToString();
         rewardsKillsText.text = GameManager.playerTotalKillCount.ToString();
         rewardsDeathsText.text = GameManager.playerTotalDeathCount.ToString();
-        int reward = Mathf.RoundToInt(GameManager.playerTotalKillCount * Mathf.Pow(1.35f - GameManager.playerTotalDeathCount / 100, GameManager.playerMaxLevelReached));
+        int reward = Mathf.RoundToInt(GameManager.playerTotalKillCount * Mathf.Pow(1.35f - GameManager.playerTotalDeathCount / 100, GameManager.playerMaxLevelReached)) + (80 / MenuSkinController.rewardsPlacement);
         PlayFabApiCalls.instance.AddVirtualCurrency(reward, "CO");
         rewardsCoinText.text = reward.ToString();
         StartCoroutine(LobbySceneLoading(rewardsPanel.name));

@@ -108,8 +108,9 @@ public class PlayerMovementController : MonoBehaviourPun, IPunObservable
         }
         set
         {
-            aimLocation = value;
+            aimLocation = new Vector3(value.x, 0, value.z);
             transform.LookAt(aimLocation);
+            //m_Rigidbody.rotation = Quaternion.LookRotation(aimLocation - m_Rigidbody.position);
         }
     }
 
@@ -141,16 +142,16 @@ public class PlayerMovementController : MonoBehaviourPun, IPunObservable
                     vertical = Input.GetAxis("Vertical");
                 }
 
+                if(horizontal == 0 && vertical == 0)
+                {
+                    m_Rigidbody.velocity = Vector3.zero;
+                    m_Rigidbody.angularVelocity = Vector3.zero;
+                }
 
                 movement = new Vector2(horizontal, vertical);
 
             }
 
-            if (movement == Vector2.zero)
-            {
-                m_Rigidbody.velocity = Vector3.zero;
-                
-            }
             m_Movement.Set(movement.x, 0f, movement.y);
             m_Movement.Normalize();
             //Debug.Log("Movement " + m_Movement);
@@ -240,5 +241,16 @@ public class PlayerMovementController : MonoBehaviourPun, IPunObservable
         joystick.OnPointerUp(null);
     }
 
-    
+    private void OnTriggerEnter(Collider other)
+    {
+        if(isPlayer)
+        {
+            if(other.gameObject.layer == 11)
+            {
+                Debug.Log("Obstacle Entered");
+            }
+        }
+    }
+
+
 }

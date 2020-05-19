@@ -269,6 +269,13 @@ public class PlayerCombatManager : MonoBehaviourPun
     {
         GameObject closestEnemy = null;
         float distance = 15;
+        if(targetEnemy != null)
+        {
+            if(LineOfSight(targetEnemy) && targetEnemy.GetComponent<PlayerCombatManager>().isSearchable && Vector3.Distance(transform.position, targetEnemy.transform.position) < 5)
+            {
+                return targetEnemy;
+            }
+        }
 
         foreach (var enemy in PhotonNetwork.PhotonViews)
         {
@@ -1015,7 +1022,7 @@ public class PlayerCombatManager : MonoBehaviourPun
     public void BotPlayerAutoAttack(GameObject targetPlayer)
     {
         
-        if(targetPlayer != null && !isDead && LineOfSight(targetPlayer))
+        if(targetPlayer != null && !isDead && LineOfSight(targetPlayer) && Vector3.Distance(transform.position, targetPlayer.transform.position) < 15)
         {
             PrimarySkill(targetPlayer.transform.position);
         }
