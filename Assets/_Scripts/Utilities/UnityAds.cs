@@ -60,6 +60,13 @@ public class UnityAds : MonoBehaviour, IUnityAdsListener
         
     }
 
+    public void EndGameAd()
+    {
+        Photon.Pun.PhotonNetwork.KeepAliveInBackground = 60;
+        myPlacementId = "EndGameContinue";
+        Advertisement.Show(myPlacementId);
+    }
+
     // Implement IUnityAdsListener interface methods:
     public void OnUnityAdsReady(string placementId)
     {

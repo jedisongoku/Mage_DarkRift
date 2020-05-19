@@ -137,6 +137,7 @@ public class HUDManager : MonoBehaviourPunCallbacks
     [SerializeField] public Text rewardsKillsText;
     [SerializeField] public Text rewardsDeathsText;
     [SerializeField] public Sprite localPlayerSprite;
+    [SerializeField] public Sprite defaultPlayerSprite;
 
     [Header("Level")]
     [SerializeField] private Text levelText;
@@ -915,7 +916,9 @@ public class HUDManager : MonoBehaviourPunCallbacks
 
         for (int i = 0; i < resultsContent.Length; i++)
         {
-            if(scoreList[i].Key.ToString() == ScoreManager.Instance.localPlayerName)
+            resultsContent[i].GetComponent<Image>().sprite = defaultPlayerSprite;
+
+            if (scoreList[i].Key.ToString() == ScoreManager.Instance.localPlayerName)
             {
                 playerNameText.text = ScoreManager.Instance.localPlayerName;
                 resultsContent[i].GetComponent<Image>().sprite = localPlayerSprite;
@@ -940,6 +943,7 @@ public class HUDManager : MonoBehaviourPunCallbacks
     public void OnRewardsContinueButtonClicked()
     {
         ActivatePanels(menuPanel.name);
+        UnityAds.instance.EndGameAd();
         UpdateCurrencies();
     }
 
