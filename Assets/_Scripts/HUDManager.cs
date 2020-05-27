@@ -228,7 +228,17 @@ public class HUDManager : MonoBehaviourPunCallbacks
                 launchLoadingBar.fillAmount += Time.deltaTime / 10;
             }
             launchLoadingText.text = Mathf.RoundToInt(launchLoadingBar.fillAmount * 100) + "%";
-            StartCoroutine(Applaunch());
+
+            if(Application.internetReachability != NetworkReachability.NotReachable)
+            {
+                StartCoroutine(Applaunch());
+            }
+            else
+            {
+                StopAllCoroutines();
+                launchLoadingText.text = "Check Internet Connection";
+            }
+            
       
         }
         else
