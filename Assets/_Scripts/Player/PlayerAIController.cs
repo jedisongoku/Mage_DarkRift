@@ -468,6 +468,7 @@ public class PlayerAIController : MonoBehaviourPunCallbacks, IPunObservable
     private void OnDestroy()
     {
         GameManager.OnGameOver -= GameOver;
+        ScoreManager.Instance.RemoveScoreboard(playerCombatManager.killFeedName);
     }
 
     void GameOver()

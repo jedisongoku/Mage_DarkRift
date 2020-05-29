@@ -69,6 +69,7 @@ public class GameManager : MonoBehaviour
         playerKillCount = 0;
         playerTotalKillCount = 0;
         botPlayerCount = 0;
+        lastSpawnLocation = Random.Range(0, PhotonNetwork.CurrentRoom.MaxPlayers);
         OnPlayerKill = null;
         OnPlayerKill = null;
         HUDManager.Instance.UpdateTotalKillsScoreText(playerTotalKillCount);
@@ -82,7 +83,8 @@ public class GameManager : MonoBehaviour
         {
             if (playerPrefab != null)
             {
-                int spawnLocationIndex;
+                int spawnLocationIndex = SpawnLocationIndex;
+                /*
                 if (PhotonNetwork.LocalPlayer.ActorNumber <= PhotonNetwork.CurrentRoom.MaxPlayers)
                 {
                     spawnLocationIndex = PhotonNetwork.LocalPlayer.ActorNumber - 1;
@@ -90,7 +92,7 @@ public class GameManager : MonoBehaviour
                 else
                 {
                     spawnLocationIndex = SpawnLocationIndex;
-                }
+                }*/
 
                 currentPlayer = PhotonNetwork.Instantiate(playerPrefab.name, spawnLocations[spawnLocationIndex].transform.position, Quaternion.identity);
 
@@ -100,9 +102,10 @@ public class GameManager : MonoBehaviour
 
                 if(PhotonNetwork.IsMasterClient)
                 {
-                    for (int i = 1; i < PhotonNetwork.CurrentRoom.MaxPlayers - PhotonNetwork.CurrentRoom.PlayerCount + 1; i++)
+                    for (int i = 0; i < PhotonNetwork.CurrentRoom.MaxPlayers - PhotonNetwork.CurrentRoom.PlayerCount + 1; i++)
                     {
-                        InitializeBotPlayer(i);
+                        if(i != spawnLocationIndex)
+                            InitializeBotPlayer(i);
                     }
                 }
                     

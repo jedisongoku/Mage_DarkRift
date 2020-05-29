@@ -37,7 +37,29 @@ public class SoundManager : MonoBehaviour
         //SwitchSound(true);
         Invoke("SetOptionSliders", 2);
         SwitchSound(true);
+        Invoke("SetSettings", 1f);
 
+    }
+
+    void SetSettings()
+    {
+        if(PlayerPrefs.HasKey("Music"))
+        {
+            if(PlayerPrefs.GetInt("Music") == 0)
+            {
+                //switch music off
+                HUDManager.Instance.musicToggle.isOn = false;
+                Debug.Log("Music " + PlayerPrefs.GetInt("Music"));
+            }
+        }
+        if (PlayerPrefs.HasKey("SoundEffect"))
+        {
+            if (PlayerPrefs.GetInt("SoundEffect") == 0)
+            {
+                //switch SoundEffect off
+                HUDManager.Instance.soundEffectToggle.isOn = false;
+            }
+        }
     }
 
     public void SwitchSound(bool menu)

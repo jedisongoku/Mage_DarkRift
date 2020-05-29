@@ -63,6 +63,13 @@ public class ScoreManager : MonoBehaviour
         RefreshScoreboard();
     }
 
+    public void RemoveScoreboard(string name)
+    {
+        //playersList.Add(new ScorePlayer(name, 0));
+        if (!playerScoreList.ContainsKey(name))
+            playerScoreList.Remove(name);
+    }
+
 
     public void UpdateScore(string name)
     {

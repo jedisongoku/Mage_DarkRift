@@ -141,6 +141,8 @@ public class HUDManager : MonoBehaviourPunCallbacks
 
     [Header("Settings Panel")]
     [SerializeField] public GameObject settingsPanel;
+    [SerializeField] public Toggle musicToggle;
+    [SerializeField] public Toggle soundEffectToggle;
 
     [Header("Level")]
     [SerializeField] private Text levelText;
@@ -173,6 +175,12 @@ public class HUDManager : MonoBehaviourPunCallbacks
 
         killLeaderboardToggle.onValueChanged.AddListener(delegate { 
             LeaderboardToggleValueChanged(killLeaderboardToggle);
+        });
+        musicToggle.onValueChanged.AddListener(delegate {
+            MusicToggle(musicToggle);
+        });
+        soundEffectToggle.onValueChanged.AddListener(delegate {
+            SoundEffectToggle(soundEffectToggle);
         });
         //ActivatePanels(menuPanel.name);   
         StartCoroutine(Applaunch());
@@ -411,6 +419,14 @@ public class HUDManager : MonoBehaviourPunCallbacks
     public void OnSettingsButtonClicked()
     {
         ActivatePanels(settingsPanel.name);
+        if (!soundEffectToggle.isOn)
+        {
+            soundEffectToggle.transform.parent.GetComponent<Animator>().SetTrigger("Off");
+        }
+        if(!musicToggle.isOn)
+        {
+            musicToggle.transform.parent.GetComponent<Animator>().SetTrigger("Off");
+        }
     }
 
     public void OnProfileButtonClicked()
@@ -985,6 +1001,40 @@ public class HUDManager : MonoBehaviourPunCallbacks
     public void TurnOffUI()
     {
         gamePanel.SetActive(false);
+    }
+
+    public void MusicToggle(Toggle change)
+    {
+        if (musicToggle.isOn)
+        {
+            musicToggle.transform.parent.GetComponent<Animator>().SetTrigger("On");
+            PlayerPrefs.SetInt("Music", 1);
+            Debug.Log("Music " + PlayerPrefs.GetInt("Music"));
+            SoundManager.Instance.masterMixer.SetFloat("MusicVolume", 0);
+        }
+        else
+        {
+            musicToggle.transform.parent.GetComponent<Animator>().SetTrigger("Off");
+            PlayerPrefs.SetInt("Music", 0);
+            Debug.Log("Music " + PlayerPrefs.GetInt("Music"));
+            SoundManager.Instance.masterMixer.SetFloat("MusicVolume", -80f);
+        }
+    }
+
+    public void SoundEffectToggle(Toggle change)
+    {
+        if (soundEffectToggle.isOn)
+        {
+            soundEffectToggle.transform.parent.GetComponent<Animator>().SetTrigger("On");
+            PlayerPrefs.SetInt("SoundEffect", 1);
+            SoundManager.Instance.masterMixer.SetFloat("SoundEffectVolume", 0f);
+        }
+        else
+        {
+            soundEffectToggle.transform.parent.GetComponent<Animator>().SetTrigger("Off");
+            PlayerPrefs.SetInt("SoundEffect", 0);
+            SoundManager.Instance.masterMixer.SetFloat("SoundEffectVolume", -80f);
+        }
     }
 
     #endregion

@@ -125,12 +125,21 @@ public class PlayFabLoginManager : MonoBehaviour
             {
                 PlayFabApiCalls.instance.LinkCustomId();
             }
+            /*
+            PlayerPrefs.SetInt("Music", 1);
+            PlayerPrefs.SetInt("SoundEffect", 1);*/
             //if(Social.localUser.authenticated) PlayFabApiCalls.instance.LinkGameAccount();
 
         }
         else
         {
             PlayFabApiCalls.instance.GetUserData();
+            /*
+            if(!PlayerPrefs.HasKey("Music"))
+            {
+                PlayerPrefs.SetInt("Music", 1);
+                PlayerPrefs.SetInt("SoundEffect", 1);
+            }*/
         }
 
         yield return new WaitUntil(() => (isPlayFabNextCallSuccess || isPlayFabNextCallFailed));
