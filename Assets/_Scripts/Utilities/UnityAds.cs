@@ -6,12 +6,12 @@ public class UnityAds : MonoBehaviour, IUnityAdsListener
     public static UnityAds instance;
 
 #if UNITY_IOS
-        private string gameId = "3522884";
+    private string gameId = "3522884";
 #elif UNITY_ANDROID
     private string gameId = "3522885";
 #endif
 
-    bool testMode = true;
+    bool testMode = false;
     string myPlacementId = "rewardedVideo";
 
     void Start()

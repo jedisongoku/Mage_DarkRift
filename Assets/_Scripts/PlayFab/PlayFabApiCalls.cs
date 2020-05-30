@@ -81,6 +81,7 @@ public class PlayFabApiCalls : MonoBehaviour
     {
         var request = new LoginWithGameCenterRequest()
         {
+            PlayerId = Social.localUser.id,
             CreateAccount = true
         };
 

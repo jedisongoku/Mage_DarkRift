@@ -151,10 +151,17 @@ public class HUDManager : MonoBehaviourPunCallbacks
  
     private string gameMode = "Deathmatch";
     private bool isRespawnRequested = false;
-    
-    
-    
 
+
+
+    private void Awake()
+    {
+        Debug.Log(Screen.width + " X " + Screen.height + " = " + (float)Screen.width / (float)Screen.height);
+        if((float)Screen.width / (float)Screen.height < 1.5f)
+        {
+            GetComponent<CanvasScaler>().matchWidthOrHeight = 0;
+        }
+    }
 
     #region Unity Mono Calls
     // Start is called before the first frame update
