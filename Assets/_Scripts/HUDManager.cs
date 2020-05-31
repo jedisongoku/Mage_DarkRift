@@ -706,6 +706,8 @@ public class HUDManager : MonoBehaviourPunCallbacks
         UpdateTotalPlayerCount();
         SoundManager.Instance.SwitchSound(false);
 
+        ShowRuneInfo("DEATHMATCH", "Get 20 kills to WIN!");
+
 
     }
 
