@@ -144,6 +144,10 @@ public class HUDManager : MonoBehaviourPunCallbacks
     [SerializeField] public Toggle musicToggle;
     [SerializeField] public Toggle soundEffectToggle;
 
+    [Header("Name Panel")]
+    [SerializeField] public GameObject namePanel;
+    [SerializeField] private Text firstTimePlayerName;
+
     [Header("Level")]
     [SerializeField] private Text levelText;
     [SerializeField] private Text xpText;
@@ -258,12 +262,29 @@ public class HUDManager : MonoBehaviourPunCallbacks
         }
         else
         {
-            ActivatePanels(menuPanel.name);
+            if (!PlayFabApiCalls.isNewUser)
+            {
+                ActivatePanels(menuPanel.name);
+                UpdateMenuPanel();
+            }
+            else
+            {
+                firstTimePlayerName.text = PlayFabDataStore.playerProfile.playerName;
+                ActivatePanels(namePanel.name);
+            }
+                
             
-            UpdateMenuPanel();
+            
             //SoundManager.Instance.SwitchSound(true);
         }
 
+    }
+
+    public void NamePanelAcceptButton()
+    {
+        ActivatePanels(menuPanel.name);
+        UpdateMenuPanel();
+        
     }
 
     void UpdateMenuPanel()
@@ -537,6 +558,19 @@ public class HUDManager : MonoBehaviourPunCallbacks
             PlayFabApiCalls.instance.UpdateProfile();
         }
         
+    }
+
+    public void SavePlayerNameFirstTime()
+    {
+        //update playername playfab
+        if (firstTimePlayerName.GetComponentInParent<InputField>().text.Length > 0)
+        {
+            PlayFabDataStore.playerProfile.playerName = firstTimePlayerName.GetComponentInParent<InputField>().text;
+            playerName.text = PlayFabDataStore.playerProfile.playerName;
+            PhotonNetwork.LocalPlayer.NickName = PlayFabDataStore.playerProfile.playerName;
+            PlayFabApiCalls.instance.UpdateProfile();
+        }
+
     }
 
     public void MakeSkinActive()
@@ -820,6 +854,7 @@ public class HUDManager : MonoBehaviourPunCallbacks
         gamePanel.SetActive(panelToBeActivated.Equals(gamePanel.name));
         rewardsPanel.SetActive(panelToBeActivated.Equals(rewardsPanel.name));
         settingsPanel.SetActive(panelToBeActivated.Equals(settingsPanel.name));
+        namePanel.SetActive(panelToBeActivated.Equals(namePanel.name));
         if (panelToBeActivated.Equals(menuPanel.name))
         {
             characterLocation.SetActive(true);
