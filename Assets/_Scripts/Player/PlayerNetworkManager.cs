@@ -38,8 +38,8 @@ public class PlayerNetworkManager : MonoBehaviourPunCallbacks
 
         if (PhotonNetwork.IsMasterClient && photonView.IsMine)
         {
-            StartCoroutine(SpawnGems());
-            previousLocation = CartController.instance.GetCartLocation;
+            //StartCoroutine(SpawnGems());
+            //previousLocation = CartController.instance.GetCartLocation;
             //GameManager.Instance.InitializeBotPlayer();
         }
 
