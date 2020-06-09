@@ -47,8 +47,8 @@ public class RatingManager : MonoBehaviour
 
     public void ShowRatingPanel()
     {
-        if (PlayerPrefs.GetString(ratingPref, "true") == "false")
-            return;
+        /*if (PlayerPrefs.GetString(ratingPref, "true") == "false")
+            return;*/
 
         foreach (var o in objectsToDeactivate)
             o.SetActive(false);

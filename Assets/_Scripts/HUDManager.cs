@@ -1025,7 +1025,7 @@ public class HUDManager : MonoBehaviourPunCallbacks
         ActivatePanels(menuPanel.name);
         UnityAds.instance.EndGameAd();
         UpdateCurrencies();
-        if(!PlayerPrefs.HasKey("Rating") || (PlayerPrefs.GetInt("Rating") < 4 && PlayFabDataStore.playerStatistics["Games Played"] > 5))
+        if(!PlayerPrefs.HasKey("Rating"))
         {
             RatingManager.Instance.ShowRatingPanel();
         }
