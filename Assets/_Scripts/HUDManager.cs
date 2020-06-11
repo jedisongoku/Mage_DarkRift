@@ -616,6 +616,7 @@ public class HUDManager : MonoBehaviourPunCallbacks
         playerControllerPanel.SetActive(false);
         respawnEnergyText.text = PlayFabDataStore.vc_energy + "/" + 50;
 
+        /*
         if(PlayFabDataStore.vc_gems < continueGemCost)
         {
             continueButton.interactable = false;
@@ -623,7 +624,7 @@ public class HUDManager : MonoBehaviourPunCallbacks
         else
         {
             continueButton.interactable = true;
-        }
+        }*/
 
         continueGemText.text = PlayFabDataStore.vc_gems.ToString();
         continueGemCostText.text = "x" + continueGemCost;
@@ -665,6 +666,24 @@ public class HUDManager : MonoBehaviourPunCallbacks
             Debug.Log("continue gem cost " + continueGemCost);
         }
 
+    }
+
+    public void OnContinueWithAdsButtonClicked()
+    {
+        UnityAds.instance.ContinueWithAds();
+    }
+
+    public void OnContinueWithAdFinished()
+    {
+        GameManager.Instance.GetCurrentPlayer.GetComponent<PlayerCombatManager>().SecondChance = true;
+
+        if (GameManager.Instance.CanRespawn)
+        {
+            GameManager.Instance.RespawnPlayer();
+            playerControllerPanel.SetActive(true);
+        }
+        isRespawnRequested = true;
+        deathPanel.SetActive(false);
     }
     public void OnRespawnButtonClicked()
     {

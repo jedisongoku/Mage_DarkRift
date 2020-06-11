@@ -60,6 +60,13 @@ public class UnityAds : MonoBehaviour, IUnityAdsListener
         
     }
 
+    public void ContinueWithAds()
+    {
+        Photon.Pun.PhotonNetwork.KeepAliveInBackground = 60;
+        myPlacementId = "InGameContinue";
+        Advertisement.Show(myPlacementId);
+    }
+
     public void EndGameAd()
     {
         Photon.Pun.PhotonNetwork.KeepAliveInBackground = 60;
@@ -100,7 +107,12 @@ public class UnityAds : MonoBehaviour, IUnityAdsListener
                 PlayFabApiCalls.instance.AddVirtualCurrency(5, "GM");
 
             }
-            
+            else if (placementId == "InGameContinue")
+            {
+                HUDManager.Instance.OnContinueWithAdFinished();
+
+            }
+
         }
         else if (showResult == ShowResult.Skipped)
         {

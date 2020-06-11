@@ -120,18 +120,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!114 &12215536 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 545133416908623258, guid: d7d650b8ccc2b7043ad3fdae8c871fb0,
-    type: 3}
-  m_PrefabInstance: {fileID: 8480077783326009772}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 793e1e1cc801dc44082dcd8a1402e1bb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &31622534
 GameObject:
   m_ObjectHideFlags: 0
@@ -484,6 +472,14 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 1654990047105618, guid: b5e3e43855df2ca43bfee321e1789ba7, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1372645487578624, guid: b5e3e43855df2ca43bfee321e1789ba7, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 224301230527117110, guid: b5e3e43855df2ca43bfee321e1789ba7,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -609,15 +605,7 @@ PrefabInstance:
       propertyPath: m_MatchWidthOrHeight
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 1372645487578624, guid: b5e3e43855df2ca43bfee321e1789ba7, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 1435491590735010, guid: b5e3e43855df2ca43bfee321e1789ba7, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1654990047105618, guid: b5e3e43855df2ca43bfee321e1789ba7, type: 3}
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
@@ -1527,35 +1515,30 @@ PrefabInstance:
       propertyPath: m_Camera
       value: 
       objectReference: {fileID: 31622538}
-    - target: {fileID: 8321454932649444893, guid: d7d650b8ccc2b7043ad3fdae8c871fb0,
+    - target: {fileID: 8711717318198543283, guid: d7d650b8ccc2b7043ad3fdae8c871fb0,
         type: 3}
-      propertyPath: m_OnEndEdit.m_PersistentCalls.m_Calls.Array.size
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8609405925296441639, guid: d7d650b8ccc2b7043ad3fdae8c871fb0,
+        type: 3}
+      propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 8321454932649444893, guid: d7d650b8ccc2b7043ad3fdae8c871fb0,
+    - target: {fileID: 8480077784676860601, guid: d7d650b8ccc2b7043ad3fdae8c871fb0,
         type: 3}
-      propertyPath: m_OnEndEdit.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 8321454932649444893, guid: d7d650b8ccc2b7043ad3fdae8c871fb0,
+    - target: {fileID: 1208485360194990376, guid: d7d650b8ccc2b7043ad3fdae8c871fb0,
         type: 3}
-      propertyPath: m_OnEndEdit.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
-      value: 2
+      propertyPath: m_AnchoredPosition.x
+      value: 105
       objectReference: {fileID: 0}
-    - target: {fileID: 8321454932649444893, guid: d7d650b8ccc2b7043ad3fdae8c871fb0,
+    - target: {fileID: 1208485360194990376, guid: d7d650b8ccc2b7043ad3fdae8c871fb0,
         type: 3}
-      propertyPath: m_OnEndEdit.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 12215536}
-    - target: {fileID: 8321454932649444893, guid: d7d650b8ccc2b7043ad3fdae8c871fb0,
-        type: 3}
-      propertyPath: m_OnEndEdit.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: SavePlayerNameFirstTime
-      objectReference: {fileID: 0}
-    - target: {fileID: 8321454932649444893, guid: d7d650b8ccc2b7043ad3fdae8c871fb0,
-        type: 3}
-      propertyPath: m_OnEndEdit.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
-      value: UnityEngine.Object, UnityEngine
+      propertyPath: m_AnchoredPosition.y
+      value: 102.07
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d7d650b8ccc2b7043ad3fdae8c871fb0, type: 3}
