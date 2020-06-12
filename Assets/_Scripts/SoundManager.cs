@@ -49,7 +49,6 @@ public class SoundManager : MonoBehaviour
             {
                 //switch music off
                 HUDManager.Instance.musicToggle.isOn = false;
-                Debug.Log("Music " + PlayerPrefs.GetInt("Music"));
             }
         }
         if (PlayerPrefs.HasKey("SoundEffect"))

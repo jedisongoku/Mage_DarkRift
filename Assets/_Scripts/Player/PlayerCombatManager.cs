@@ -6,8 +6,9 @@ using UnityEngine.UI;
 using Photon.Pun;
 using TMPro;
 using System.Linq;
+using Photon.Realtime;
 
-public class PlayerCombatManager : MonoBehaviourPun
+public class PlayerCombatManager : MonoBehaviourPun, IPunOwnershipCallbacks
 {
     [SerializeField] private PlayerMovementController playerMovementController;
     [SerializeField] private PlayerHealthManager playerHealthManager;
@@ -1076,6 +1077,16 @@ public class PlayerCombatManager : MonoBehaviourPun
         obj.SetActive(true);
 
         obj.GetComponent<Rigidbody>().AddExplosionForce(12, spawnLocation, 1, Random.Range(0.5f, 1f), ForceMode.Impulse);
+    }
+
+    public void OnOwnershipRequest(PhotonView targetView, Player requestingPlayer)
+    {
+        //do nothing
+    }
+
+    public void OnOwnershipTransfered(PhotonView targetView, Player previousOwner)
+    {
+        if (targetView.IsMine && !isPlayer) playerAIController.OwnershipChanged();
     }
 
     #endregion

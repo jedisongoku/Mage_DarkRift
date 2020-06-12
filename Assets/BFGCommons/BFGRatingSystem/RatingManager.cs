@@ -32,7 +32,11 @@ public class RatingManager : MonoBehaviour
 
     private void Awake()
     {
+        storeLink = "https://apps.apple.com/us/app/mage-io-magic-battle-arena/id1505443765";
+#if UNITY_ANDROID
         storeLink = "https://play.google.com/store/apps/details?id=" + Application.identifier;
+#endif
+
 
         if (Instance == null)
         {

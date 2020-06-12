@@ -95,6 +95,11 @@ public class ScoreManager : MonoBehaviour
         {
             GameManager.Instance.GetCurrentPlayer.GetComponent<PlayerNetworkManager>().WinGame(scoreList[0].Key.ToString());
         }
+
+        if(PhotonNetwork.IsMasterClient && scoreList[0].Value > 4)
+        {
+            PhotonNetwork.CurrentRoom.IsOpen = false;
+        }
         
 
 

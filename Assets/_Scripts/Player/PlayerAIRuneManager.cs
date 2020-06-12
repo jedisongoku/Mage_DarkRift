@@ -35,7 +35,7 @@ public class PlayerAIRuneManager : MonoBehaviour
             runeCatalog.Add(new Rune("SECOND CHANCE", "SecondChance", "Respawn once without losing your abilities", 1, 1));
             runeCatalog.Add(new Rune("SHIELD GUARD", "ShieldGuard", "Reduces damage taken by 35%", 1, 1));
             runeCatalog.Add(new Rune("STRONG HEART", "StrongHeart", "Increases healing over time by 75%", 1, 1));
-            runeCatalog.Add(new Rune("SMART", "Smart", "Earn 50% more XP", 1, 1));
+            //runeCatalog.Add(new Rune("SMART", "Smart", "Earn 50% more XP", 1, 1));
             runeCatalog.Add(new Rune("RAGE", "Rage", "Deal 15% more damage at low health", 1, 1));
 
 

@@ -16,6 +16,7 @@ public class HUDManager : MonoBehaviourPunCallbacks
     [SerializeField] public GameObject launchPanel;
     [SerializeField] private Text launchLoadingText;
     [SerializeField] private Image launchLoadingBar;
+    public bool hasGameLaunched = false;
     public bool isContentDownloaded { get; set; }
     public bool isLoginSuccess { get; set; }
 
@@ -160,7 +161,6 @@ public class HUDManager : MonoBehaviourPunCallbacks
 
     private void Awake()
     {
-        Debug.Log(Screen.width + " X " + Screen.height + " = " + (float)Screen.width / (float)Screen.height);
         if((float)Screen.width / (float)Screen.height < 1.5f)
         {
             GetComponent<CanvasScaler>().matchWidthOrHeight = 0;
@@ -207,77 +207,80 @@ public class HUDManager : MonoBehaviourPunCallbacks
 
     IEnumerator Applaunch()
     {
-        if(isContentDownloaded)
+        if(!hasGameLaunched)
         {
-            switch (PhotonNetwork.NetworkClientState)
+            if (isContentDownloaded)
             {
-                case ClientState.ConnectingToMasterServer:
-                    launchLoadingText.text = "Downloading Content";
-                    break;
-                case ClientState.ConnectedToMasterServer:
-                    launchLoadingBar.fillAmount += 0.3f;
-                    launchLoadingText.text = Mathf.RoundToInt(launchLoadingBar.fillAmount * 100) + "%";
-                    break;
-
-                default:
-                    launchLoadingText.text = Mathf.RoundToInt(launchLoadingBar.fillAmount * 100) + "%";
-                    break;
-            }
-        }
-        else if(!isLoginSuccess)
-        {
-            launchLoadingBar.fillAmount += Time.deltaTime / 25;
-            launchLoadingText.text = Mathf.RoundToInt(launchLoadingBar.fillAmount * 100) + "%";
-        }
-        
-        
-        yield return new WaitForSeconds(0);
-
-        if (launchLoadingBar.fillAmount < 1)
-        {
-            if(!isContentDownloaded)
-            {
-                if (isLoginSuccess)
+                switch (PhotonNetwork.NetworkClientState)
                 {
-                    launchLoadingBar.fillAmount += Time.deltaTime;
+                    case ClientState.ConnectingToMasterServer:
+                        launchLoadingText.text = "Downloading Content";
+                        break;
+                    case ClientState.ConnectedToMasterServer:
+                        launchLoadingBar.fillAmount += 0.3f;
+                        launchLoadingText.text = Mathf.RoundToInt(launchLoadingBar.fillAmount * 100) + "%";
+                        break;
+
+                    default:
+                        launchLoadingText.text = Mathf.RoundToInt(launchLoadingBar.fillAmount * 100) + "%";
+                        break;
                 }
             }
-            else
+            else if (!isLoginSuccess)
             {
-                launchLoadingBar.fillAmount += Time.deltaTime / 10;
+                launchLoadingBar.fillAmount += Time.deltaTime / 25;
+                launchLoadingText.text = Mathf.RoundToInt(launchLoadingBar.fillAmount * 100) + "%";
             }
-            launchLoadingText.text = Mathf.RoundToInt(launchLoadingBar.fillAmount * 100) + "%";
 
-            if(Application.internetReachability != NetworkReachability.NotReachable)
-            {
-                StartCoroutine(Applaunch());
-            }
-            else
-            {
-                StopAllCoroutines();
-                launchLoadingText.text = "Check Internet Connection";
-            }
-            
-      
-        }
-        else
-        {
-            if (!PlayFabApiCalls.isNewUser)
-            {
-                ActivatePanels(menuPanel.name);
-                UpdateMenuPanel();
-            }
-            else
-            {
-                firstTimePlayerName.text = PlayFabDataStore.playerProfile.playerName;
-                ActivatePanels(namePanel.name);
-            }
-                
-            
-            
-            //SoundManager.Instance.SwitchSound(true);
-        }
 
+            yield return new WaitForSeconds(0);
+
+            if (launchLoadingBar.fillAmount < 1)
+            {
+                if (!isContentDownloaded)
+                {
+                    if (isLoginSuccess)
+                    {
+                        launchLoadingBar.fillAmount += Time.deltaTime;
+                    }
+                }
+                else
+                {
+                    launchLoadingBar.fillAmount += Time.deltaTime / 10;
+                }
+                launchLoadingText.text = Mathf.RoundToInt(launchLoadingBar.fillAmount * 100) + "%";
+
+                if (Application.internetReachability != NetworkReachability.NotReachable)
+                {
+                    StartCoroutine(Applaunch());
+                }
+                else
+                {
+                    StopAllCoroutines();
+                    launchLoadingText.text = "Check Internet Connection";
+                }
+
+
+            }
+            else
+            {
+                if (!PlayFabApiCalls.isNewUser)
+                {
+                    ActivatePanels(menuPanel.name);
+                    UpdateMenuPanel();
+                }
+                else
+                {
+                    firstTimePlayerName.text = PlayFabDataStore.playerProfile.playerName;
+                    ActivatePanels(namePanel.name);
+                }
+                hasGameLaunched = true;
+
+
+
+                //SoundManager.Instance.SwitchSound(true);
+            }
+        }     
     }
 
     public void NamePanelAcceptButton()
@@ -399,7 +402,7 @@ public class HUDManager : MonoBehaviourPunCallbacks
             ActivatePanels(loadingPanel.name);
             StartCoroutine(GameSceneLoading());
 
-            PlayFabApiCalls.instance.SubtractVirtualCurrency(5, "EN");
+            
         }
         else
         {
@@ -777,15 +780,18 @@ public class HUDManager : MonoBehaviourPunCallbacks
         {
             loadingBar.fillAmount += Time.deltaTime / 2;
         }
+
         loadingText.text = Mathf.RoundToInt(loadingBar.fillAmount * 100) + "%";
 
         yield return new WaitForSeconds(0);
+
         if(loadingBar.fillAmount < 1)
         {
             StartCoroutine(GameSceneLoading());
         }
         else
         {
+            PlayFabApiCalls.instance.SubtractVirtualCurrency(5, "EN");
             GameManager.Instance.InitializePlayer();
             Invoke("ActivateGamePanel", 0.2f);
             //SoundManager.Instance.SwitchSound(false);
@@ -892,10 +898,11 @@ public class HUDManager : MonoBehaviourPunCallbacks
 
     public void StartAppLaunch()
     {
-        Debug.Log("Disconnect on HUD");
+        hasGameLaunched = false;
         launchLoadingBar.fillAmount = 0;
         ActivatePanels(launchPanel.name);
         StartCoroutine(Applaunch());
+
     }
 
     public void RuneUISelection()

@@ -58,10 +58,12 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
     {
 #if (!UNITY_EDITOR)
         // your code here
-        Debug.Log("Disconnected");
         HUDManager.Instance.StartAppLaunch();
         SceneManager.LoadScene(0);
 #endif
+        Debug.Log("Disconnected");
+        
+        
 
     }
 
@@ -89,20 +91,29 @@ public class PhotonNetworkManager : MonoBehaviourPunCallbacks
     public override void OnJoinRandomFailed(short returnCode, string message)
     {
         Debug.Log(message);
+        if(message == "No match found")
+        {
+            ExitGames.Client.Photon.Hashtable roomPropterties = new ExitGames.Client.Photon.Hashtable();
+            roomPropterties.Add("Level", PlayFabDataStore.gameMode);
+            string[] lobbyProperties = { "Level", PlayFabDataStore.gameMode };
+            RoomOptions roomOptions = new RoomOptions();
+            roomOptions.CustomRoomPropertiesForLobby = lobbyProperties;
+            string roomName = PlayFabDataStore.gameMode + Random.Range(1000, 10000);
+            roomOptions.CustomRoomProperties = roomPropterties;
+            if (PlayFabDataStore.gameMode == "Deathmatch") roomOptions.MaxPlayers = 8;
+            else roomOptions.MaxPlayers = 2;
+            PhotonNetwork.CreateRoom(roomName, roomOptions);
+        }
+        else
+        {
+            HUDManager.Instance.StartAppLaunch();
+            SceneManager.LoadScene(0);
+        }
+        
 
-        ExitGames.Client.Photon.Hashtable roomPropterties = new ExitGames.Client.Photon.Hashtable();
-        roomPropterties.Add("Level", PlayFabDataStore.gameMode);
-        string[] lobbyProperties = { "Level", PlayFabDataStore.gameMode };
-        RoomOptions roomOptions = new RoomOptions();
-        roomOptions.CustomRoomPropertiesForLobby = lobbyProperties;
-        string roomName = PlayFabDataStore.gameMode + Random.Range(1000, 10000);
-        roomOptions.CustomRoomProperties = roomPropterties;
-        if(PlayFabDataStore.gameMode == "Deathmatch") roomOptions.MaxPlayers = 8;
-        else roomOptions.MaxPlayers = 2;
 
 
-
-        PhotonNetwork.CreateRoom(roomName, roomOptions);
+        
 
         
     }

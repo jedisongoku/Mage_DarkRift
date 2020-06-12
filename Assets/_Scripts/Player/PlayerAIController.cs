@@ -38,6 +38,7 @@ public class PlayerAIController : MonoBehaviourPunCallbacks, IPunObservable
 
     int defenseHealthThreshold;
     private float fireTimer;
+    private float spawnTimer = 0;
 
     // Start is called before the first frame update
     void Awake()
@@ -55,15 +56,16 @@ public class PlayerAIController : MonoBehaviourPunCallbacks, IPunObservable
         playerCombatManager.isPlayer = false;
         
 
-        StartCoroutine(StateSwitcher(botState.spawn, 0));
+        //StartCoroutine(StateSwitcher(botState.spawn, 0));
         defenseHealthThreshold = Random.Range(30, 60);
 
         if(PhotonNetwork.IsMasterClient)
         {
             searchCollider.enabled = true;
-            StartCoroutine(SanityCheck());
+            //StartCoroutine(SanityCheck());
 
-            playerNameText.text = "Mage" + Random.Range(1000, 9999);
+            //playerNameText.text = "Mage" + Random.Range(1000, 9999);
+            playerNameText.text = PlayFabDataStore.botNames[Random.Range(0, PlayFabDataStore.botNames.Length)];
             playerCombatManager.killFeedName = playerNameText.text;
             GameManager.OnGameOver += GameOver;
         }
@@ -83,7 +85,7 @@ public class PlayerAIController : MonoBehaviourPunCallbacks, IPunObservable
     {
         photonView.RPC("SetName", newPlayer, playerNameText.text);
     }
-
+    /*
     IEnumerator StateSwitcher(botState newState, float time)
     {
         //Debug.Log("State Switcher " + newState);
@@ -114,8 +116,227 @@ public class PlayerAIController : MonoBehaviourPunCallbacks, IPunObservable
                 break;
 
         }
+    }*/
+
+    void Update()
+    {
+        spawnTimer += Time.deltaTime;
+        if(botPlayerState == botState.spawn)
+        {
+            if(spawnTimer >= 2f)
+            {
+                botPlayerState = botState.patrol;
+            }
+        }
+        else if (botPlayerState == botState.patrol)
+        {
+            Patrol();
+        }
+        else if (botPlayerState == botState.attack)
+        {
+            Attack();
+        }
+        else if (botPlayerState == botState.flank)
+        {
+            Flank();
+        }
+        else if (botPlayerState == botState.defense)
+        {
+            Defense();
+        }
     }
 
+    void Patrol()
+    {
+        if (botPlayerCurrentState != botState.patrol || Vector3.Distance(transform.position, botController.destination) < botController.stoppingDistance)
+        {
+            botPlayerCurrentState = botState.patrol;
+            if (botController.enabled)
+                botController.SetDestination(GetPatrolDestionation());
+        }
+
+        if (!searchCollider.enabled)
+        {
+            searchCollider.enabled = true;
+            //StartCoroutine(SanityCheck());
+        }
+
+        if (targetPlayer != null)
+        {
+            if (Vector3.Distance(targetPlayer.transform.position, transform.position) > 12)
+            {
+                targetPlayer = null;
+            }
+            else
+            {
+                botPlayerState = botState.attack;
+            }
+        }
+        else
+        {
+            if (playersInRange.Count > 0)
+            {
+                targetPlayer = playersInRange[0];
+                botPlayerState = botState.attack;
+            }
+        }
+    }
+
+    void Attack()
+    {
+        botPlayerCurrentState = botState.attack;
+
+        if (targetPlayer != null)
+        {
+            if (targetPlayer.GetComponent<PlayerCombatManager>().isSearchable)
+                playerCombatManager.BotPlayerAutoAttack(targetPlayer);
+
+            if (playerHealthManager.PlayerHealth < defenseHealthThreshold && !playerCombatManager.IsDead)
+            {
+                if (playerCombatManager.BotPlayerPrimarySkillCharge() == 0)
+                {
+                    botPlayerState = botState.defense;
+                }
+                else
+                {
+                    botPlayerState = botState.flank;
+                }
+            }
+            else if (Vector3.Distance(targetPlayer.transform.position, transform.position) > 8f && botController.enabled)
+            {
+                botController.SetDestination(targetPlayer.transform.position);
+                if (playerCombatManager.BotPlayerSecondarySkillAvailable() && Random.Range(0f, 1f) < 0.5f)
+                {
+                    playerCombatManager.BotPlayerDash();
+                }
+
+            }
+            else if(botController.velocity.magnitude < 0.5f && botController.enabled)
+            {
+                botController.SetDestination(targetPlayer.transform.position);
+            }
+            
+            if (playersInRange.Count == 0 && targetPlayer != null)
+            {
+                targetPlayer = null;
+                botPlayerState = botState.patrol;
+                //botPlayerState = botState.flank;
+            }
+            else if(targetPlayer.GetComponent<PlayerCombatManager>().IsDead)
+            {
+                if (playersInRange.Contains(targetPlayer)) playersInRange.Remove(targetPlayer);
+                targetPlayer = null;
+                botPlayerState = botState.patrol;
+            }
+        }
+        else
+        {
+            if(playersInRange.Count > 0 && playersInRange[0].GetComponent<PlayerCombatManager>().isSearchable)
+            {
+                targetPlayer = playersInRange[0];
+            }
+            else
+            {
+                botPlayerState = botState.patrol;
+            }
+                
+        }
+    }
+
+    void Flank()
+    {
+        if (botPlayerCurrentState != botState.flank)
+        {
+            botPlayerCurrentState = botState.flank;
+            if (botController.enabled)
+                botController.SetDestination(GetPatrolDestionation());
+        }
+
+        if (targetPlayer != null)
+        {
+            playerCombatManager.BotPlayerAutoAttack(targetPlayer);
+        }
+
+        Invoke("EndFlank", 2f);
+        
+    }
+
+    void EndFlank()
+    {
+        if (targetPlayer != null)
+        {
+            if (Vector3.Distance(transform.position, targetPlayer.transform.position) > 8f)
+            {
+                botPlayerState = botState.attack;
+            }
+            else
+            {
+                botPlayerState = botState.patrol;
+            }
+        }
+        else
+        {
+            botPlayerState = botState.patrol;
+        }
+    }
+
+    void Defense()
+    {
+        if (botPlayerCurrentState != botState.defense)
+        {
+            botPlayerCurrentState = botState.defense;
+
+            if (targetPlayer != null)
+            {
+                for (int i = 0; i < 8; i++)
+                {
+                    if (Vector3.Distance(targetPlayer.transform.position, GameManager.Instance.SpawnLocation(i)) > Vector3.Distance(transform.position, GameManager.Instance.SpawnLocation(i))
+                        && Vector3.Distance(transform.position, GameManager.Instance.SpawnLocation(i)) > 5)
+                    {
+                        if (botController.enabled)
+                            botController.SetDestination(GameManager.Instance.SpawnLocation(i));
+                        break;
+                    }
+                }
+
+                if (playerCombatManager.BotPlayerSecondarySkillAvailable())
+                {
+                    playerCombatManager.BotPlayerDash();
+                }
+            }
+        }
+
+        if (targetPlayer != null)
+        {
+            playerCombatManager.BotPlayerAutoAttack(targetPlayer);
+        }
+
+        Invoke("EndDefense", 1f);
+  
+    }
+
+    void EndDefense()
+    {
+        if (botPlayerCurrentState == botState.defense)
+        {
+            if (GetComponent<PlayerHealthManager>().PlayerHealth > defenseHealthThreshold || botController.velocity.magnitude < botController.speed)
+            {
+                botPlayerState = botState.patrol;
+            }
+        }
+    }
+
+    public bool AttackTimer
+    {
+        set
+        {
+            fireTimer = 0;
+        }
+    }
+
+    #region Deleted Enumarators
+
+    /*
     IEnumerator Spawn()
     {
         botPlayerCurrentState = botState.spawn;
@@ -125,6 +346,7 @@ public class PlayerAIController : MonoBehaviourPunCallbacks, IPunObservable
         StartCoroutine(StateSwitcher(botState.patrol, 0));
     }
 
+    
     IEnumerator Patrol()
     {
         if (botPlayerCurrentState != botState.patrol || Vector3.Distance(transform.position, botController.destination) < botController.stoppingDistance)
@@ -163,16 +385,10 @@ public class PlayerAIController : MonoBehaviourPunCallbacks, IPunObservable
             else
                 if (botPlayerState == botState.patrol) StartCoroutine(Patrol());
         }  
-    }
+    }*/
 
-    public bool AttackTimer
-    {
-        set
-        {
-            fireTimer = 0;
-        }
-    }
 
+    /*
     IEnumerator Attack()
     {
         botPlayerCurrentState = botState.attack;
@@ -301,7 +517,9 @@ public class PlayerAIController : MonoBehaviourPunCallbacks, IPunObservable
             }
         }
         //if (botPlayerState == botState.defense) StartCoroutine(Defense());
-    }
+    }*/
+
+    #endregion
 
     IEnumerator Dash()
     {
@@ -318,9 +536,9 @@ public class PlayerAIController : MonoBehaviourPunCallbacks, IPunObservable
         
         if(botController.velocity.magnitude < 3 && playersInRange.Count == 0)
         {
-            StartCoroutine(StateSwitcher(botState.patrol, 0));
+            botPlayerState = botState.patrol;
         }
-        StartCoroutine(SanityCheck());
+        //StartCoroutine(SanityCheck());
     }
 
     // Update is called once per frame
@@ -398,9 +616,9 @@ public class PlayerAIController : MonoBehaviourPunCallbacks, IPunObservable
             playersInRange.Add(other.gameObject);
             if (other.gameObject.GetComponent<PlayerCombatManager>().isPlayer && targetPlayer == null && other.gameObject.GetComponent<PlayerCombatManager>().isSearchable)
                 targetPlayer = other.gameObject;
-            
-            if(botPlayerState != botState.spawn)
-                StartCoroutine(StateSwitcher(botState.attack, 0));
+
+            if (botPlayerState != botState.spawn)
+                botPlayerState = botState.attack;
 
         }
     }
@@ -414,7 +632,7 @@ public class PlayerAIController : MonoBehaviourPunCallbacks, IPunObservable
             if (playersInRange.Count == 0)
             {
                 targetPlayer = null;
-                StartCoroutine(StateSwitcher(botState.patrol, 0));
+                botPlayerState = botState.patrol;
             }
             else
             {
@@ -441,7 +659,8 @@ public class PlayerAIController : MonoBehaviourPunCallbacks, IPunObservable
         searchCollider.enabled = true;
         botController.ResetPath();
 
-        StartCoroutine(StateSwitcher(botState.spawn, 0));
+        spawnTimer = 0;
+        botPlayerState = botState.spawn;
     }
 
     bool LineOfSight(GameObject enemy)
@@ -477,4 +696,13 @@ public class PlayerAIController : MonoBehaviourPunCallbacks, IPunObservable
         botController.enabled = false;
         this.enabled = false;
     }
+
+    public void OwnershipChanged()
+    {
+        searchCollider.enabled = true;
+        GameManager.OnGameOver += GameOver;
+
+    }
+    
+
 }
